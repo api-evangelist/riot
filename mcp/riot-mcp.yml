@@ -1,0 +1,320 @@
+generated: '2026-08-05'
+method: derived
+status: candidate
+source: openapi/riot-public-api-openapi.yml
+searched:
+  result: no published MCP server found
+  probes:
+  - url: https://mcp.tryriot.com/
+    method: POST tools/list
+    http_status: 404
+  - url: https://public-api.tryriot.com/mcp
+    method: POST tools/list
+    http_status: 404
+  - url: https://tryriot.com/mcp
+    method: POST tools/list
+    http_status: 404
+  - url: https://app.tryriot.com/mcp
+    method: POST tools/list
+    http_status: 200
+    soft_404: true
+    note: SPA catch-all HTML shell, not an MCP endpoint
+  - url: https://docs.tryriot.com/llms.txt
+    http_status: 404
+  - url: https://tryriot.com/llms.txt
+    http_status: 404
+  registries_checked:
+  - npm (@modelcontextprotocol scope and keyword search)
+  - provider docs
+  - provider GitHub org github.com/tryriot
+server:
+  name: riot
+  published: false
+  url: null
+  transport: null
+  note: CANDIDATE ONLY. Riot operates no MCP server. The tools below are a derived proposal showing what an MCP server
+    over the existing public REST API would expose; each is bound to a real operationId in the published OpenAPI and
+    inherits that operation parameters and requestBody as its input schema. Do not present this as a Riot product.
+  no_pointer_note: >-
+    DELIBERATELY NOT WIRED as `type: MCPServer` in apis.yml. That pointer is what the apis.io rating reads to
+    award mcp_server_present (4 pts) and the agent-readiness mcp_server dimension (12 pts), and Riot operates
+    no MCP server. Wiring a candidate here would be false credit. If Riot ships a real server, probe it,
+    upgrade this file to method: searched / status: published, and add the pointer then.
+authentication:
+  type: apiKey
+  header: x-api-key
+  note: Any MCP server over this API would carry the same scoped key model — see scopes/riot-scopes.yml.
+coverage:
+  rest_operations_total: 40
+  rest_operations_mapped: 23
+  excluded: 17 SCIM 2.0 provisioning operations — identity lifecycle is a provisioning surface, not an agent tool
+    surface.
+  read_only_tools: 22
+  write_tools: 1
+tools:
+- name: get_course_statistics
+  category: awareness
+  description: Get aggregate awareness training statistics.
+  method: GET
+  path: /v1/courses/statistics
+  source_operation: openapi/riot-public-api-openapi.yml#courses_get_statistics_DJESCNQ
+  input_parameters:
+  - workspace_id
+  read_only: true
+- name: list_course_employee_statuses
+  category: awareness
+  description: List employee completion statuses for one course.
+  method: GET
+  path: /v1/courses/{course_id}
+  source_operation: openapi/riot-public-api-openapi.yml#courses_get_course_statuses_of_employees_DJESCNQ
+  input_parameters:
+  - cursor
+  - limit
+  - course_id
+  - workspace_id
+  - status
+  read_only: true
+- name: list_courses
+  category: awareness
+  description: List awareness training courses available in the workspace.
+  method: GET
+  path: /v1/courses
+  source_operation: openapi/riot-public-api-openapi.yml#courses_get_paginated_DJESCNQ
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  read_only: true
+- name: list_employee_course_progress
+  category: awareness
+  description: List per-employee learning progress across courses.
+  method: GET
+  path: /v1/courses/employees_progress
+  source_operation: openapi/riot-public-api-openapi.yml#courses_get_employees_progress_DJESCNQ
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  read_only: true
+- name: get_breach_statistics
+  category: breaches
+  description: Get aggregate breach statistics for a time window.
+  method: GET
+  path: /v1/breaches/statistics
+  source_operation: openapi/riot-public-api-openapi.yml#breaches_get_statistics_FAUE35Y
+  input_parameters:
+  - workspace_id
+  - breached_after
+  - breached_before
+  read_only: true
+- name: list_breach_compromised_employees
+  category: breaches
+  description: List the employees compromised by a specific breach.
+  method: GET
+  path: /v1/breaches/{breach_id}/compromised-employees
+  source_operation: openapi/riot-public-api-openapi.yml#breaches_get_breach_compromised_employees_FAUE35Y
+  input_parameters:
+  - cursor
+  - limit
+  - breach_id
+  - workspace_id
+  - warned
+  - acknowledged
+  read_only: true
+- name: list_breaches
+  category: breaches
+  description: List credential breaches affecting the workspace.
+  method: GET
+  path: /v1/breaches
+  source_operation: openapi/riot-public-api-openapi.yml#breaches_get_paginated_FAUE35Y
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  - status
+  read_only: true
+- name: get_employee
+  category: general
+  description: Get a single employee by id.
+  method: GET
+  path: /v1/employees/{employee_id}
+  source_operation: openapi/riot-public-api-openapi.yml#employees_get_LRY7OLI
+  input_parameters:
+  - employee_id
+  read_only: true
+- name: get_employee_statistics
+  category: general
+  description: Get aggregate employee statistics for the workspace.
+  method: GET
+  path: /v1/employees/statistics
+  source_operation: openapi/riot-public-api-openapi.yml#employees_get_statistics_LRY7OLI
+  input_parameters:
+  - workspace_id
+  read_only: true
+- name: get_organization
+  category: general
+  description: Get the organization and its workspaces.
+  method: GET
+  path: /v1/organization
+  source_operation: openapi/riot-public-api-openapi.yml#organizations_get_XEBQFJQ
+  input_parameters: []
+  read_only: true
+- name: list_domains
+  category: general
+  description: List the organization domains and their simulation spoofed domains.
+  method: GET
+  path: /v1/domains
+  source_operation: openapi/riot-public-api-openapi.yml#domains_get_paginated_domains_OOWLIAA
+  input_parameters:
+  - cursor
+  - limit
+  read_only: true
+- name: list_employees
+  category: general
+  description: List employees with posture, karma, department and IdP identifiers.
+  method: GET
+  path: /v1/employees
+  source_operation: openapi/riot-public-api-openapi.yml#employees_get_paginated_LRY7OLI
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  - status
+  - karma_score_gte
+  - karma_score_lte
+  read_only: true
+- name: list_group_employees
+  category: general
+  description: List the employees belonging to a group.
+  method: GET
+  path: /v1/groups/{group_id}/employees
+  source_operation: openapi/riot-public-api-openapi.yml#groups_get_group_employees_BOILCUA
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  - group_id
+  read_only: true
+- name: list_groups
+  category: general
+  description: List employee groups in the workspace.
+  method: GET
+  path: /v1/groups
+  source_operation: openapi/riot-public-api-openapi.yml#groups_get_paginated_BOILCUA
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  read_only: true
+- name: get_inbox_statistics
+  category: inbox
+  description: Get aggregate Inbox ticket and report statistics.
+  method: GET
+  path: /v1/inbox_tickets/statistics
+  source_operation: openapi/riot-public-api-openapi.yml#inbox_tickets_get_inbox_statistics_QHKH7RI
+  input_parameters:
+  - workspace_id
+  - created_after
+  - created_before
+  read_only: true
+- name: list_employees_with_email_reports
+  category: inbox
+  description: List employees who reported emails to the Inbox.
+  method: GET
+  path: /v1/inbox_tickets/list_employees_with_email_reports
+  source_operation: openapi/riot-public-api-openapi.yml#inbox_tickets_list_employees_with_email_reports_QHKH7RI
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  - created_after
+  - created_before
+  read_only: true
+- name: report_attack_from_message_id
+  category: inbox
+  description: Report a suspicious email to the Riot Inbox by its provider message id.
+  method: POST
+  path: /v1/email_reports/report_attack_from_message_id
+  source_operation: openapi/riot-public-api-openapi.yml#reports_report_attack_from_message_id_DO4XYPA
+  input_parameters: []
+  read_only: false
+- name: get_campaign_statistics
+  category: simulation
+  description: Get aggregate phishing simulation campaign statistics.
+  method: GET
+  path: /v1/campaigns/statistics
+  source_operation: openapi/riot-public-api-openapi.yml#campaigns_get_statistics_CWCTX3I
+  input_parameters:
+  - workspace_id
+  - campaign_id
+  - campaign_cycle_id
+  - created_after
+  - created_before
+  read_only: true
+- name: list_attack_login_domains
+  category: simulation
+  description: List the login domains used by phishing simulation attacks.
+  method: GET
+  path: /v1/attack_login_domains
+  source_operation: openapi/riot-public-api-openapi.yml#attack_login_domains_get_attack_login_domain_paginated_XU5W4YI
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  read_only: true
+- name: list_campaign_attacks
+  category: simulation
+  description: List the individual attacks sent in a campaign, with their events.
+  method: GET
+  path: /v1/campaigns/{campaign_id}/attacks
+  source_operation: openapi/riot-public-api-openapi.yml#attacks_get_paginated_KCLEOEQ
+  input_parameters:
+  - cursor
+  - limit
+  - campaign_id
+  - workspace_id
+  - campaign_cycle_id
+  - created_after
+  - created_before
+  - is_tricked
+  read_only: true
+- name: list_campaigns
+  category: simulation
+  description: List phishing simulation campaigns.
+  method: GET
+  path: /v1/campaigns
+  source_operation: openapi/riot-public-api-openapi.yml#campaigns_get_paginated_CWCTX3I
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  - status
+  - created_after
+  - created_before
+  read_only: true
+- name: list_employees_with_alert_statistics
+  category: slash
+  description: List employees with inbound-protection alert statistics.
+  method: GET
+  path: /v1/slash/employees/alert_statistics
+  source_operation: openapi/riot-public-api-openapi.yml#inbound_protections_list_employees_with_alerts_stats_YGL572Y
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  - created_after
+  - created_before
+  read_only: true
+- name: list_employees_with_impersonation_statistics
+  category: slash
+  description: List employees with impersonation-attempt statistics.
+  method: GET
+  path: /v1/slash/employees/impersonation_statistics
+  source_operation: openapi/riot-public-api-openapi.yml#inbound_protections_list_employees_with_impersonation_stats_YGL572Y
+  input_parameters:
+  - cursor
+  - limit
+  - workspace_id
+  - created_after
+  - created_before
+  read_only: true

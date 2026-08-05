@@ -1,0 +1,123 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Riot Public API
+  version: 1.0.0
+extends: openapi/riot-public-api-openapi.yml
+x-generated: '2026-08-05'
+x-method: generated
+x-source: openapi/_original/riot-openapi.json
+x-note: >-
+  Captures API Evangelist's derived annotations over Riot's published OpenAPI 3.1.1. The harvested spec in
+  openapi/_original/ is never mutated. Nothing here changes Riot's contract — these are our findings,
+  expressed as x- extensions so they travel with the spec.
+actions:
+- target: $.info
+  update:
+    x-apievangelist-profile: https://apis.io/provider/riot/
+    x-apievangelist-harvested-from: https://public-api.tryriot.com/openapi
+    x-apievangelist-harvested-on: '2026-08-05'
+    x-apievangelist-error-format: json-api-style-error-array
+    x-apievangelist-rfc9457: false
+    x-apievangelist-pagination: cursor
+    x-apievangelist-request-idempotency: false
+    x-apievangelist-webhook-idempotency: webhook-id
+- target: $.info
+  update:
+    x-apievangelist-standards:
+    - openapi-3.1
+    - scim-2.0
+    - ocsf-1.4.0
+    - standard-webhooks
+    - rfc8288-web-linking
+    - rfc9116-security-txt
+    x-apievangelist-standards-absent:
+    - rfc9457-problem-details
+    - oauth2
+    - oidc
+    - rfc8594-sunset
+    - mcp
+    - a2a
+    - asyncapi
+- target: $.info
+  update:
+    x-apievangelist-artifacts:
+      authentication: authentication/riot-authentication.yml
+      scopes: scopes/riot-scopes.yml
+      conventions: conventions/riot-conventions.yml
+      errors: errors/riot-error-codes.yml
+      rate_limits: rate-limits/riot-rate-limits.yml
+      lifecycle: lifecycle/riot-lifecycle.yml
+      conformance: conformance/riot-conformance.yml
+      data_model: data-model/riot-data-model.yml
+      webhooks: asyncapi/riot-webhooks.yml
+      skills: skills/_index.yml
+      agentic_access: agentic-access/riot-agentic-access.yml
+- target: $.servers
+  update:
+  - url: https://public-api.tryriot.com/
+    description: >-
+      Production. NOTE the spec declares the server as the host root while info.description states the base
+      URL is https://public-api.tryriot.com/v1 — the /v1 prefix is carried in each path, so both are
+      consistent, but a generated client built from servers[] alone will resolve correctly only because the
+      paths include /v1.
+- target: $.components.securitySchemes.apiKeyAuth
+  update:
+    description: >-
+      API key issued by Riot's technical team (not self-service). Keys are scoped to an organization or a
+      single workspace, and may be further limited to read scopes such as awareness:read, simulation:read,
+      breach:read and workspace:read. A workspace-scoped key targeting another workspace via workspace_id
+      is rejected with 403.
+    x-apievangelist-self-service: false
+    x-apievangelist-scopes: scopes/riot-scopes.yml
+- target: $.tags
+  update:
+  - name: SCIM
+    description: >-
+      SCIM 2.0 user and group provisioning (RFC 7643 / RFC 7644), including ServiceProviderConfiguration
+      discovery. Versioned by the standard, not by Riot.
+  - name: Breaches
+    description: Credential breach monitoring — breaches, statistics and compromised employees.
+  - name: Groups
+    description: Employee groups and their membership.
+  - name: Inbox
+    description: Employee-reported email triage — report submission and ticket statistics.
+  - name: Slash
+    description: Inbound email protection — per-employee alert and impersonation statistics.
+  - name: Sonar
+    description: Third-party SaaS and drive exposure monitoring. Webhook-only on the public surface.
+x-apievangelist-observations:
+- id: opaque-operation-ids
+  severity: medium
+  finding: >-
+    Every operationId carries a trailing seven-character random suffix (e.g. employees_get_LRY7OLI,
+    breaches_get_paginated_FAUE35Y). These are stable enough to reference but produce unreadable generated
+    client method names and look like build artifacts rather than a designed contract.
+- id: no-operation-summaries
+  severity: medium
+  finding: >-
+    Operations carry tags and responses but the spec relies on info.description for its conventions rather
+    than per-operation summaries, which weakens generated documentation and agent tool descriptions.
+- id: error-envelope-divergence
+  severity: medium
+  finding: >-
+    Three 404 schemas (EmployeeNotFoundErrorResponse, CourseNotFoundErrorResponse,
+    BreachNotFoundErrorResponse) return a flat {"error": "..."} string instead of the documented errors[]
+    envelope, forcing consumers to implement two parsers.
+- id: no-rate-limit-headers
+  severity: medium
+  finding: >-
+    429 is declared on 23 operations but no Retry-After or RateLimit-* header is declared or documented, and
+    no numeric limit is published, so clients cannot size backoff.
+- id: hidden-team-tags
+  severity: low
+  finding: >-
+    Nine tags exist, four of which (Team platform, Team simulation, Team awareness, Team sonar, Team inbox)
+    are marked x-scalar-ignore — internal team ownership leaking into the public contract.
+- id: scim-errors-undocumented
+  severity: low
+  finding: >-
+    SCIM operations declare 400/404/409/500 status codes with no response schemas, so SCIM error bodies are
+    undocumented.
+- id: docs-host-hsts
+  severity: low
+  finding: docs.tryriot.com does not send HSTS, unlike the apex tryriot.com (max-age 31536000).

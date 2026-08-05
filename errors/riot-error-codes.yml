@@ -1,0 +1,155 @@
+generated: '2026-08-05'
+method: derived
+source: openapi/riot-public-api-openapi.yml
+docs: https://docs.tryriot.com/
+format: json-api-style-error-array
+rfc9457: false
+format_note: >-
+  Riot does NOT use RFC 9457 problem+json. Every documented error body is served as application/json with a
+  JSON:API-shaped envelope: a top-level `errors` array whose members carry `code`, `title`, `detail` and
+  `source.pointer`. `title` and `code` are declared as JSON Schema `const` values on the shared error
+  schemas, which makes them a reliable, machine-checkable error identifier — the practical equivalent of an
+  RFC 9457 `type` URI, minus the dereferenceable URI.
+envelope:
+  media_type: application/json
+  shape: |
+    {
+      "errors": [
+        {
+          "code": "<stable machine code>",
+          "title": "<stable human title>",
+          "detail": "<contextual message>",
+          "source": { "pointer": "<JSON pointer to the offending member>" }
+        }
+      ]
+    }
+  required_members:
+  - title
+  - source
+  - detail
+  additional_properties: false
+divergence:
+  description: >-
+    Three resource-level 404 schemas break the envelope and return a flat string instead of an errors array.
+    An agent parsing Riot errors must handle both shapes.
+  legacy_flat_shape: '{"error": "<message>"}'
+  schemas:
+  - EmployeeNotFoundErrorResponse
+  - CourseNotFoundErrorResponse
+  - BreachNotFoundErrorResponse
+problems:
+- status: 401
+  code: unauthorized
+  title: Unauthorized
+  schema: UnauthorizedErrorResponse
+  description: Missing API key or the key is invalid.
+  remediation: Send a valid credential in the `x-api-key` request header.
+  operations: 23
+  envelope: errors-array
+- status: 403
+  code: forbidden
+  title: Forbidden
+  schema: ForbiddenErrorResponse
+  description: Requested resource cannot be accessed.
+  remediation: >-
+    The key is valid but not authorized for this resource. Most commonly a workspace-scoped key targeting a
+    different workspace through `workspace_id`, or a key missing the required read scope.
+  operations: 23
+  envelope: errors-array
+- status: 404
+  code: endpoint_not_found
+  title: Endpoint not found
+  schema: EndpointNotFoundErrorResponse
+  description: Requested endpoint is not found.
+  remediation: Check the path and the /v1 (or /scim/{workspace_id}/v2) prefix.
+  envelope: errors-array
+  note: >-
+    Verified live — an unauthenticated GET of https://public-api.tryriot.com/ returns 404
+    {"error":"Endpoint not found"} at the edge, i.e. the flat shape rather than the declared errors array.
+- status: 404
+  code: workspace_not_found
+  title: Workspace not found
+  schema: WorkspaceNotFoundErrorResponse
+  description: The `workspace_id` does not resolve to a workspace visible to this key.
+  envelope: errors-array
+- status: 404
+  title: Employee not found
+  schema: EmployeeNotFoundErrorResponse
+  description: The requested employee does not exist in this workspace.
+  source_operation: openapi/riot-public-api-openapi.yml#employees_get_LRY7OLI
+  envelope: flat-error-string
+- status: 404
+  title: Course is not included in the program
+  schema: CourseNotFoundErrorResponse
+  description: The requested course is not part of the workspace's awareness program.
+  source_operation: openapi/riot-public-api-openapi.yml#courses_get_course_statuses_of_employees_DJESCNQ
+  envelope: flat-error-string
+- status: 404
+  title: Breach not found
+  schema: BreachNotFoundErrorResponse
+  description: The requested breach does not exist or is not visible to this key.
+  source_operation: openapi/riot-public-api-openapi.yml#breaches_get_breach_compromised_employees_FAUE35Y
+  envelope: flat-error-string
+- status: 422
+  code: null
+  title: null
+  schema: UnprocessableContentErrorResponse
+  description: Unprocessable content — request parameters failed validation.
+  remediation: >-
+    Read `source.pointer` to find the offending parameter. Unlike the other shared schemas, `code` and
+    `title` here are free-form strings rather than `const` values, so the specific validation failures are
+    not enumerated in the contract.
+  operations: 23
+  envelope: errors-array
+- status: 429
+  code: too_many_requests
+  title: Too Many Requests
+  schema: RateLimitExceededErrorResponse
+  description: Rate limit is exceeded for this authentication key.
+  remediation: >-
+    Back off until the next fixed interval begins. No Retry-After or RateLimit-* header is documented, so
+    the wait must be estimated.
+  operations: 23
+  envelope: errors-array
+  see: rate-limits/riot-rate-limits.yml
+scim_errors:
+  note: >-
+    The /scim/{workspace_id}/v2/* operations declare their own status codes and do not reference the shared
+    v1 error schemas. Their error bodies are not described in the spec beyond the status code.
+  statuses:
+  - status: 400
+    operations: 6
+    description: Malformed SCIM request or invalid PATCH operation.
+  - status: 404
+    operations: 10
+    description: SCIM resource, schema or resource type not found.
+  - status: 409
+    operations: 1
+    description: User already exists (SCIM uniqueness conflict on create).
+    source_operation: openapi/riot-public-api-openapi.yml#users_create_user_3IQ5M4I
+  - status: 500
+    operations: 2
+    description: Server error on SCIM delete.
+coverage:
+  operations_total: 40
+  v1_operations_with_full_error_set: 23
+  status_declarations:
+    '400': 6
+    '401': 23
+    '403': 23
+    '404': 18
+    '409': 1
+    '422': 23
+    '429': 23
+    '500': 2
+gaps:
+- >-
+  The 422 schema does not enumerate its `code`/`title` values, so validation failures cannot be branched on
+  from the contract.
+- >-
+  Three 404 schemas use a flat `{"error": "..."}` body instead of the documented `errors[]` envelope.
+- SCIM error bodies are undocumented — only status codes are declared.
+- No public docs page enumerates error codes outside the OpenAPI itself.
+cross_links:
+  conventions: conventions/riot-conventions.yml
+  rate_limits: rate-limits/riot-rate-limits.yml

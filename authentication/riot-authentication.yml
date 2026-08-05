@@ -1,0 +1,15 @@
+generated: '2026-08-05'
+method: derived
+source: openapi/riot-public-api-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: x-api-key
+  sources:
+  - openapi/riot-public-api-openapi.yml

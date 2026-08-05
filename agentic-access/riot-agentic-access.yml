@@ -1,0 +1,550 @@
+generated: '2026-08-05'
+method: generated
+source: openapi/riot-public-api-openapi.yml
+description: Recommended x-agentic-access execution contracts, classified heuristically from
+  the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
+  audience per deployment. See research/curity/agentic-governance/.
+summary:
+  operations: 40
+  by_action_class:
+    connected: 31
+    acting: 9
+  by_consequence:
+    read: 31
+    write: 9
+  human_in_the_loop_required: 0
+operations:
+- path: /scim/{workspace_id}/v2/Groups
+  method: get
+  operationId: groups_list_groups_ZC2NT5A
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - scim:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /scim/{workspace_id}/v2/Groups
+  method: post
+  operationId: groups_create_group_ZC2NT5A
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - scim:write
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /scim/{workspace_id}/v2/Groups/{group_id}
+  method: delete
+  operationId: groups_delete_group_ZC2NT5A
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - scim:write
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /scim/{workspace_id}/v2/Groups/{group_id}
+  method: get
+  operationId: groups_get_group_ZC2NT5A
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - scim:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /scim/{workspace_id}/v2/Groups/{group_id}
+  method: patch
+  operationId: groups_patch_group_ZC2NT5A
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - scim:write
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /scim/{workspace_id}/v2/Groups/{group_id}
+  method: put
+  operationId: groups_update_group_ZC2NT5A
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - scim:write
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /scim/{workspace_id}/v2/ResourceTypes
+  method: get
+  operationId: resource_types_list_resource_types_KKPMSEY
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - scim:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /scim/{workspace_id}/v2/ResourceTypes/{resource_type_id}
+  method: get
+  operationId: resource_types_get_resource_type_KKPMSEY
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - scim:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /scim/{workspace_id}/v2/Schemas
+  method: get
+  operationId: schemas_list_schemas_DEOEZDI
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - scim:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /scim/{workspace_id}/v2/Schemas/{schema}
+  method: get
+  operationId: schemas_get_schema_DEOEZDI
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - scim:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /scim/{workspace_id}/v2/ServiceProviderConfiguration
+  method: get
+  operationId: service_provider_configuration_get_service_provider_configuration_M4XZ6RY
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - scim:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /scim/{workspace_id}/v2/Users
+  method: get
+  operationId: users_list_users_3IQ5M4I
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - scim:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /scim/{workspace_id}/v2/Users
+  method: post
+  operationId: users_create_user_3IQ5M4I
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - scim:write
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /scim/{workspace_id}/v2/Users/{user_id}
+  method: delete
+  operationId: users_delete_user_3IQ5M4I
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - scim:write
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /scim/{workspace_id}/v2/Users/{user_id}
+  method: get
+  operationId: users_get_user_3IQ5M4I
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - scim:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /scim/{workspace_id}/v2/Users/{user_id}
+  method: patch
+  operationId: users_patch_user_3IQ5M4I
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - scim:write
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /scim/{workspace_id}/v2/Users/{user_id}
+  method: put
+  operationId: users_update_user_3IQ5M4I
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - scim:write
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/attack_login_domains
+  method: get
+  operationId: attack_login_domains_get_attack_login_domain_paginated_XU5W4YI
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - simulation:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/breaches
+  method: get
+  operationId: breaches_get_paginated_FAUE35Y
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - breaches:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/breaches/statistics
+  method: get
+  operationId: breaches_get_statistics_FAUE35Y
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - breaches:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/breaches/{breach_id}/compromised-employees
+  method: get
+  operationId: breaches_get_breach_compromised_employees_FAUE35Y
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - breaches:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/campaigns
+  method: get
+  operationId: campaigns_get_paginated_CWCTX3I
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - simulation:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/campaigns/statistics
+  method: get
+  operationId: campaigns_get_statistics_CWCTX3I
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - simulation:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/campaigns/{campaign_id}/attacks
+  method: get
+  operationId: attacks_get_paginated_KCLEOEQ
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - simulation:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/courses
+  method: get
+  operationId: courses_get_paginated_DJESCNQ
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - awareness:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/courses/employees_progress
+  method: get
+  operationId: courses_get_employees_progress_DJESCNQ
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - awareness:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/courses/statistics
+  method: get
+  operationId: courses_get_statistics_DJESCNQ
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - awareness:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/courses/{course_id}
+  method: get
+  operationId: courses_get_course_statuses_of_employees_DJESCNQ
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - awareness:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/domains
+  method: get
+  operationId: domains_get_paginated_domains_OOWLIAA
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - workspace:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/email_reports/report_attack_from_message_id
+  method: post
+  operationId: reports_report_attack_from_message_id_DO4XYPA
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - inbox:write
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/employees
+  method: get
+  operationId: employees_get_paginated_LRY7OLI
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - workspace:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/employees/statistics
+  method: get
+  operationId: employees_get_statistics_LRY7OLI
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - workspace:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/employees/{employee_id}
+  method: get
+  operationId: employees_get_LRY7OLI
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - workspace:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/groups
+  method: get
+  operationId: groups_get_paginated_BOILCUA
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - groups:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/groups/{group_id}/employees
+  method: get
+  operationId: groups_get_group_employees_BOILCUA
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - groups:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/inbox_tickets/list_employees_with_email_reports
+  method: get
+  operationId: inbox_tickets_list_employees_with_email_reports_QHKH7RI
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - inbox:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/inbox_tickets/statistics
+  method: get
+  operationId: inbox_tickets_get_inbox_statistics_QHKH7RI
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - inbox:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organization
+  method: get
+  operationId: organizations_get_XEBQFJQ
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - workspace:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/slash/employees/alert_statistics
+  method: get
+  operationId: inbound_protections_list_employees_with_alerts_stats_YGL572Y
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - inbox:read
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/slash/employees/impersonation_statistics
+  method: get
+  operationId: inbound_protections_list_employees_with_impersonation_stats_YGL572Y
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - inbox:read
+    token:
+      max-ttl: 3600
+    audit: none

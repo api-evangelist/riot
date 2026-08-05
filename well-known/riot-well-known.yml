@@ -1,0 +1,81 @@
+generated: '2026-08-05'
+method: searched
+source: live probes of every host in apis.yml and the OpenAPI servers[]
+note: >-
+  app.tryriot.com is a single-page application whose catch-all returns HTTP 200 with the same 2,611-byte
+  HTML shell for EVERY /.well-known/* path (verified by diffing /.well-known/agent-card.json against a
+  control path /zzz-not-a-real-path-9182 — byte-identical). Those 200s are recorded below as
+  soft_404: true and are NOT counted as documents found.
+hosts:
+- host: https://tryriot.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: riot-security.txt
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://public-api.tryriot.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://app.tryriot.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    soft_404: true
+    content_type: text/html
+    note: SPA catch-all shell, not a security.txt
+  - path: /.well-known/openid-configuration
+    status: 200
+    soft_404: true
+    content_type: text/html
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    soft_404: true
+    content_type: text/html
+  - path: /.well-known/agent-card.json
+    status: 200
+    soft_404: true
+    content_type: text/html
+  - path: /.well-known/agent.json
+    status: 200
+    soft_404: true
+    content_type: text/html
+- host: https://docs.tryriot.com
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 404
+found:
+- path: /.well-known/security.txt
+  host: tryriot.com
+  file: riot-security.txt
+  spec: RFC 9116
+  fields:
+    Contact: https://app.yogosha.com/cvd/riot-security-inc./14MISime5gRIAGoFZLzCQ4
+    Expires: '2026-08-19T22:00:00.000Z'
+  observations:
+  - Contact points at a Yogosha coordinated-vulnerability-disclosure (CVD) program, not a mailto.
+  - No Encryption, Preferred-Languages, Canonical, Policy or Acknowledgments fields are published.
+  - Expires is 2026-08-19, two weeks after this probe — the file needs rotation to stay RFC 9116 valid.

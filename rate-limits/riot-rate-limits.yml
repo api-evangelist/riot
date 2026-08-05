@@ -1,0 +1,45 @@
+generated: '2026-08-05'
+method: searched
+source: https://public-api.tryriot.com/openapi
+docs: https://docs.tryriot.com/
+description: >-
+  Rate-limit signalling for the Riot Public API. Riot documents that rate limiting exists, how it is scoped
+  and what happens when it is exceeded, but does NOT publish the numeric limits.
+rate_limits:
+- api: Riot Public API
+  scope: per authentication key
+  scope_note: All requests made with the same x-api-key share the same limit.
+  algorithm: fixed time interval window
+  limit_count: null
+  window: null
+  published: false
+  published_note: >-
+    "Specific rate limits are defined and managed by the technical team." No numeric quota, window length or
+    per-endpoint limit is published anywhere on the public surface.
+  exceeded:
+    status: 429
+    error_code: too_many_requests
+    error_title: Too Many Requests
+    schema: RateLimitExceededErrorResponse
+    behavior: >-
+      Further requests return 429 until the next interval begins.
+  headers:
+    retry_after: not documented
+    ratelimit_limit: not documented
+    ratelimit_remaining: not documented
+    ratelimit_reset: not documented
+    note: >-
+      No RateLimit-* / X-RateLimit-* / Retry-After response headers are declared in the OpenAPI or described
+      in the docs, so a client cannot read its remaining budget or the reset time — it can only observe 429.
+  applies_to: all API endpoints
+  declared_on_operations: 24
+  declared_on_operations_note: >-
+    Every /v1/* operation declares a 429 response referencing the shared RateLimitExceededErrorResponse.
+    The /scim/* operations do not declare 429.
+gaps:
+- No numeric limit is published — an integrator cannot size a backoff or a batch job in advance.
+- No rate-limit response headers are documented, so budget must be discovered by hitting 429.
+- No Retry-After is declared on the 429 response, leaving retry timing to the client's guess.
+cross_links:
+  conventions: conventions/riot-conventions.yml
+  errors: errors/riot-error-codes.yml

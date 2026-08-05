@@ -1,0 +1,184 @@
+generated: '2026-08-05'
+method: derived
+source: openapi/riot-public-api-openapi.yml
+docs: https://docs.tryriot.com/
+spec_type: Webhooks
+asyncapi_published: false
+asyncapi_note: >-
+  Riot publishes no AsyncAPI document. Its event surface is instead declared natively inside the OpenAPI
+  3.1.1 document's top-level `webhooks` block — which is the OpenAPI 3.1 mechanism for exactly this, and is
+  fully machine-readable. This catalog is derived from that block; no event, field or header below was
+  invented. NOTHING here is a fabricated AsyncAPI.
+transport:
+  direction: server-to-server, Riot -> customer
+  method: POST
+  content_type: application/json
+  endpoint: customer-configured HTTPS endpoint
+  endpoint_management:
+    self_service: false
+    note: >-
+      "Contact your account manager to add or rotate an endpoint. Self-service management is not available
+      for now."
+standard:
+  name: Standard Webhooks
+  url: https://github.com/standard-webhooks/standard-webhooks
+  claim: >-
+    "The implementation follows the Standard Webhooks specification, so any Standard-Webhooks-compatible
+    library can verify and consume payloads without bespoke code."
+envelope:
+  shape: |
+    {
+      "type": "inbox_email_analysis.classified",
+      "timestamp": "2026-06-03T08:42:11.812Z",
+      "data": { }
+    }
+  fields:
+  - name: type
+    description: Event type. Declared as a JSON Schema `const` on each event schema.
+    required: true
+  - name: timestamp
+    format: date-time
+    description: >-
+      ISO 8601 time the event was created in Riot — the EVENT time, not the delivery-attempt time. The
+      delivery time is carried separately in the webhook-timestamp header.
+    required: true
+  - name: data
+    description: Event-specific payload.
+    required: true
+  additional_properties: false
+headers:
+- name: webhook-id
+  format: uuid
+  required: true
+  description: >-
+    Unique event identifier. The same id is sent on every retry — Riot's documentation explicitly says to
+    use it as an idempotency key.
+- name: webhook-timestamp
+  type: integer
+  required: true
+  description: Unix timestamp (seconds) of the delivery attempt.
+- name: webhook-signature
+  required: true
+  description: >-
+    Space-delimited list of `v1,<base64-hmac>` signatures, one per active endpoint secret.
+  algorithm: HMAC-SHA256
+  signed_payload: '<webhook-id>.<webhook-timestamp>.<body>'
+  verification_note: >-
+    Verify against the RAW request body — re-serializing the JSON changes the bytes and invalidates the
+    signature.
+  rotation: >-
+    Multiple concurrent signatures (one per active secret) support zero-downtime secret rotation.
+delivery:
+  success: any 2xx status returned within 15 seconds
+  failure: any non-2xx status, connection error, or timeout
+  retries:
+    attempts: 10
+    span: ~75 hours
+    schedule:
+    - immediate
+    - 5s
+    - 5m
+    - 30m
+    - 2h
+    - 5h
+    - 10h
+    - 14h
+    - 20h
+    - 24h
+    source: Standard Webhooks recommended schedule
+events:
+- type: inbox_email_analysis.classified
+  operation_id: InboxEmailAnalysisClassifiedWebhook
+  product: Inbox
+  summary: >-
+    Fires every time an email reported to the Inbox is classified, including reclassifications.
+  payload_schema: InboxEmailAnalysisClassifiedEvent
+  data_schema: InboxEmailAnalysisClassifiedData
+  data_standard:
+    name: OCSF Detection Finding
+    class_uid: 2004
+    class_name: Detection Finding
+    category_uid: 2
+    category_name: Findings
+    activity_id: 1
+    activity_name: Create
+    version: 1.4.0
+    url: https://schema.ocsf.io/1.4.0/classes/detection_finding
+    rationale: >-
+      "so it can be ingested by SIEMs and SOARs without custom mapping"
+  enums:
+    analysis_status:
+    - fraudulent
+    - safe
+    - spam
+    detection_type:
+    - Phishing
+    - Safe
+    - Spam
+    severity_name:
+    - High
+    - Informational
+    - Low
+  reclassification: true
+  security: []
+  security_note: >-
+    The webhook operation declares `security: []` — the receiver authenticates the event with the
+    webhook-signature HMAC, not with a Riot credential.
+- type: revoke_drive_item_permission_request.created
+  operation_id: RevokeDriveItemPermissionRequestCreatedWebhook
+  product: Sonar
+  summary: >-
+    Fires when Riot decides a third-party drive permission should be revoked. The customer is expected to
+    perform the revocation on the corresponding provider using the identifiers in data.provider_data.
+  payload_schema: RevokeDriveItemPermissionRequestCreatedEvent
+  data_schema: RevokeDriveItemPermissionRequestCreatedData
+  action_required: true
+  action_note: >-
+    This is a request-for-action event, not a notification — Riot does not perform the revocation itself.
+  providers:
+  - google
+  - microsoft
+  provider_data_fields:
+  - name: drive_item_id
+    required: true
+    description: Provider-side identifier of the drive item the permission grants access to.
+  - name: permission_id
+    required: true
+    description: Provider-side identifier of the permission to revoke.
+  - name: owner_id
+    required: true
+    description: Provider-side identifier of the drive item owner.
+  - name: shared_drive_id
+    required: false
+    description: Provider-side identifier of the shared drive, when the item lives in one (Microsoft only).
+  security: []
+compatibility:
+  forward_compatibility_rule: ignore unknown fields in the `data` object
+  non_breaking:
+  - adding a new field to the payload
+  - adding a new event type
+  breaking_change_mechanism: >-
+    Breaking changes ship under a new event type (e.g. inbox_email_analysis.classified.v2), leaving the
+    original event type unchanged.
+coverage:
+  events_published: 2
+  events_with_schema: 2
+  products_covered:
+  - Inbox
+  - Sonar
+  products_without_events:
+  - Awareness
+  - Simulation
+  - Breaches
+  - Slash
+gaps:
+- >-
+  Only 2 of Riot's 6+ product surfaces emit events. There is no event for a phishing simulation click, a
+  course completion, or a new credential breach — all of which are polled through the REST API instead.
+- No AsyncAPI document is published; consumers must read the OpenAPI `webhooks` block.
+- Endpoint registration and secret rotation are not self-service.
+- No event replay or event-history endpoint is documented.
+cross_links:
+  conventions: conventions/riot-conventions.yml
+  openapi: openapi/riot-public-api-openapi.yml
+  lifecycle: lifecycle/riot-lifecycle.yml

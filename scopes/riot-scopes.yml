@@ -1,0 +1,85 @@
+generated: '2026-08-05'
+method: searched
+source: https://public-api.tryriot.com/openapi
+docs: https://docs.tryriot.com/
+model: api-key-scopes
+note: >-
+  Riot does NOT use OAuth 2.0. This artifact records the API-key scope model the provider documents in the
+  OpenAPI `info.description` under "Authorization". Scopes are attached to an `x-api-key` credential, not
+  granted through an authorization flow, so there are no authorization/token endpoints and no consent step.
+  The `components.securitySchemes.apiKeyAuth` object declares no scopes, and no operation declares a
+  `security[]` scope requirement — the scope names below come from the prose reference only, which is why
+  the scope-to-operation binding is recorded as not-published.
+key_scoping:
+  levels:
+  - level: organization
+    description: >-
+      Organization-scoped keys can access any workspace belonging to the organization. Endpoints that take a
+      `workspace_id` parameter accept any workspace of that organization.
+  - level: workspace
+    description: >-
+      Workspace-scoped keys are restricted to a single workspace. Requests targeting a different workspace
+      through a `workspace_id` parameter are rejected with a 403 status code.
+  enforcement_status: 403
+schemes:
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: x-api-key
+  source: openapi/riot-public-api-openapi.yml
+  flows: []
+scopes:
+- scope: awareness:read
+  description: Read access to the awareness surface — courses, course settings and employee learning progress.
+  likely_operations:
+  - courses_get_paginated_DJESCNQ
+  - courses_get_statistics_DJESCNQ
+  - courses_get_employees_progress_DJESCNQ
+  - courses_get_course_statuses_of_employees_DJESCNQ
+  binding: inferred-from-tag
+  confidence: medium
+  sources:
+  - https://public-api.tryriot.com/openapi
+- scope: simulation:read
+  description: Read access to the phishing simulation surface — campaigns, attacks, attack events and login domains.
+  likely_operations:
+  - campaigns_get_paginated_CWCTX3I
+  - campaigns_get_statistics_CWCTX3I
+  - attacks_get_paginated_KCLEOEQ
+  - attack_login_domains_get_attack_login_domain_paginated_XU5W4YI
+  binding: inferred-from-tag
+  confidence: medium
+  sources:
+  - https://public-api.tryriot.com/openapi
+- scope: breach:read
+  description: Read access to credential breach data and compromised employees.
+  likely_operations:
+  - breaches_get_paginated_FAUE35Y
+  - breaches_get_statistics_FAUE35Y
+  - breaches_get_breach_compromised_employees_FAUE35Y
+  binding: inferred-from-tag
+  confidence: medium
+  sources:
+  - https://public-api.tryriot.com/openapi
+- scope: workspace:read
+  description: Read access to organization and workspace metadata, employees, groups and domains.
+  likely_operations:
+  - organizations_get_XEBQFJQ
+  - employees_get_paginated_LRY7OLI
+  - employees_get_LRY7OLI
+  - employees_get_statistics_LRY7OLI
+  - groups_get_paginated_BOILCUA
+  - groups_get_group_employees_BOILCUA
+  - domains_get_paginated_domains_OOWLIAA
+  binding: inferred-from-tag
+  confidence: medium
+  sources:
+  - https://public-api.tryriot.com/openapi
+gaps:
+- >-
+  The documented scope list is introduced with "such as", so it may not be exhaustive. No scope is published
+  for the Inbox/Slash endpoints or for the SCIM 2.0 provisioning surface.
+- >-
+  No per-operation `security[]` scope requirements appear in the OpenAPI, so an agent cannot compute the
+  minimum scope set for a call from the machine-readable contract alone.
+- API keys are not self-service — the docs state customers must contact the technical team to acquire one.

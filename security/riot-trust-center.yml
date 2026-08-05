@@ -1,0 +1,49 @@
+generated: '2026-08-05'
+method: searched
+probe: true
+source: https://tryriot.com/security/
+url: https://trust.tryriot.com/
+platform: Vanta
+security_page: https://tryriot.com/security/
+certifications:
+- id: soc2-type-ii
+  name: AICPA SOC 2 Type II
+  source: https://tryriot.com/security/
+- id: gdpr
+  name: GDPR
+  source: https://tryriot.com/security/
+program:
+  penetration_testing: annual pentest campaigns
+  vulnerability_disclosure: security/riot-vulnerability-disclosure.yml
+  encryption_at_rest: AES 256
+  encryption_in_transit: TLS 1.2+
+  data_hosting:
+  - AWS (Ireland)
+  - Azure (France)
+  backups: daily encrypted backups, 12-hour RTO, 24-hour RPO
+  access_control:
+  - SSO with leading identity providers
+  - role-based access control
+  - MFA required
+  - annual access reviews
+  sdlc:
+  - peer code review before production
+contact: security@tryriot.com
+evidence:
+- source: https://trust.tryriot.com/
+  http_status: 200
+  kind: trust center
+  platform_detected: vanta
+  note: >-
+    The trust center is a client-side-rendered Vanta page; the certification list is fetched by JavaScript
+    and is not present in the served HTML. The certifications above are therefore taken from the
+    server-rendered https://tryriot.com/security/ page, which names them in text.
+- source: https://tryriot.com/security/
+  http_status: 200
+  kind: security page
+  keywords:
+  - AICPA SOC 2 Type II
+  - GDPR
+  - bug bounty
+  - annual pentest campaigns
+  - Trust Center

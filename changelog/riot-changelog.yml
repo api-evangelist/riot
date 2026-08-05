@@ -1,0 +1,69 @@
+generated: '2026-08-05'
+method: searched
+source: https://tryriot.com/changelog/
+url: https://tryriot.com/changelog/
+scheme: dated
+versioned: false
+scope: product
+scope_note: >-
+  This is the product changelog for the Riot platform. It is not an API changelog — no entry in the captured
+  window mentions the public REST API, the OpenAPI document, or a webhook event type change.
+current_version: v1
+window: recent entries as published on 2026-08-05
+entries:
+- date: '2026-06-11'
+  breaking: false
+  highlights:
+  - title: OWASP course series
+    summary: >-
+      First technical course in a new security training series — "Train your engineering and IT teams on
+      Broken Access Control".
+    product: Awareness
+  - title: Full incident visibility in ticket details
+    summary: >-
+      Redesigned Inbox interface showing activity timelines, recipient data and reporter information for
+      attack analysis.
+    product: Inbox
+  - title: Block senders with Inbox
+    summary: One-click blocking of malicious senders, automatically handling future emails and reports.
+    product: Inbox
+  - title: Auto-forward monitoring
+    summary: >-
+      Sonar alerts administrators when emails are forwarded to non-business addresses, with one-click
+      removal.
+    product: Sonar
+  - title: New Sonar insights
+    summary: Revamped dashboard metrics showing exposure levels and their evolution since onboarding.
+    product: Sonar
+- date: '2026-05-04'
+  breaking: false
+  highlights:
+  - title: Darksword
+    summary: >-
+      iOS vulnerability response including device fleet synchronization and a dedicated security awareness
+      course for vulnerable users.
+    product: Platform
+- date: '2026-04-27'
+  breaking: false
+  highlights:
+  - title: Sonar alerts
+    summary: >-
+      New alert system covering employee sharing decisions, dangerous app permissions, missing partner
+      ownership and overdue partner reviews.
+    product: Sonar
+  - title: Inbox and Slash summary
+    summary: >-
+      Email categorization now displays context-specific reasoning in employee-friendly language across
+      platforms.
+    product: Inbox / Slash
+feeds:
+  rss: null
+  atom: null
+  json: null
+  note: No machine-readable changelog feed was found at /changelog/ or on the docs host.
+gaps:
+- No API changelog, release notes, or OpenAPI diff is published.
+- Entries are undated by version and carry no links to affected endpoints or event types.
+- No subscribable feed — consumers must poll the HTML page.
+cross_links:
+  lifecycle: lifecycle/riot-lifecycle.yml

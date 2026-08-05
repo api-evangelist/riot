@@ -1,0 +1,142 @@
+generated: '2026-08-05'
+method: searched
+source: openapi/riot-public-api-openapi.yml
+docs: https://docs.tryriot.com/
+description: >-
+  Industry and cross-cutting standards the Riot Public API conforms to, derived from the OpenAPI document
+  and confirmed against Riot's published security and trust material. `conforms: false` entries are recorded
+  deliberately — an honest negative is data.
+standards:
+- id: openapi-3.1
+  name: OpenAPI 3.1.1
+  conforms: true
+  evidence: >-
+    openapi: 3.1.1 served at https://public-api.tryriot.com/openapi (application/json), 32 paths,
+    40 operations, 109 component schemas, plus a top-level `webhooks` block.
+- id: scim-2.0
+  name: SCIM 2.0 (RFC 7643 / RFC 7644)
+  conforms: true
+  evidence: >-
+    17 operations under /scim/{workspace_id}/v2/ implementing Users, Groups, Schemas, ResourceTypes and
+    ServiceProviderConfiguration, with PATCH semantics via a SCIM PatchSchema and 409 on user-uniqueness
+    conflict.
+  note: >-
+    ServiceProviderConfiguration is exposed, which is the SCIM discovery document a provisioning client
+    reads to learn supported features.
+- id: ocsf-1.4.0
+  name: OCSF Detection Finding (class 2004, v1.4.0)
+  conforms: true
+  evidence: >-
+    The inbox_email_analysis.classified webhook payload is an OCSF Detection Finding — class_uid 2004,
+    category_uid 2 (Findings), activity_id 1 (Create) — declared as const values in the event schema, so a
+    SIEM/SOAR can ingest it without custom mapping.
+- id: standard-webhooks
+  name: Standard Webhooks
+  conforms: true
+  evidence: >-
+    webhook-id / webhook-timestamp / webhook-signature headers, v1,<base64-hmac> signature list over
+    `<id>.<timestamp>.<body>` with HMAC-SHA256, and the Standard Webhooks recommended retry schedule
+    (10 attempts over ~75 hours). Provider states the implementation follows the specification.
+- id: rfc9116-security-txt
+  name: RFC 9116 security.txt
+  conforms: true
+  partial: true
+  evidence: >-
+    https://tryriot.com/.well-known/security.txt returns 200 with Contact and Expires.
+  deviations:
+  - No Policy field.
+  - No Encryption, Preferred-Languages, Canonical or Acknowledgments fields.
+  - Expires is 2026-08-19, within two weeks of this probe.
+- id: web-linking-rfc8288
+  name: RFC 8288 Web Linking (pagination)
+  conforms: true
+  evidence: >-
+    Paginated responses include a `link` response header with rel="next" carrying a fully constructed next
+    page URL; the header is omitted on the last page.
+- id: cursor-pagination
+  name: Cursor pagination
+  conforms: true
+  evidence: >-
+    Every collection endpoint accepts `limit` (default 50, max 100) and `cursor`, and returns
+    metadata.next_cursor.
+- id: api-key-auth
+  name: API key authentication
+  conforms: true
+  evidence: components.securitySchemes.apiKeyAuth — apiKey in header, name x-api-key, applied globally.
+- id: rfc9457-problem-details
+  name: RFC 9457 Problem Details for HTTP APIs
+  conforms: false
+  evidence: >-
+    No application/problem+json media type anywhere in the spec. Errors use a JSON:API-shaped `errors[]`
+    array with code/title/detail/source.pointer, and three 404 schemas use a flat {"error": "..."} string.
+- id: jsonapi
+  name: JSON:API
+  conforms: false
+  partial: true
+  evidence: >-
+    The error envelope is JSON:API-shaped (errors[] with code/title/detail/source.pointer), but successful
+    responses are plain {data, metadata} rather than JSON:API resource objects, and the media type is
+    application/json rather than application/vnd.api+json.
+- id: oauth2
+  name: OAuth 2.0
+  conforms: false
+  evidence: >-
+    No oauth2 securityScheme; no /.well-known/oauth-authorization-server or
+    /.well-known/oauth-protected-resource on public-api.tryriot.com (both 404). Authorization is expressed
+    as scopes attached to a static API key.
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  evidence: >-
+    /.well-known/openid-configuration returns 404 on both tryriot.com and public-api.tryriot.com.
+  note: >-
+    Riot's security page states the product supports SSO with leading identity providers for END USERS of
+    the portal; that is a product feature, not an OIDC surface on the public API.
+- id: rfc8594-sunset
+  name: RFC 8594 Sunset header
+  conforms: false
+  evidence: No Sunset or Deprecation header support is documented and no operation is marked deprecated.
+- id: idempotency-key
+  name: Request idempotency key (draft-ietf-httpapi-idempotency-key-header)
+  conforms: false
+  evidence: >-
+    No Idempotency-Key header or parameter in the spec. Note that Riot DOES publish a delivery-side
+    idempotency key (webhook-id) for inbound webhook consumption — see conventions/riot-conventions.yml.
+- id: rate-limit-headers
+  name: RateLimit header fields (draft-ietf-httpapi-ratelimit-headers)
+  conforms: false
+  evidence: >-
+    Rate limiting is documented and 429 is declared on 23 operations, but no RateLimit-*, X-RateLimit-* or
+    Retry-After response header is declared or described.
+- id: mcp
+  name: Model Context Protocol
+  conforms: false
+  evidence: >-
+    No hosted MCP server found. tools/list POSTs to mcp.tryriot.com (404),
+    public-api.tryriot.com/mcp (404) and tryriot.com/mcp (404) all missed.
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json return 404 on tryriot.com, 404 on
+    public-api.tryriot.com and 404 on docs.tryriot.com. app.tryriot.com returns 200 for both, but that is a
+    single-page-app catch-all serving an identical 2,611-byte HTML shell for every path (verified against a
+    control path) — not an agent card.
+- id: graphql
+  name: GraphQL
+  conforms: false
+  evidence: public-api.tryriot.com/graphql returns 404; no GraphQL surface is documented.
+- id: asyncapi
+  name: AsyncAPI
+  conforms: false
+  evidence: >-
+    No AsyncAPI document published. The event surface is declared in the OpenAPI 3.1 `webhooks` block
+    instead — machine-readable, but not AsyncAPI.
+compliance:
+  published: true
+  trust_center: https://trust.tryriot.com/
+  security_page: https://tryriot.com/security/
+  certifications:
+  - AICPA SOC 2 Type II
+  - GDPR
+  see: security/riot-trust-center.yml

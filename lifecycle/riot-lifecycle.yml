@@ -1,0 +1,84 @@
+generated: '2026-08-05'
+method: searched
+source: https://public-api.tryriot.com/openapi
+docs: https://docs.tryriot.com/
+versioning:
+  scheme: uri-path
+  current: v1
+  base_url: https://public-api.tryriot.com/v1
+  spec_version: 3.1.1
+  info_version: v1
+  docs: https://docs.tryriot.com/
+  secondary:
+    surface: SCIM
+    path: /scim/{workspace_id}/v2/
+    version: SCIM 2.0
+    note: v2 here is the SCIM standard's version, not a second Riot API version.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: >-
+    No deprecation or sunset policy is published for the REST surface, and no operation in the OpenAPI is
+    marked `deprecated: true`. Riot publishes no removal notice period and does not advertise RFC 8594
+    Sunset/Deprecation header support. This repo therefore carries NO `Deprecation` pointer.
+compatibility_policy:
+  scope: webhook events only
+  published: true
+  source: https://public-api.tryriot.com/openapi
+  forward_compatibility_rule: >-
+    Consumers must ignore unknown fields in the `data` object — new fields may be added at any time without
+    notice and without a version bump.
+  non_breaking:
+  - adding a new field to the payload
+  - adding a new event type
+  breaking:
+  - removing or renaming a field
+  - changing the type of a field
+  - changing the meaning of an existing value (e.g. repurposing an enum value)
+  breaking_change_mechanism: >-
+    Breaking changes ship under a NEW event type (e.g. inbox_email_analysis.classified.v2); the original
+    event type is left unchanged. This is an additive-only, never-mutate contract for events, and it is the
+    closest thing Riot publishes to a deprecation policy — but nothing states how long the superseded event
+    type is retained.
+  note: >-
+    No equivalent compatibility statement exists for the REST endpoints.
+status_page:
+  url: https://status.tryriot.com/
+  http_status: 200
+  platform: Atlassian Statuspage
+  hosting: S3 + CloudFront
+  note: >-
+    The status page is a client-rendered application; current component state and incident history could not
+    be read from the served HTML.
+sla:
+  url: null
+  uptime_target: null
+  published: false
+  note: >-
+    No public uptime SLA or uptime target was found. The security page publishes disaster-recovery targets
+    (12-hour RTO, 24-hour RPO) but those are recovery objectives, not an availability commitment.
+changelog:
+  url: https://tryriot.com/changelog/
+  artifact: changelog/riot-changelog.yml
+  scope: product changelog, not API changelog
+  note: >-
+    The public changelog covers product features. No API-specific changelog, release notes feed, or spec
+    diff is published, so a breaking change to the REST contract would arrive unannounced.
+api_key_lifecycle:
+  self_service: false
+  note: Customers must contact the Riot technical team to acquire an API key.
+webhook_endpoint_lifecycle:
+  self_service: false
+  note: >-
+    "Contact your account manager to add or rotate an endpoint. Self-service management is not available
+    for now." Secret rotation is supported operationally — the webhook-signature header carries one
+    signature per active endpoint secret, enabling zero-downtime rotation.
+gaps:
+- No deprecation or sunset policy for the REST API.
+- No API-level changelog or release notes.
+- No published availability SLA.
+- Webhook endpoint and secret management require an account manager rather than an API or console.

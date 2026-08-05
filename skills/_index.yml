@@ -1,0 +1,54 @@
+generated: '2026-08-05'
+method: generated
+source: openapi/riot-public-api-openapi.yml
+note: >-
+  Packaged Agent Skills for the Riot Public API. No provider-published skills or AGENTS.md were found on
+  tryriot.com, docs.tryriot.com or github.com/tryriot, so these are generated. Every operationId referenced
+  was grepped out of the published OpenAPI — none is invented. The Riot public API is read-dominant (39 of
+  40 operations are GET or SCIM), so each skill states plainly what cannot be done through the API.
+skills:
+- file: riot-phishing-simulation-review.md
+  name: Review a Riot phishing simulation campaign
+  api: openapi/riot-public-api-openapi.yml
+  product: Simulation
+  operations:
+  - campaigns_get_paginated_CWCTX3I
+  - campaigns_get_statistics_CWCTX3I
+  - attacks_get_paginated_KCLEOEQ
+  - employees_get_LRY7OLI
+- file: riot-breach-exposure-triage.md
+  name: Triage Riot credential breach exposure
+  api: openapi/riot-public-api-openapi.yml
+  product: Breaches
+  operations:
+  - breaches_get_paginated_FAUE35Y
+  - breaches_get_statistics_FAUE35Y
+  - breaches_get_breach_compromised_employees_FAUE35Y
+  - employees_get_LRY7OLI
+  - organizations_get_XEBQFJQ
+- file: riot-awareness-training-compliance.md
+  name: Report Riot awareness training compliance
+  api: openapi/riot-public-api-openapi.yml
+  product: Awareness
+  operations:
+  - courses_get_paginated_DJESCNQ
+  - courses_get_statistics_DJESCNQ
+  - courses_get_employees_progress_DJESCNQ
+  - courses_get_course_statuses_of_employees_DJESCNQ
+  - groups_get_paginated_BOILCUA
+  - groups_get_group_employees_BOILCUA
+  - organizations_get_XEBQFJQ
+- file: riot-inbox-webhook-consumer.md
+  name: Consume Riot webhook events
+  api: openapi/riot-public-api-openapi.yml
+  product: Inbox / Sonar
+  operations:
+  - InboxEmailAnalysisClassifiedWebhook
+  - RevokeDriveItemPermissionRequestCreatedWebhook
+  - reports_report_attack_from_message_id_DO4XYPA
+  - inbox_tickets_get_inbox_statistics_QHKH7RI
+cross_links:
+  conventions: conventions/riot-conventions.yml
+  errors: errors/riot-error-codes.yml
+  scopes: scopes/riot-scopes.yml
+  webhooks: asyncapi/riot-webhooks.yml

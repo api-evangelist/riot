@@ -1,0 +1,263 @@
+generated: '2026-08-05'
+method: derived
+source: openapi/riot-public-api-openapi.yml
+description: >-
+  Entity-relationship graph for the Riot Public API, derived from OpenAPI `$ref` links between
+  components.schemas and from id-reference fields. Every entity, field and relationship below is present in
+  the published spec — nothing is inferred beyond the $ref graph and explicitly named identity fields.
+identifiers:
+  format: UUID
+  evidence: >-
+    Employee, group, workspace, organization, campaign, attack, breach, course and domain ids are declared
+    as plain `string`; the employee and group schemas describe theirs explicitly as "UUID of the employee"
+    / "UUID of the group". Riot uses no prefixed id scheme (no `emp_`/`cmp_` style prefixes).
+tenancy:
+  root: Organization
+  hierarchy: Organization -> Workspace -> (Employee | Group | Campaign | Course settings | Domain)
+  parameter: workspace_id
+  note: >-
+    Nearly every collection is scoped by a `workspace_id`. Key scope decides whether one workspace or all
+    workspaces of the organization are reachable.
+entities:
+- name: Organization
+  schema: OrganizationPayload
+  operation: organizations_get_XEBQFJQ
+  fields: [id, created_at, updated_at, cyber_posture, workspaces]
+- name: Workspace
+  schema: OrganizationWorkspaceSchema
+  overview_schema: WorkspaceOverviewSchema
+  fields: [id, name, created_at, updated_at, cyber_posture]
+- name: Employee
+  schema: PaginatedEmployeePayload
+  overview_schema: EmployeeOverviewSchema
+  operations: [employees_get_paginated_LRY7OLI, employees_get_LRY7OLI, employees_get_statistics_LRY7OLI]
+  fields:
+  - id
+  - name
+  - username
+  - primary_email_address
+  - email_addresses
+  - job_title
+  - department
+  - country_code
+  - timezone
+  - language
+  - status
+  - aura_score
+  - karma
+  - cyber_posture
+  - current_mission
+  - mission_stats
+  - manager
+  - created_at
+  - updated_at
+  external_identity_fields:
+  - google_user_id
+  - microsoft_user_id
+  - okta_user_id
+  - slack_user_id
+  external_identity_note: >-
+    Employees carry native identifiers for Google, Microsoft, Okta and Slack, which is the join key for
+    correlating Riot records with an existing IdP or collaboration directory.
+- name: Group
+  schema: PaginatedGroupPayload
+  operations: [groups_get_paginated_BOILCUA, groups_get_group_employees_BOILCUA]
+  fields: [id, name, description, created_at]
+- name: Course
+  schema: CourseOverviewSchema
+  operations: [courses_get_paginated_DJESCNQ, courses_get_course_statuses_of_employees_DJESCNQ]
+  fields: [id, name, slug, description]
+  localization_note: name and description are returned in the workspace's default locale.
+- name: CourseProgress
+  schema: PaginatedCourseStatusPayload
+  operations: [courses_get_employees_progress_DJESCNQ, courses_get_course_statuses_of_employees_DJESCNQ]
+  fields: [employee, status, quiz_score, years]
+  join_entity: true
+- name: Campaign
+  schema: PaginatedCampaignPayload
+  operations: [campaigns_get_paginated_CWCTX3I, campaigns_get_statistics_CWCTX3I]
+  fields: [id, name, status, delivery, frequency, cycles, workspace, launched_at, completed_at, created_at, updated_at]
+- name: CampaignCycle
+  schema: CampaignCycleSchema
+  overview_schema: CampaignCycleOverviewSchema
+  fields: [id, name, starts_at, ends_at, created_at, updated_at]
+- name: Attack
+  schema: PaginatedAttackPayload
+  operation: attacks_get_paginated_KCLEOEQ
+  fields: [id, employee, campaign_cycle, template, sender, service, difficulty, events, sent_at, reported_at, tricked_at, created_at]
+- name: AttackEvent
+  schema: AttackEventSchema
+  fields: [id, type, data, created_at]
+  event_types:
+  - attachment_opened
+  - attack_sent
+  - attack_voided
+  - credentials_submitted
+  - download_link_clicked
+  - email_answered
+  - email_opened
+  - email_reported
+  - employee_tricked
+  - file_opened
+  - manually_reported
+  - manually_retried
+  data_note: The `data` member is populated only for the credentials_submitted event type.
+- name: Breach
+  schema: PaginatedBreachPayload
+  operations: [breaches_get_paginated_FAUE35Y, breaches_get_statistics_FAUE35Y]
+  fields: [id, name, domain, status, criticality, impacted, warned, acknowledged, last_breached_at, created_at, updated_at]
+- name: CompromisedEmployee
+  schema: PaginatedBreachCompromisedEmployeePayload
+  operation: breaches_get_breach_compromised_employees_FAUE35Y
+  fields: [employee, breached_accounts, compromised_at, warned_at, acknowledged_at]
+  join_entity: true
+- name: BreachedAccount
+  schema: BreachedAccountPayload
+  fields: [email, compromised_at]
+- name: Domain
+  schema: PaginatedDomainPayload
+  operation: domains_get_paginated_domains_OOWLIAA
+  fields: [id, name, status, simulation_spoofed_domains]
+- name: CyberPosture
+  schema: CyberPostureSchema
+  overview_schema: CyberPostureOverviewSchema
+  note: Grade summary attached to the organization, each workspace, and each employee.
+- name: ScimUser
+  schema: ParrotWeb.PublicApi.Scim.Schemas.UserSchema
+  surface: SCIM 2.0
+  note: >-
+    The SCIM User is a separate provisioning projection of Employee; the spec does not declare a $ref link
+    between the two, so the correspondence is by external identity rather than by schema.
+- name: ScimGroup
+  schema: ParrotWeb.PublicApi.Scim.Schemas.GroupSchema
+  surface: SCIM 2.0
+relationships:
+- from: Organization
+  to: Workspace
+  type: has_many
+  via: workspaces
+  evidence: OrganizationPayload.workspaces -> [OrganizationWorkspaceSchema]
+- from: Organization
+  to: CyberPosture
+  type: has_one
+  via: cyber_posture
+- from: Workspace
+  to: CyberPosture
+  type: has_one
+  via: cyber_posture
+- from: Employee
+  to: Workspace
+  type: belongs_to
+  via: workspace
+  evidence: PaginatedEmployeePayload.workspace -> WorkspaceOverviewSchema
+- from: Employee
+  to: EmployeeEmailAddress
+  type: has_many
+  via: email_addresses
+  evidence: PaginatedEmployeePayload.email_addresses -> [EmployeeEmailAddressSchema]
+- from: Employee
+  to: Employee
+  type: belongs_to
+  via: manager
+  note: Self-referencing management hierarchy.
+- from: Employee
+  to: CyberPosture
+  type: has_one
+  via: cyber_posture
+- from: Employee
+  to: EmployeeMissionStats
+  type: has_one
+  via: mission_stats
+- from: Employee
+  to: EmployeeKarma
+  type: has_one
+  via: karma
+- from: Group
+  to: Employee
+  type: has_many
+  via: groups_get_group_employees_BOILCUA
+  binding: operation
+  note: The relationship is exposed as an endpoint rather than an embedded array.
+- from: Campaign
+  to: Workspace
+  type: belongs_to
+  via: workspace
+  evidence: PaginatedCampaignPayload.workspace -> WorkspaceOverviewSchema
+- from: Campaign
+  to: CampaignCycle
+  type: has_many
+  via: cycles
+  evidence: PaginatedCampaignPayload.cycles -> [CampaignCycleSchema]
+- from: Campaign
+  to: Attack
+  type: has_many
+  via: attacks_get_paginated_KCLEOEQ
+  binding: operation
+  note: Attacks are fetched through /v1/campaigns/{campaign_id}/attacks.
+- from: Attack
+  to: Employee
+  type: belongs_to
+  via: employee
+  evidence: PaginatedAttackPayload.employee -> EmployeeOverviewSchema
+- from: Attack
+  to: CampaignCycle
+  type: belongs_to
+  via: campaign_cycle
+- from: Attack
+  to: AttackTemplate
+  type: has_one
+  via: template
+- from: Attack
+  to: AttackSender
+  type: has_one
+  via: sender
+- from: Attack
+  to: AttackService
+  type: has_one
+  via: service
+- from: Attack
+  to: AttackEvent
+  type: has_many
+  via: events
+  evidence: PaginatedAttackPayload.events -> [AttackEventSchema]
+- from: CourseProgress
+  to: Employee
+  type: belongs_to
+  via: employee
+  evidence: PaginatedCourseStatusPayload.employee -> EmployeeOverviewSchema
+- from: CourseProgress
+  to: Course
+  type: belongs_to
+  via: course_id path parameter
+  binding: operation
+- from: CourseProgress
+  to: EmployeeCourseStatusPerYear
+  type: has_many
+  via: years
+- from: Breach
+  to: CompromisedEmployee
+  type: has_many
+  via: breaches_get_breach_compromised_employees_FAUE35Y
+  binding: operation
+- from: CompromisedEmployee
+  to: Employee
+  type: belongs_to
+  via: employee
+  evidence: PaginatedBreachCompromisedEmployeePayload.employee -> EmployeeOverviewSchema
+- from: CompromisedEmployee
+  to: BreachedAccount
+  type: has_many
+  via: breached_accounts
+- from: Domain
+  to: SpoofedDomain
+  type: has_many
+  via: simulation_spoofed_domains
+coverage:
+  entities: 18
+  relationships: 24
+  schemas_in_spec: 109
+render: null
+render_note: No subway/ visual exists in this repo yet.
+cross_links:
+  openapi: openapi/riot-public-api-openapi.yml
+  conventions: conventions/riot-conventions.yml

@@ -1,0 +1,164 @@
+generated: '2026-08-05'
+method: searched
+source: https://public-api.tryriot.com/openapi
+docs: https://docs.tryriot.com/
+description: >-
+  Cross-cutting request/response semantics for the Riot Public API, captured from the OpenAPI 3.1.1
+  `info.description` (which the provider uses as its conventions reference) and derived from the spec itself.
+
+authentication:
+  style: api-key-header
+  header: x-api-key
+  required_on: every request
+  provisioning: not self-service — customers contact the Riot technical team for a key
+  scoping: organization-scoped or workspace-scoped, optionally limited to read scopes
+  cross_workspace_denial: 403
+  see: authentication/riot-authentication.yml
+
+idempotency:
+  api_requests:
+    supported: false
+    documented: false
+    note: >-
+      Riot publishes no request-level idempotency key (no Idempotency-Key header or parameter appears in the
+      OpenAPI). This is low-consequence in practice because the public surface is read-dominant: 39 of 40
+      operations are natively idempotent (36 GET plus SCIM PUT/PATCH/DELETE, which are idempotent by SCIM
+      semantics). The single non-idempotent operation is
+      POST /v1/email_reports/report_attack_from_message_id.
+  webhook_delivery:
+    supported: true
+    documented: true
+    key: webhook-id
+    location: request header on the inbound webhook POST
+    spec: Standard Webhooks
+    provider_wording: >-
+      "webhook-id: unique event identifier. The same id is sent on every retry; use it as an idempotency key."
+    retention: >-
+      Not published. Riot retries up to 10 times over roughly 75 hours, so a consumer's dedupe window must
+      cover at least that period.
+    note: >-
+      SCOPE MATTERS: this is a delivery-side idempotency contract for the consumer receiving Riot's events,
+      not a request-side idempotency contract for calls made INTO the Riot API. It is a genuine, published,
+      machine-readable guarantee (the webhook operations and their webhook-id header are declared in the
+      OpenAPI `webhooks` block), and it is the reason this repo carries an `Idempotency` pointer — but it
+      does not make a retried POST to /v1/email_reports/report_attack_from_message_id safe.
+
+pagination:
+  style: cursor
+  applies_to: every endpoint that returns an array of objects
+  consistency_note: >-
+    Pagination is offered even on small collections (e.g. /courses) to keep every endpoint consistent.
+  request_params:
+  - name: limit
+    in: query
+    default: 50
+    max: 100
+    description: Maximum number of items per page.
+  - name: cursor
+    in: query
+    description: >-
+      Omit on the first request. On subsequent requests pass the previous response's
+      `metadata.next_cursor` value unchanged.
+  response_fields:
+    data: array of items
+    metadata.next_cursor: cursor for the next page; null when there are no more pages
+    metadata.limit: the maximum number of items per page
+  link_header:
+    supported: true
+    header: link
+    rel: next
+    format: '<https://public-api.tryriot.com/v1/groups?workspace_id=abc&cursor=...>; rel="next"'
+    note: The link header is omitted once the last page is reached.
+  example_response: |
+    {
+      "data": [],
+      "metadata": {
+        "next_cursor": "REDACTED_EXAMPLE_CURSOR",
+        "limit": 50
+      }
+    }
+
+multi_tenancy:
+  parameter: workspace_id
+  in: path (SCIM) / query (v1 endpoints)
+  description: >-
+    An organization contains one or more workspaces. Organization-scoped keys may target any workspace via
+    workspace_id; workspace-scoped keys are rejected with 403 when targeting a different workspace.
+
+rate_limiting:
+  documented: true
+  scope: per authentication key — all requests sharing a key share the limit
+  algorithm: fixed time interval window
+  exceeded_status: 429
+  published_numbers: false
+  note: Specific limits are "defined and managed by the technical team" and are not published.
+  see: rate-limits/riot-rate-limits.yml
+
+error_envelope:
+  shape: json-api-style-error-array
+  rfc9457: false
+  media_type: application/json
+  note: >-
+    Errors are NOT RFC 9457 problem+json. The envelope is a JSON:API-shaped `errors[]` array; each member
+    carries `code`, `title`, `detail` and `source.pointer`. A small number of legacy 404 bodies use a flat
+    `{"error": "..."}` string instead — see errors/riot-error-codes.yml for the divergence.
+  canonical_example: |
+    {
+      "errors": [
+        {
+          "code": "forbidden",
+          "title": "Forbidden",
+          "detail": "...",
+          "source": { "pointer": "" }
+        }
+      ]
+    }
+  see: errors/riot-error-codes.yml
+
+versioning:
+  scheme: uri-path
+  current: v1
+  base_url: https://public-api.tryriot.com/v1
+  spec_info_version: v1
+  note: >-
+    The SCIM surface is versioned separately in-path as /scim/{workspace_id}/v2/ (SCIM 2.0), which is the
+    standard's version, not Riot's.
+  see: lifecycle/riot-lifecycle.yml
+
+field_expansion:
+  supported: false
+  note: No expand/include/fields parameter appears in the OpenAPI or the conventions prose.
+
+metadata:
+  custom_metadata: false
+  note: >-
+    `metadata` in a Riot response is the pagination envelope, not a customer-writable key/value bag.
+
+request_tracing:
+  request_id_header: not published
+  note: >-
+    No request-id/correlation-id response header is documented. Webhook deliveries do carry a `webhook-id`,
+    which is the only published per-event correlation handle.
+
+compatibility_policy:
+  scope: webhook event payloads
+  forward_compatibility_rule: ignore unknown fields in the `data` object
+  non_breaking:
+  - adding a new field to the payload
+  - adding a new event type
+  breaking_handled_by: >-
+    A breaking change ships under a NEW event type (e.g. inbox_email_analysis.classified.v2), leaving the
+    original event type unchanged.
+  breaking_examples:
+  - removing or renaming a field
+  - changing the type of a field
+  - changing the meaning of an existing value (e.g. repurposing an enum value)
+
+cross_links:
+  authentication: authentication/riot-authentication.yml
+  scopes: scopes/riot-scopes.yml
+  errors: errors/riot-error-codes.yml
+  rate_limits: rate-limits/riot-rate-limits.yml
+  lifecycle: lifecycle/riot-lifecycle.yml
+  webhooks: asyncapi/riot-webhooks.yml
+  data_model: data-model/riot-data-model.yml

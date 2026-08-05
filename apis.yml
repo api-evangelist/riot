@@ -1,23 +1,160 @@
 aid: riot
 name: Riot
-description: 'Riot is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Riot is a Paris-based employee security posture management (human risk management) platform that helps companies
+  reduce the human attack surface. The product suite spans phishing and smishing simulation, security awareness
+  training courses, credential breach monitoring, employee-reported email triage (Inbox), inbound email protection
+  (Slash), and third-party SaaS/drive exposure monitoring (Sonar), fronted by a chat assistant that runs in Slack,
+  Microsoft Teams and the web portal. Riot publishes a public REST API (OpenAPI 3.1.1, x-api-key authentication,
+  cursor pagination, scoped keys) that exposes organization, employee, group, course, campaign, attack, breach and
+  inbox data, a SCIM 2.0 provisioning surface for user and group lifecycle, and Standard-Webhooks server-to-server
+  events whose payloads follow the OCSF Detection Finding schema so they can be ingested by a SIEM or SOAR without
+  custom mapping.
 url: https://raw.githubusercontent.com/api-evangelist/riot/refs/heads/main/apis.yml
+image: https://cms-content.tryriot.com/riot_preview_305b31b839.png
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-05'
 modified: '2026-08-05'
 tags:
-- Company
-apis: []
+- cybersecurity
+- security-awareness
+- human-risk-management
+- phishing-simulation
+- employee-security
+- security-posture-management
+- breach-detection
+- email-security
+- saas-security
+- scim
+- webhooks
+- ocsf
+- france
+apis:
+- name: Riot Public API
+  description: >-
+    Public REST API for the Riot employee security posture management platform. Read access to organization and
+    workspace metadata, employees and groups, awareness courses and per-employee learning progress, phishing
+    simulation campaigns and their attacks/events, credential breaches and compromised employees, and Inbox/Slash
+    email-report statistics. Includes a SCIM 2.0 provisioning surface for users and groups, and Standard Webhooks
+    server-to-server events (OCSF Detection Finding payloads). Authenticated with an x-api-key header; keys are
+    scoped to an organization or a single workspace and can be further limited to read scopes.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - cybersecurity
+  - security-awareness
+  - human-risk-management
+  - phishing-simulation
+  - breach-detection
+  - email-security
+  - scim
+  - webhooks
+  - ocsf
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-public-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+  - type: Overlay
+    url: overlays/riot-public-api-overlay.yaml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/riot-agentic-access.yml
 - type: Website
-  url: https://forgeglobal.com/riot_stock/
+  url: https://tryriot.com/
+- type: DeveloperPortal
+  url: https://docs.tryriot.com/
+- type: Documentation
+  url: https://docs.tryriot.com/
+- type: APIReference
+  url: https://docs.tryriot.com/
+- type: Blog
+  url: https://tryriot.com/blog/
+- type: Support
+  url: https://tryriot.com/support/
+- type: GitHubOrganization
+  url: https://github.com/tryriot
+- type: Pricing
+  url: https://tryriot.com/pricing/
+- type: Login
+  url: https://app.tryriot.com/
+- type: TermsOfService
+  url: https://tryriot.com/terms/
+- type: PrivacyPolicy
+  url: https://tryriot.com/privacy/
+- type: StatusPage
+  url: https://status.tryriot.com/
+- type: ChangeLog
+  url: https://tryriot.com/changelog/
+- type: ChangeLog
+  url: changelog/riot-changelog.yml
+- type: Security
+  url: https://tryriot.com/security/
+- type: TrustCenter
+  url: security/riot-trust-center.yml
+- type: Compliance
+  url: https://trust.tryriot.com/
+- type: VulnerabilityDisclosure
+  url: security/riot-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/riot-domain-security.yml
+- type: SecurityTxt
+  url: well-known/riot-security.txt
+- type: WellKnown
+  url: well-known/riot-well-known.yml
+- type: Authentication
+  url: authentication/riot-authentication.yml
+- type: OAuthScopes
+  url: scopes/riot-scopes.yml
+- type: Conventions
+  url: conventions/riot-conventions.yml
+- type: Idempotency
+  url: conventions/riot-conventions.yml
+- type: RateLimits
+  url: rate-limits/riot-rate-limits.yml
+- type: ErrorCatalog
+  url: errors/riot-error-codes.yml
+- type: Lifecycle
+  url: lifecycle/riot-lifecycle.yml
+- type: Conformance
+  url: conformance/riot-conformance.yml
+- type: DataModel
+  url: data-model/riot-data-model.yml
+- type: Webhooks
+  url: asyncapi/riot-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/riot-llms.txt
+- type: Overlay
+  url: overlays/riot-public-api-overlay.yaml
+x-enrichment:
+  date: '2026-08-05'
+  status: enriched
+  artifacts_added: 26
+  pass: local-v1
