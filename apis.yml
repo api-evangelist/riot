@@ -32,29 +32,17 @@ tags:
 - ocsf
 - france
 apis:
-- name: Riot Public API
+- aid: riot:riot-awareness-api
+  name: Riot Awareness API
   description: >-
-    Public REST API for the Riot employee security posture management platform. Read access to organization and
-    workspace metadata, employees and groups, awareness courses and per-employee learning progress, phishing
-    simulation campaigns and their attacks/events, credential breaches and compromised employees, and Inbox/Slash
-    email-report statistics. Includes a SCIM 2.0 provisioning surface for users and groups, and Standard Webhooks
-    server-to-server events (OCSF Detection Finding payloads). Authenticated with an x-api-key header; keys are
-    scoped to an organization or a single workspace and can be further limited to read scopes.
+    Provides data about courses, their settings within the workspace and employees' learning progress.
   humanURL: https://docs.tryriot.com/
   baseURL: https://public-api.tryriot.com/v1
   tags:
-  - cybersecurity
-  - security-awareness
-  - human-risk-management
-  - phishing-simulation
-  - breach-detection
-  - email-security
-  - scim
-  - webhooks
-  - ocsf
+  - Awareness
   properties:
   - type: OpenAPI
-    url: openapi/riot-public-api-openapi.yml
+    url: openapi/riot-awareness-api-openapi.yml
   - type: Documentation
     url: https://docs.tryriot.com/
   - type: APIReference
@@ -75,14 +63,404 @@ apis:
     url: data-model/riot-data-model.yml
   - type: Webhooks
     url: asyncapi/riot-webhooks.yml
-  - type: Overlay
-    url: overlays/riot-public-api-overlay.yaml
+- aid: riot:riot-breaches-api
+  name: Riot Breaches API
+  description: The Breaches API from Riot — 3 operation(s) for breaches.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Breaches
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-breaches-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-general-api
+  name: Riot General API
+  description: Provides an overview of the organization and employees' data.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - General
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-general-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-groups-api
+  name: Riot Groups API
+  description: The Groups API from Riot — 2 operation(s) for groups.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Groups
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-groups-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-inbox-api
+  name: Riot Inbox API
+  description: The Inbox API from Riot — 3 operation(s) for inbox.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Inbox
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-inbox-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-scim-api
+  name: Riot SCIM API
+  description: The SCIM API from Riot — 9 operation(s) for scim.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - SCIM
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-scim-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-simulation-api
+  name: Riot Simulation API
+  description: Provides data about phishing campaigns, corresponding attacks and related events.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Simulation
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-simulation-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-slash-api
+  name: Riot Slash API
+  description: The Slash API from Riot — 2 operation(s) for slash.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Slash
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-slash-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-sonar-api
+  name: Riot Sonar API
+  description: The Sonar API from Riot — 0 operation(s) for sonar.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Sonar
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-sonar-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-team-awareness-api
+  name: Riot Team awareness API
+  description: The Team awareness API from Riot — 4 operation(s) for team awareness.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Team awareness
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-team-awareness-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-team-inbox-api
+  name: Riot Team inbox API
+  description: The Team inbox API from Riot — 5 operation(s) for team inbox.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Team inbox
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-team-inbox-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-team-platform-api
+  name: Riot Team platform API
+  description: The Team platform API from Riot — 15 operation(s) for team platform.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Team platform
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-team-platform-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-team-simulation-api
+  name: Riot Team simulation API
+  description: The Team simulation API from Riot — 8 operation(s) for team simulation.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Team simulation
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-team-simulation-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
+- aid: riot:riot-webhook-events-api
+  name: Riot Webhook Events API
+  description: Server-to-server events Riot sends to customer-configured endpoints.
+  humanURL: https://docs.tryriot.com/
+  baseURL: https://public-api.tryriot.com/v1
+  tags:
+  - Webhook Events
+  properties:
+  - type: OpenAPI
+    url: openapi/riot-webhook-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.tryriot.com/
+  - type: APIReference
+    url: https://docs.tryriot.com/
+  - type: Authentication
+    url: authentication/riot-authentication.yml
+  - type: OAuthScopes
+    url: scopes/riot-scopes.yml
+  - type: Conventions
+    url: conventions/riot-conventions.yml
+  - type: Idempotency
+    url: conventions/riot-conventions.yml
+  - type: ErrorCatalog
+    url: errors/riot-error-codes.yml
+  - type: RateLimits
+    url: rate-limits/riot-rate-limits.yml
+  - type: DataModel
+    url: data-model/riot-data-model.yml
+  - type: Webhooks
+    url: asyncapi/riot-webhooks.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: MCPServer
+  url: mcp/riot-mcp.yml
 - type: AgenticAccess
   url: agentic-access/riot-agentic-access.yml
 - type: Website
