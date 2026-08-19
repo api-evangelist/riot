@@ -32,14 +32,15 @@ server:
   published: false
   url: null
   transport: null
-  note: CANDIDATE ONLY. Riot operates no MCP server. The tools below are a derived proposal showing what an MCP server
-    over the existing public REST API would expose; each is bound to a real operationId in the published OpenAPI and
-    inherits that operation parameters and requestBody as its input schema. Do not present this as a Riot product.
-  no_pointer_note: >-
-    DELIBERATELY NOT WIRED as `type: MCPServer` in apis.yml. That pointer is what the apis.io rating reads to
-    award mcp_server_present (4 pts) and the agent-readiness mcp_server dimension (12 pts), and Riot operates
-    no MCP server. Wiring a candidate here would be false credit. If Riot ships a real server, probe it,
-    upgrade this file to method: searched / status: published, and add the pointer then.
+  note: CANDIDATE ONLY. Riot operates no MCP server. The tools below are a derived proposal showing what
+    an MCP server over the existing public REST API would expose; each is bound to a real operationId
+    in the published OpenAPI and inherits that operation parameters and requestBody as its input schema.
+    Do not present this as a Riot product.
+  no_pointer_note: 'DELIBERATELY NOT WIRED as `type: MCPServer` in apis.yml. That pointer is what the
+    apis.io rating reads to award mcp_server_present (4 pts) and the agent-readiness mcp_server dimension
+    (12 pts), and Riot operates no MCP server. Wiring a candidate here would be false credit. If Riot
+    ships a real server, probe it, upgrade this file to method: searched / status: published, and add
+    the pointer then.'
 authentication:
   type: apiKey
   header: x-api-key
@@ -47,8 +48,8 @@ authentication:
 coverage:
   rest_operations_total: 40
   rest_operations_mapped: 23
-  excluded: 17 SCIM 2.0 provisioning operations — identity lifecycle is a provisioning surface, not an agent tool
-    surface.
+  excluded: 17 SCIM 2.0 provisioning operations — identity lifecycle is a provisioning surface, not an
+    agent tool surface.
   read_only_tools: 22
   write_tools: 1
 tools:
@@ -318,3 +319,9 @@ tools:
   - created_after
   - created_before
   read_only: true
+deployment:
+  mode: none
+  verified: derived
+  tools: 23
+  checked: '2026-08-12'
+  source: catalog MCP census

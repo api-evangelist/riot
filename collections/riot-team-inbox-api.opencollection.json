@@ -1,0 +1,243 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Riot Team inbox API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Team inbox",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Report a phishing simulation attack by Message-ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://public-api.tryriot.com/v1/email_reports/report_attack_from_message_id",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Marks a Riot phishing simulation as reported, identified by the RFC 5322 Message-ID of the reported email.\n\nNo notification email is sent to the employee for reports submitted through this endpoint.\n\n\n**Scopes required:**\n- inbox:write"
+        },
+        {
+          "info": {
+            "name": "List employees with email reports statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/inbox_tickets/list_employees_with_email_reports",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "  Retrieves a paginated list of employees having reported emails in the workspace.\n  For each employee, returns detailed information including their identification data and a breakdown of their emails reports: Number of emails reported classified as safe, fraudulent and spam.\n\n\n**Scopes required:**\n- inbox:read"
+        },
+        {
+          "info": {
+            "name": "Get inbox statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/inbox_tickets/statistics",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves statistics about inbox tickets and reports for a workspace, including counts by status and type.\n\n**Scopes required:**\n- inbox:read"
+        },
+        {
+          "info": {
+            "name": "List employees with alerts statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/slash/employees/alert_statistics",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "  Retrieves a paginated list of employees who have been alerted by the Slash system in the workspace.\n  For each employee, returns detailed information including their identification data and a breakdown of their email alerts:\n  - number of alerted emails received by the employee;\n  - number of alerted emails reported by the employee;\n  - number of alerted emails marked as safe by the employee.\n\n\n**Scopes required:**\n- inbox:read"
+        },
+        {
+          "info": {
+            "name": "List employees with email impersonation statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/slash/employees/impersonation_statistics",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "  Retrieves a paginated list of employees whose identity has been used in email impersonation attacks in the workspace.\n  For each employee, returns detailed information including their identification data and a breakdown of email impersonation attacks:\n  - total number of attacks impersonating the employee;\n  - number of attacks confirmed as fraudulent;\n  - number of attacks pending review;\n  - number of attacks confirmed as safe.\n\n\n**Scopes required:**\n- inbox:read"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

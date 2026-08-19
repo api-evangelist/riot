@@ -1,0 +1,2072 @@
+openapi: 3.2.0
+info:
+  description: "## Overview\nThe Riot API is a (mostly) RESTful API. Typically, both POST bodies and responses are JSON-encoded.\n\n## Base URL\nThe base URL for the Riot API is https://public-api.tryriot.com/v1.\n\n## Authentication\n\nEvery API request must include an authentication key in the `x-api-key` header.\n\nTo acquire an API key, customers must contact the technical team.\n\n## Authorization\n\nEach key is scoped to either a single organization or a single workspace, ensuring that access and data are restricted to the appropriate entity.\n\n- **Organization-scoped keys** can access any workspace belonging to the organization. Endpoints that take a `workspace_id` parameter accept any workspace of that organization.\n- **Workspace-scoped keys** are restricted to a single workspace. Requests targeting a different workspace through a `workspace_id` parameter are rejected with a **403** status code.\n\nKeys can also be limited by specific scopes, such as `awareness:read`, `simulation:read`, `breach:read`, or `workspace:read` which define the endpoints that can be accessed.\n\n## Pagination\n\nAll endpoints that return an array of objects support cursor-based pagination.\nEven for endpoints with a limited number of items (e.g., `/courses`), pagination is available to maintain consistency across all endpoints.\n\n**Request**\n\n- **`limit`** (query parameter): Maximum number of items per page. The maximum allowed value is `100`, with a default of `50`.\n- **`cursor`** (query parameter): Pagination cursor for retrieving the next page of results. On the first request, omit this parameter. For subsequent requests, pass the `next_cursor` value from the previous response's `metadata` object unchanged.\n\n**Response**\n\nPaginated responses include a `metadata` object alongside the `data` array:\n\n```json\n{\n  \"data\": [...],\n  \"metadata\": {\n    \"next_cursor\": \"eyJpZCI6...\",\n    \"limit\": 50\n  }\n}\n```\n\n- **`next_cursor`**: The cursor to pass in the next request. `null` when there are no more pages.\n- **`limit`**: The maximum number of items per page.\n\n**Link header**\n\nPaginated responses also include a standard `link` response header with `rel=\"next\"` when there are more results.\nThis header contains a fully constructed URL for the next page, including the cursor and any query parameters from the original request.\n\nExample: `<https://public-api.tryriot.com/v1/groups?workspace_id=abc&cursor=eyJpZCI6...>; rel=\"next\"`\n\nWhen the last page is reached, the `link` header is omitted.\n\n## Rate limits\n\nRate limiting is enforced across all API endpoints and is scoped by the authentication key. This ensures fair usage and prevents abuse of the system.\n\n- **Scope**: Rate limits are applied **per key**, meaning all requests made with the same key share the same limit.\n- **Configuration**: Specific rate limits are defined and managed by the technical team.\n- **Behavior**: The rate limiting mechanism operates within fixed time intervals. If the limit is exceeded within a given interval, further requests will return **429** status code until the next interval begins.\n\n## Webhooks\n\nRiot can push server-to-server events to a customer-configured HTTPS endpoint when something happens in a workspace (e.g. an inbox email being classified).\n\nThe implementation follows the [Standard Webhooks specification](https://github.com/standard-webhooks/standard-webhooks), so any Standard-Webhooks-compatible library can verify and consume payloads without bespoke code.\n\n**Envelope**\n\nEvery event body is wrapped in the Standard Webhooks envelope:\n\n```json\n{\n  \"type\": \"inbox_email_analysis.classified\",\n  \"timestamp\": \"2026-06-03T08:42:11.812Z\",\n  \"data\": { /* event-specific payload */ }\n}\n```\n\n**Headers**\n\n- `webhook-id`: unique event identifier. The same id is sent on every retry; use it as an idempotency key.\n- `webhook-timestamp`: Unix timestamp (seconds) of the delivery attempt.\n- `webhook-signature`: space-delimited list of `v1,<base64-hmac>` signatures, one per active endpoint secret, computed over `<webhook-id>.<webhook-timestamp>.<body>` using HMAC-SHA256 with the raw request body. Multiple signatures support zero-downtime secret rotation.\n\n**Delivery**\n\n- Method: `POST` with `content-type: application/json`.\n- Success: any `2xx` status returned within 15 seconds.\n- Failure: any non-`2xx` status, connection error, or timeout. Retries follow the Standard Webhooks recommended schedule: 10 attempts spread over ~75 hours (immediate, 5s, 5m, 30m, 2h, 5h, 10h, 14h, 20h, 24h).\n\n**Endpoint management**\n\nContact your account manager to add or rotate an endpoint. Self-service management is not available for now.\n\n**Compatibility**\n\nEvent payloads evolve over time. To stay forward-compatible, **ignore unknown fields** in the `data` object — new fields may be added at any time without notice and without a version bump.\n\nThe following changes to an existing event type are **not** considered breaking:\n\n- Adding a new field to the payload.\n- Adding a new event type.\n\nThe following changes **are** breaking and will be shipped under a new event type (e.g. `inbox_email_analysis.classified.v2`), leaving the original event type unchanged:\n\n- Removing or renaming a field.\n- Changing the type of a field.\n- Changing the meaning of an existing value (e.g. repurposing an enum value).\n\n**Event types**\n\nSee the **Webhook Events** section in the sidebar for the list of supported event types and their payload schemas.\n"
+  title: Riot Team platform API
+  version: v1
+servers:
+- url: https://public-api.tryriot.com/
+security:
+- apiKeyAuth: []
+tags:
+- name: Team platform
+  x-scalar-ignore: true
+paths:
+  /scim/{workspace_id}/v2/Groups:
+    get:
+      description: 'Lists groups with SCIM pagination support. Supports startIndex, count, and filter parameters.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: groups_list_groups_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: query
+        name: startIndex
+        required: false
+        schema:
+          default: 1
+          minimum: 1
+          type: integer
+      - in: query
+        name: count
+        required: false
+        schema:
+          default: 100
+          maximum: 1000
+          minimum: 1
+          type: integer
+      - in: query
+        name: filter
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM groups list
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: List SCIM groups
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+    post:
+      description: 'Creates a new group from SCIM data.
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: groups_create_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.GroupSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM group created
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Create a SCIM group
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Groups/{group_id}:
+    delete:
+      description: 'Deletes a group.
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: groups_delete_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: group_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '204':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Group deleted
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Group not found
+        '500':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Failed to delete group
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Delete a SCIM group
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+    get:
+      description: 'Gets a single group by ID.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: groups_get_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: group_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM group
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Group not found
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get a SCIM group
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+    patch:
+      description: 'Partially updates an existing group using SCIM PATCH operations (RFC 7644 Section 3.5.2).
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: groups_patch_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: group_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.PatchSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM group updated
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Partially update a SCIM group
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+    put:
+      description: 'Updates an existing group (SCIM PUT).
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: groups_update_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: group_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.GroupSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM group updated
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Update a SCIM group
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/ResourceTypes:
+    get:
+      description: 'Retrieves the list of supported SCIM resource types.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: resource_types_list_resource_types_KKPMSEY
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM resource types list
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: List SCIM resource types
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/ResourceTypes/{resource_type_id}:
+    get:
+      description: 'Retrieves a specific SCIM resource type by ID.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: resource_types_get_resource_type_KKPMSEY
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: resource_type_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM resource type
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: ResourceType not found
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get a SCIM resource type
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Schemas:
+    get:
+      description: 'Retrieves the list of supported SCIM schemas.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: schemas_list_schemas_DEOEZDI
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM schemas list
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: List SCIM schemas
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Schemas/{schema}:
+    get:
+      description: 'Retrieves a specific SCIM schema by ID.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: schemas_get_schema_DEOEZDI
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: schema
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM schema
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Schema not found
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get a SCIM schema
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/ServiceProviderConfiguration:
+    get:
+      description: 'Retrieves the SCIM service provider configuration, including supported features and capabilities.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: service_provider_configuration_get_service_provider_configuration_M4XZ6RY
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM service provider configuration
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get SCIM service provider configuration
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Users:
+    get:
+      description: 'Lists users with SCIM pagination support. Supports startIndex, count, and filter parameters.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: users_list_users_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: query
+        name: startIndex
+        required: false
+        schema:
+          default: 1
+          minimum: 1
+          type: integer
+      - in: query
+        name: count
+        required: false
+        schema:
+          default: 100
+          maximum: 1000
+          minimum: 1
+          type: integer
+      - in: query
+        name: filter
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM users list
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: List SCIM users
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+    post:
+      description: 'Creates a new user from SCIM data.
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: users_create_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.UserSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM user created
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '409':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Username already exists
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Create a SCIM user
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Users/{user_id}:
+    delete:
+      description: 'Deletes a user.
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: users_delete_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '204':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User deleted
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+        '500':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Failed to delete user
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Delete a SCIM user
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+    get:
+      description: 'Gets a single user by ID.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: users_get_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM user
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get a SCIM user
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+    patch:
+      description: 'Partially updates an existing user using SCIM PATCH operations (RFC 7644 Section 3.5.2).
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: users_patch_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.PatchSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM user updated
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Partially update a SCIM user
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+    put:
+      description: 'Updates an existing user (SCIM PUT).
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: users_update_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.UserSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM user updated
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Update a SCIM user
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /v1/employees:
+    get:
+      description: 'Retrieves a list of workspace employees, sorted by their creation date in descending order (most recent entries first).
+
+
+        **Scopes required:**
+
+        - workspace:read'
+      operationId: employees_get_paginated_LRY7OLI
+      parameters:
+      - in: header
+        name: x-item-limit
+        required: false
+        schema:
+          default: 50
+          deprecated: true
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: header
+        name: x-next-cursor
+        required: false
+        schema:
+          deprecated: true
+          type: string
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 50
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: query
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - explode: false
+        in: query
+        name: status
+        required: false
+        schema:
+          items:
+            $ref: '#/components/schemas/EmployeeStatusSchema'
+          minItems: 1
+          type: array
+          uniqueItems: true
+        style: form
+      - in: query
+        name: karma_score_gte
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+      - in: query
+        name: karma_score_lte
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      $ref: '#/components/schemas/PaginatedEmployeePayload'
+                    type: array
+                  metadata:
+                    properties:
+                      limit:
+                        type: integer
+                      next_cursor:
+                        type:
+                        - string
+                        - 'null'
+                    required:
+                    - next_cursor
+                    - limit
+                    type: object
+                required:
+                - data
+                type: object
+          description: Employees list
+          headers:
+            link:
+              description: 'Link header with rel="next" pointing to the next page URL. Format: `<url>; rel="next"`'
+              required: false
+              schema:
+                type: string
+            x-next-cursor:
+              description: Pagination cursor for the next page
+              required: false
+              schema:
+                deprecated: true
+                type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContentErrorResponse'
+        '429':
+          $ref: '#/components/responses/RateLimitExceededErrorResponse'
+      security:
+      - apiKeyAuth:
+        - workspace:read
+      summary: List employees
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /v1/employees/statistics:
+    get:
+      description: 'Retrieves statistics about employees in a workspace grouped by status.
+
+
+        **Scopes required:**
+
+        - workspace:read'
+      operationId: employees_get_statistics_LRY7OLI
+      parameters:
+      - in: query
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/EmployeeStatisticsPayload'
+                required:
+                - data
+                type: object
+          description: Employee statistics
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceNotFoundErrorResponse'
+          description: no description
+        '422':
+          $ref: '#/components/responses/UnprocessableContentErrorResponse'
+        '429':
+          $ref: '#/components/responses/RateLimitExceededErrorResponse'
+      security:
+      - apiKeyAuth:
+        - workspace:read
+      summary: Get employee statistics
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /v1/employees/{employee_id}:
+    get:
+      description: 'Retrieves details for a specific employee by ID.
+
+
+        **Scopes required:**
+
+        - workspace:read'
+      operationId: employees_get_LRY7OLI
+      parameters:
+      - in: path
+        name: employee_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PaginatedEmployeePayload'
+                required:
+                - data
+                type: object
+          description: Employee details
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeNotFoundErrorResponse'
+          description: no description
+        '422':
+          $ref: '#/components/responses/UnprocessableContentErrorResponse'
+        '429':
+          $ref: '#/components/responses/RateLimitExceededErrorResponse'
+      security:
+      - apiKeyAuth:
+        - workspace:read
+      summary: Get employee details
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /v1/groups:
+    get:
+      description: 'Retrieves a list of workspace groups, sorted by their creation date in descending order (most recent entries first).
+
+
+        **Scopes required:**
+
+        - groups:read'
+      operationId: groups_get_paginated_BOILCUA
+      parameters:
+      - in: header
+        name: x-item-limit
+        required: false
+        schema:
+          default: 50
+          deprecated: true
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: header
+        name: x-next-cursor
+        required: false
+        schema:
+          deprecated: true
+          type: string
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 50
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: query
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      $ref: '#/components/schemas/PaginatedGroupPayload'
+                    type: array
+                  metadata:
+                    properties:
+                      limit:
+                        type: integer
+                      next_cursor:
+                        type:
+                        - string
+                        - 'null'
+                    required:
+                    - next_cursor
+                    - limit
+                    type: object
+                required:
+                - data
+                type: object
+          description: Groups list
+          headers:
+            link:
+              description: 'Link header with rel="next" pointing to the next page URL. Format: `<url>; rel="next"`'
+              required: false
+              schema:
+                type: string
+            x-next-cursor:
+              description: Pagination cursor for the next page
+              required: false
+              schema:
+                deprecated: true
+                type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContentErrorResponse'
+        '429':
+          $ref: '#/components/responses/RateLimitExceededErrorResponse'
+      security:
+      - apiKeyAuth:
+        - groups:read
+      summary: List groups
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /v1/groups/{group_id}/employees:
+    get:
+      description: 'Retrieves a list of employees in a specific group, sorted by membership date in descending order (most recently added first). Returns an empty list if the group does not exist or has no employees.
+
+
+        **Scopes required:**
+
+        - groups:read'
+      operationId: groups_get_group_employees_BOILCUA
+      parameters:
+      - in: header
+        name: x-item-limit
+        required: false
+        schema:
+          default: 50
+          deprecated: true
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: header
+        name: x-next-cursor
+        required: false
+        schema:
+          deprecated: true
+          type: string
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 50
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: query
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: group_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      $ref: '#/components/schemas/PaginatedGroupEmployeePayload'
+                    type: array
+                  metadata:
+                    properties:
+                      limit:
+                        type: integer
+                      next_cursor:
+                        type:
+                        - string
+                        - 'null'
+                    required:
+                    - next_cursor
+                    - limit
+                    type: object
+                required:
+                - data
+                type: object
+          description: Group employees list
+          headers:
+            link:
+              description: 'Link header with rel="next" pointing to the next page URL. Format: `<url>; rel="next"`'
+              required: false
+              schema:
+                type: string
+            x-next-cursor:
+              description: Pagination cursor for the next page
+              required: false
+              schema:
+                deprecated: true
+                type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContentErrorResponse'
+        '429':
+          $ref: '#/components/responses/RateLimitExceededErrorResponse'
+      security:
+      - apiKeyAuth:
+        - groups:read
+      summary: List employees in a group
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+  /v1/organization:
+    get:
+      description: 'Returns the organization with its workspaces.
+
+
+        **Scopes required:**
+
+        - workspace:read'
+      operationId: organizations_get_XEBQFJQ
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OrganizationPayload'
+                required:
+                - data
+                type: object
+          description: Organization
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContentErrorResponse'
+        '429':
+          $ref: '#/components/responses/RateLimitExceededErrorResponse'
+      security:
+      - apiKeyAuth:
+        - workspace:read
+      summary: Get organization
+      tags:
+      - Team platform
+      x-riot-team-ownership: platform
+components:
+  schemas:
+    EmployeeStatisticsPayload:
+      additionalProperties: false
+      properties:
+        activated:
+          description: Number of active employees
+          type: integer
+        archived:
+          description: Number of archived employees
+          type: integer
+        deactivated:
+          description: Number of deactivated employees
+          type: integer
+        total:
+          description: Total number of employees
+          type: integer
+      required:
+      - archived
+      - deactivated
+      - activated
+      - total
+      title: EmployeeStatisticsPayload
+      type: object
+    PaginatedEmployeePayload:
+      additionalProperties: false
+      properties:
+        aura_score:
+          description: Employee's current aura score.
+          type: integer
+        country_code:
+          description: Alpha-2 ISO 3166-1 country code of the employee.
+          examples:
+          - FR
+          maxLength: 2
+          type:
+          - string
+          - 'null'
+        created_at:
+          description: Riot employee creation date
+          format: date-time
+          type: string
+        current_mission:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EmployeeCurrentMissionSchema'
+          description: The employee's live mission, or `null` when no mission is running.
+        cyber_posture:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CyberPostureOverviewSchema'
+          description: Latest cyber posture summary for the employee.
+        department:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EmployeeDepartmentSchema'
+        email_addresses:
+          description: Professional email addresses of the employee. No personal email address is returned
+          items:
+            $ref: '#/components/schemas/EmployeeEmailAddressSchema'
+          type: array
+        google_user_id:
+          description: Google Workspace user ID, when the employee is synced from Google.
+          examples:
+          - '112233445566778899000'
+          type:
+          - string
+          - 'null'
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        job_title:
+          description: The employee's job title.
+          examples:
+          - Account manager
+          type:
+          - string
+          - 'null'
+        karma:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EmployeeKarmaSchema'
+        language:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EmployeeLanguage'
+        manager:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EmployeeOverviewSchema'
+        microsoft_user_id:
+          description: Microsoft Entra ID (Azure AD) user object ID, when the employee is synced from Microsoft.
+          examples:
+          - f9a7ceeb-6c82-48b1-a522-faf335c7d623
+          type:
+          - string
+          - 'null'
+        mission_stats:
+          $ref: '#/components/schemas/EmployeeMissionStatsSchema'
+        name:
+          description: Name of the employee
+          examples:
+          - John Doe
+          type:
+          - string
+          - 'null'
+        okta_user_id:
+          description: Okta user ID, when the employee is synced from Okta.
+          examples:
+          - 00u1abcdef2GhIjKlMn3
+          type:
+          - string
+          - 'null'
+        primary_email_address:
+          description: Primary email address of the employee
+          examples:
+          - john.doe@tryriot.com
+          format: email
+          type:
+          - string
+          - 'null'
+        slack_user_id:
+          description: Slack user ID, when the employee is synced from Slack.
+          examples:
+          - U01234ABCDE
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/EmployeeStatusSchema'
+        timezone:
+          description: Timezone of the employee.
+          examples:
+          - Europe/Paris
+          type: string
+        updated_at:
+          description: When the last update occurred
+          format: date-time
+          type: string
+        username:
+          description: Username of the employee
+          type:
+          - string
+          - 'null'
+        workspace:
+          $ref: '#/components/schemas/WorkspaceOverviewSchema'
+      required:
+      - okta_user_id
+      - slack_user_id
+      - google_user_id
+      - microsoft_user_id
+      - job_title
+      - country_code
+      - manager
+      - department
+      - current_mission
+      - mission_stats
+      - aura_score
+      - cyber_posture
+      - karma
+      - email_addresses
+      - primary_email_address
+      - status
+      - timezone
+      - language
+      - username
+      - name
+      - updated_at
+      - created_at
+      - workspace
+      - id
+      title: PaginatedEmployeePayload
+      type: object
+    EmployeeNotFoundErrorResponse:
+      additionalProperties: false
+      properties:
+        error:
+          const: Employee not found
+      required:
+      - error
+      title: EmployeeNotFoundErrorResponse
+      type: object
+    PaginatedGroupEmployeePayload:
+      additionalProperties: false
+      properties:
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        name:
+          description: Full name of the employee
+          type: string
+        primary_email_address:
+          description: Primary email address of the employee
+          format: email
+          type: string
+        username:
+          description: Username of the employee
+          examples:
+          - john.doe
+          type:
+          - string
+          - 'null'
+      required:
+      - username
+      - primary_email_address
+      - name
+      - id
+      title: PaginatedGroupEmployeePayload
+      type: object
+    EmployeeMissionStatsSchema:
+      additionalProperties: false
+      properties:
+        streak_count:
+          description: Current consecutive completed-missions streak
+          type: integer
+      required:
+      - streak_count
+      title: EmployeeMissionStatsSchema
+      type: object
+    ParrotWeb.PublicApi.Scim.Schemas.UserSchema:
+      properties:
+        active:
+          description: Whether the user is active. Defaults to true if not provided
+          type: boolean
+        department:
+          description: Department of the user
+          type: string
+        emails:
+          items:
+            properties:
+              primary:
+                anyOf:
+                - type: boolean
+                - type: string
+                description: Whether this is the primary email (boolean or string)
+              type:
+                description: A label indicating the type of email address. The only currently supported value is 'work'.
+                enum:
+                - work
+                type: string
+              value:
+                description: Email address
+                format: email
+                type: string
+            required:
+            - value
+            - primary
+            type: object
+          minItems: 1
+          type: array
+        externalId:
+          type: string
+        manager:
+          properties:
+            $ref:
+              description: The URI of the 'User' resource corresponding to the manager
+              type: string
+            displayName:
+              description: Family name of the user
+              type: string
+            value:
+              description: The identifier of the manager's User
+              type: string
+          required:
+          - value
+          type: object
+        name:
+          properties:
+            familyName:
+              description: Family name of the user
+              type: string
+            givenName:
+              description: Given name of the user
+              type: string
+          required:
+          - givenName
+          - familyName
+          type: object
+        preferredLanguage:
+          description: User's preferred language in ISO 639-1 language code with ISO 3166-1 country code format (e.g., 'en-US', 'fr-FR').
+          type: string
+        timezone:
+          description: User's timezone in Olson format (e.g., 'America/Los_Angeles'). Defaults to workspace timezone if not provided.
+          type: string
+        userName:
+          description: Unique identifier for the user
+          type: string
+      required:
+      - userName
+      - name
+      - emails
+      type: object
+    ForbiddenErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: forbidden
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Forbidden
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: ForbiddenErrorResponse
+      type: object
+    EmployeeDepartmentSchema:
+      additionalProperties: false
+      properties:
+        name:
+          description: Name of the department
+          examples:
+          - Devs
+          type: string
+      required:
+      - name
+      title: EmployeeDepartmentSchema
+      type: object
+    EmployeeStatusSchema:
+      description: "        - `active`: default status.\n        - `deactivated`: employee has been manually deactivated.\n        - `pending`: employee is currently being synced via workspace's AD\n"
+      enum:
+      - active
+      - deactivated
+      - pending
+      - unlicensed
+      title: EmployeeStatusSchema
+      type: string
+    EmployeeCyberPostureGrade:
+      enum:
+      - a
+      - b
+      - c
+      - d
+      title: EmployeeCyberPostureGrade
+      type: string
+    EmployeeSecurityLevel:
+      enum:
+      - bad
+      - dangerous
+      - excellent
+      - exceptional
+      - good
+      - great
+      - ok
+      title: EmployeeSecurityLevel
+      type: string
+    ParrotWeb.PublicApi.Scim.Schemas.PatchSchema:
+      properties:
+        Operations:
+          items:
+            properties:
+              op:
+                description: The operation to perform
+                enum:
+                - add
+                - replace
+                - remove
+                type: string
+              path:
+                description: Optional path to the attribute (required for remove)
+                type: string
+              value:
+                description: The value to add or replace (required for add and replace)
+            required:
+            - op
+            type: object
+          minItems: 1
+          type: array
+        schemas:
+          description: Must be ["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
+          items:
+            type: string
+          type: array
+      required:
+      - schemas
+      - Operations
+      type: object
+    OrganizationPayload:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        cyber_posture:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CyberPostureSchema'
+          description: Latest cyber posture summary for the organization.
+        id:
+          format: uuid
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        workspaces:
+          items:
+            $ref: '#/components/schemas/OrganizationWorkspaceSchema'
+          type: array
+      required:
+      - workspaces
+      - cyber_posture
+      - updated_at
+      - created_at
+      - id
+      title: OrganizationPayload
+      type: object
+    OrganizationWorkspaceSchema:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        cyber_posture:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CyberPostureSchema'
+          description: Latest cyber posture summary for the workspace.
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+      - cyber_posture
+      - updated_at
+      - created_at
+      - name
+      - id
+      title: OrganizationWorkspaceSchema
+      type: object
+    EmployeeCurrentMissionSchema:
+      additionalProperties: false
+      properties:
+        completed_at:
+          description: When the employee completed the mission
+          format: date-time
+          type:
+          - string
+          - 'null'
+        completion_percentage:
+          description: Share of the mission's tasks the employee has completed
+          maximum: 100
+          minimum: 0
+          type: integer
+        end_at:
+          description: When the mission ends
+          format: date-time
+          type: string
+        id:
+          description: UUID of the mission
+          format: uuid
+          type: string
+        start_at:
+          description: When the mission starts
+          format: date-time
+          type: string
+      required:
+      - completion_percentage
+      - completed_at
+      - end_at
+      - start_at
+      - id
+      title: EmployeeCurrentMissionSchema
+      type: object
+    CyberPostureOverviewSchema:
+      additionalProperties: false
+      properties:
+        grade:
+          $ref: '#/components/schemas/EmployeeCyberPostureGrade'
+        score_percentage:
+          description: Employee cyber posture score (0-100)
+          examples:
+          - 87.5
+          type: number
+      required:
+      - grade
+      - score_percentage
+      title: CyberPostureOverviewSchema
+      type: object
+    EmployeeOverviewSchema:
+      additionalProperties: false
+      properties:
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        name:
+          description: Name of the employee
+          examples:
+          - John Doe
+          type:
+          - string
+          - 'null'
+        primary_email_address:
+          description: Email address
+          examples:
+          - john.doe@tryriot.com
+          format: email
+          type:
+          - string
+          - 'null'
+        username:
+          description: Username of the employee
+          type:
+          - string
+          - 'null'
+      required:
+      - primary_email_address
+      - username
+      - name
+      - id
+      title: EmployeeOverviewSchema
+      type: object
+    UnauthorizedErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: unauthorized
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Unauthorized
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnauthorizedErrorResponse
+      type: object
+    UnprocessableContentErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                type: string
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnprocessableContentErrorResponse
+      type: object
+    EmployeeKarmaSchema:
+      additionalProperties: false
+      properties:
+        score:
+          type: integer
+        security_level:
+          $ref: '#/components/schemas/EmployeeSecurityLevel'
+      required:
+      - security_level
+      - score
+      title: EmployeeKarmaSchema
+      type: object
+    ParrotWeb.PublicApi.Scim.Schemas.GroupSchema:
+      properties:
+        displayName:
+          description: Human-readable name for the group
+          type: string
+        externalId:
+          description: Identifier for the resource as defined by the provisioning client
+          type: string
+        members:
+          items:
+            properties:
+              $ref:
+                description: URI of the corresponding User resource
+                type: string
+              display:
+                description: Human-readable name, primarily for display purposes
+                type: string
+              value:
+                description: Identifier of the group member
+                format: uuid
+                type: string
+            required:
+            - value
+            type: object
+          type: array
+      required:
+      - displayName
+      type: object
+    EmployeeLanguage:
+      description: Language of the employee
+      enum:
+      - arabic
+      - bulgarian
+      - catalan
+      - chinese
+      - chinese_traditional_taiwan
+      - czech
+      - danish
+      - dutch
+      - english
+      - finnish
+      - french
+      - french_quebec
+      - german
+      - greek
+      - hindi
+      - hungarian
+      - indonesian
+      - italian
+      - japanese
+      - korean
+      - norwegian_bokmal
+      - polish
+      - portuguese
+      - portuguese_brazilian
+      - romanian
+      - russian
+      - slovak
+      - slovenian
+      - spanish
+      - thai
+      - turkish
+      - ukrainian
+      - vietnamese
+      examples:
+      - english
+      title: EmployeeLanguage
+      type: string
+    CyberPostureGrade:
+      enum:
+      - a
+      - b
+      - c
+      - d
+      title: CyberPostureGrade
+      type: string
+    EmployeeEmailAddressSchema:
+      additionalProperties: false
+      properties:
+        address:
+          description: Email address
+          examples:
+          - john.doe@tryriot.com
+          format: email
+          type: string
+        is_primary:
+          type: boolean
+        source:
+          $ref: '#/components/schemas/EmployeeEmailAddressSource'
+      required:
+      - is_primary
+      - source
+      - address
+      title: EmployeeEmailAddressSchema
+      type: object
+    EmployeeEmailAddressSource:
+      description: ' Source of the email.
+
+        `custom` - the email is provided by the employee''s admin or set during CSV import
+
+        `employee` - the email is provided by the employee via portal
+
+        `google`, `microsoft`, `okta`, `slack` - imported via corresponding synchronization
+
+        '
+      enum:
+      - custom
+      - employee
+      - google
+      - microsoft
+      - okta
+      - slack
+      examples:
+      - google
+      title: EmployeeEmailAddressSource
+      type: string
+    WorkspaceNotFoundErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: workspace_not_found
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Workspace not found
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: WorkspaceNotFoundErrorResponse
+      type: object
+    RateLimitExceededErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: too_many_requests
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Too Many Requests
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: RateLimitExceededErrorResponse
+      type: object
+    WorkspaceOverviewSchema:
+      additionalProperties: false
+      properties:
+        id:
+          format: uuid
+          type: string
+      required:
+      - id
+      title: WorkspaceOverviewSchema
+      type: object
+    PaginatedGroupPayload:
+      additionalProperties: false
+      properties:
+        created_at:
+          description: Group creation date
+          format: date-time
+          type: string
+        description:
+          description: Description of the group
+          type:
+          - string
+          - 'null'
+        id:
+          description: UUID of the group
+          format: uuid
+          type: string
+        name:
+          description: Name of the group
+          examples:
+          - Marketing Team
+          type: string
+      required:
+      - created_at
+      - name
+      - id
+      title: PaginatedGroupPayload
+      type: object
+    CyberPostureSchema:
+      additionalProperties: false
+      properties:
+        grade:
+          $ref: '#/components/schemas/CyberPostureGrade'
+        percentage:
+          description: Cyber posture score (0-100).
+          type: integer
+      required:
+      - grade
+      - percentage
+      title: CyberPostureSchema
+      type: object
+  responses:
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
+    UnprocessableContentErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
+      description: Unprocessable content
+  securitySchemes:
+    apiKeyAuth:
+      in: header
+      name: x-api-key
+      type: apiKey

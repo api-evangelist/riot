@@ -1,0 +1,894 @@
+openapi: 3.2.0
+info:
+  description: "## Overview\nThe Riot API is a (mostly) RESTful API. Typically, both POST bodies and responses are JSON-encoded.\n\n## Base URL\nThe base URL for the Riot API is https://public-api.tryriot.com/v1.\n\n## Authentication\n\nEvery API request must include an authentication key in the `x-api-key` header.\n\nTo acquire an API key, customers must contact the technical team.\n\n## Authorization\n\nEach key is scoped to either a single organization or a single workspace, ensuring that access and data are restricted to the appropriate entity.\n\n- **Organization-scoped keys** can access any workspace belonging to the organization. Endpoints that take a `workspace_id` parameter accept any workspace of that organization.\n- **Workspace-scoped keys** are restricted to a single workspace. Requests targeting a different workspace through a `workspace_id` parameter are rejected with a **403** status code.\n\nKeys can also be limited by specific scopes, such as `awareness:read`, `simulation:read`, `breach:read`, or `workspace:read` which define the endpoints that can be accessed.\n\n## Pagination\n\nAll endpoints that return an array of objects support cursor-based pagination.\nEven for endpoints with a limited number of items (e.g., `/courses`), pagination is available to maintain consistency across all endpoints.\n\n**Request**\n\n- **`limit`** (query parameter): Maximum number of items per page. The maximum allowed value is `100`, with a default of `50`.\n- **`cursor`** (query parameter): Pagination cursor for retrieving the next page of results. On the first request, omit this parameter. For subsequent requests, pass the `next_cursor` value from the previous response's `metadata` object unchanged.\n\n**Response**\n\nPaginated responses include a `metadata` object alongside the `data` array:\n\n```json\n{\n  \"data\": [...],\n  \"metadata\": {\n    \"next_cursor\": \"eyJpZCI6...\",\n    \"limit\": 50\n  }\n}\n```\n\n- **`next_cursor`**: The cursor to pass in the next request. `null` when there are no more pages.\n- **`limit`**: The maximum number of items per page.\n\n**Link header**\n\nPaginated responses also include a standard `link` response header with `rel=\"next\"` when there are more results.\nThis header contains a fully constructed URL for the next page, including the cursor and any query parameters from the original request.\n\nExample: `<https://public-api.tryriot.com/v1/groups?workspace_id=abc&cursor=eyJpZCI6...>; rel=\"next\"`\n\nWhen the last page is reached, the `link` header is omitted.\n\n## Rate limits\n\nRate limiting is enforced across all API endpoints and is scoped by the authentication key. This ensures fair usage and prevents abuse of the system.\n\n- **Scope**: Rate limits are applied **per key**, meaning all requests made with the same key share the same limit.\n- **Configuration**: Specific rate limits are defined and managed by the technical team.\n- **Behavior**: The rate limiting mechanism operates within fixed time intervals. If the limit is exceeded within a given interval, further requests will return **429** status code until the next interval begins.\n\n## Webhooks\n\nRiot can push server-to-server events to a customer-configured HTTPS endpoint when something happens in a workspace (e.g. an inbox email being classified).\n\nThe implementation follows the [Standard Webhooks specification](https://github.com/standard-webhooks/standard-webhooks), so any Standard-Webhooks-compatible library can verify and consume payloads without bespoke code.\n\n**Envelope**\n\nEvery event body is wrapped in the Standard Webhooks envelope:\n\n```json\n{\n  \"type\": \"inbox_email_analysis.classified\",\n  \"timestamp\": \"2026-06-03T08:42:11.812Z\",\n  \"data\": { /* event-specific payload */ }\n}\n```\n\n**Headers**\n\n- `webhook-id`: unique event identifier. The same id is sent on every retry; use it as an idempotency key.\n- `webhook-timestamp`: Unix timestamp (seconds) of the delivery attempt.\n- `webhook-signature`: space-delimited list of `v1,<base64-hmac>` signatures, one per active endpoint secret, computed over `<webhook-id>.<webhook-timestamp>.<body>` using HMAC-SHA256 with the raw request body. Multiple signatures support zero-downtime secret rotation.\n\n**Delivery**\n\n- Method: `POST` with `content-type: application/json`.\n- Success: any `2xx` status returned within 15 seconds.\n- Failure: any non-`2xx` status, connection error, or timeout. Retries follow the Standard Webhooks recommended schedule: 10 attempts spread over ~75 hours (immediate, 5s, 5m, 30m, 2h, 5h, 10h, 14h, 20h, 24h).\n\n**Endpoint management**\n\nContact your account manager to add or rotate an endpoint. Self-service management is not available for now.\n\n**Compatibility**\n\nEvent payloads evolve over time. To stay forward-compatible, **ignore unknown fields** in the `data` object — new fields may be added at any time without notice and without a version bump.\n\nThe following changes to an existing event type are **not** considered breaking:\n\n- Adding a new field to the payload.\n- Adding a new event type.\n\nThe following changes **are** breaking and will be shipped under a new event type (e.g. `inbox_email_analysis.classified.v2`), leaving the original event type unchanged:\n\n- Removing or renaming a field.\n- Changing the type of a field.\n- Changing the meaning of an existing value (e.g. repurposing an enum value).\n\n**Event types**\n\nSee the **Webhook Events** section in the sidebar for the list of supported event types and their payload schemas.\n"
+  title: Riot SCIM API
+  version: v1
+servers:
+- url: https://public-api.tryriot.com/
+security:
+- apiKeyAuth: []
+tags:
+- name: SCIM
+paths:
+  /scim/{workspace_id}/v2/Groups:
+    get:
+      description: 'Lists groups with SCIM pagination support. Supports startIndex, count, and filter parameters.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: groups_list_groups_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: query
+        name: startIndex
+        required: false
+        schema:
+          default: 1
+          minimum: 1
+          type: integer
+      - in: query
+        name: count
+        required: false
+        schema:
+          default: 100
+          maximum: 1000
+          minimum: 1
+          type: integer
+      - in: query
+        name: filter
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM groups list
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: List SCIM groups
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+    post:
+      description: 'Creates a new group from SCIM data.
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: groups_create_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.GroupSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM group created
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Create a SCIM group
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Groups/{group_id}:
+    delete:
+      description: 'Deletes a group.
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: groups_delete_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: group_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '204':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Group deleted
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Group not found
+        '500':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Failed to delete group
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Delete a SCIM group
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+    get:
+      description: 'Gets a single group by ID.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: groups_get_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: group_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM group
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Group not found
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get a SCIM group
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+    patch:
+      description: 'Partially updates an existing group using SCIM PATCH operations (RFC 7644 Section 3.5.2).
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: groups_patch_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: group_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.PatchSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM group updated
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Partially update a SCIM group
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+    put:
+      description: 'Updates an existing group (SCIM PUT).
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: groups_update_group_ZC2NT5A
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: group_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.GroupSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM group updated
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Update a SCIM group
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/ResourceTypes:
+    get:
+      description: 'Retrieves the list of supported SCIM resource types.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: resource_types_list_resource_types_KKPMSEY
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM resource types list
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: List SCIM resource types
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/ResourceTypes/{resource_type_id}:
+    get:
+      description: 'Retrieves a specific SCIM resource type by ID.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: resource_types_get_resource_type_KKPMSEY
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: resource_type_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM resource type
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: ResourceType not found
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get a SCIM resource type
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Schemas:
+    get:
+      description: 'Retrieves the list of supported SCIM schemas.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: schemas_list_schemas_DEOEZDI
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM schemas list
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: List SCIM schemas
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Schemas/{schema}:
+    get:
+      description: 'Retrieves a specific SCIM schema by ID.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: schemas_get_schema_DEOEZDI
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: schema
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM schema
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Schema not found
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get a SCIM schema
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/ServiceProviderConfiguration:
+    get:
+      description: 'Retrieves the SCIM service provider configuration, including supported features and capabilities.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: service_provider_configuration_get_service_provider_configuration_M4XZ6RY
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM service provider configuration
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get SCIM service provider configuration
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Users:
+    get:
+      description: 'Lists users with SCIM pagination support. Supports startIndex, count, and filter parameters.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: users_list_users_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: query
+        name: startIndex
+        required: false
+        schema:
+          default: 1
+          minimum: 1
+          type: integer
+      - in: query
+        name: count
+        required: false
+        schema:
+          default: 100
+          maximum: 1000
+          minimum: 1
+          type: integer
+      - in: query
+        name: filter
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM users list
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: List SCIM users
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+    post:
+      description: 'Creates a new user from SCIM data.
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: users_create_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.UserSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM user created
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '409':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Username already exists
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Create a SCIM user
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+  /scim/{workspace_id}/v2/Users/{user_id}:
+    delete:
+      description: 'Deletes a user.
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: users_delete_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '204':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User deleted
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+        '500':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Failed to delete user
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Delete a SCIM user
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+    get:
+      description: 'Gets a single user by ID.
+
+
+        **Scopes required:**
+
+        - scim:read'
+      operationId: users_get_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM user
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:read
+      summary: Get a SCIM user
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+    patch:
+      description: 'Partially updates an existing user using SCIM PATCH operations (RFC 7644 Section 3.5.2).
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: users_patch_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.PatchSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM user updated
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Partially update a SCIM user
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+    put:
+      description: 'Updates an existing user (SCIM PUT).
+
+
+        **Scopes required:**
+
+        - scim:write'
+      operationId: users_update_user_3IQ5M4I
+      parameters:
+      - in: path
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/scim+json:
+            schema:
+              $ref: '#/components/schemas/ParrotWeb.PublicApi.Scim.Schemas.UserSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: SCIM user updated
+        '400':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: Invalid request
+        '404':
+          content:
+            application/scim+json:
+              schema:
+                type: object
+          description: User not found
+      security:
+      - apiKeyAuth:
+        - scim:write
+      summary: Update a SCIM user
+      tags:
+      - SCIM
+      x-riot-team-ownership: platform
+components:
+  schemas:
+    ParrotWeb.PublicApi.Scim.Schemas.GroupSchema:
+      properties:
+        displayName:
+          description: Human-readable name for the group
+          type: string
+        externalId:
+          description: Identifier for the resource as defined by the provisioning client
+          type: string
+        members:
+          items:
+            properties:
+              $ref:
+                description: URI of the corresponding User resource
+                type: string
+              display:
+                description: Human-readable name, primarily for display purposes
+                type: string
+              value:
+                description: Identifier of the group member
+                format: uuid
+                type: string
+            required:
+            - value
+            type: object
+          type: array
+      required:
+      - displayName
+      type: object
+    ParrotWeb.PublicApi.Scim.Schemas.PatchSchema:
+      properties:
+        Operations:
+          items:
+            properties:
+              op:
+                description: The operation to perform
+                enum:
+                - add
+                - replace
+                - remove
+                type: string
+              path:
+                description: Optional path to the attribute (required for remove)
+                type: string
+              value:
+                description: The value to add or replace (required for add and replace)
+            required:
+            - op
+            type: object
+          minItems: 1
+          type: array
+        schemas:
+          description: Must be ["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
+          items:
+            type: string
+          type: array
+      required:
+      - schemas
+      - Operations
+      type: object
+    ParrotWeb.PublicApi.Scim.Schemas.UserSchema:
+      properties:
+        active:
+          description: Whether the user is active. Defaults to true if not provided
+          type: boolean
+        department:
+          description: Department of the user
+          type: string
+        emails:
+          items:
+            properties:
+              primary:
+                anyOf:
+                - type: boolean
+                - type: string
+                description: Whether this is the primary email (boolean or string)
+              type:
+                description: A label indicating the type of email address. The only currently supported value is 'work'.
+                enum:
+                - work
+                type: string
+              value:
+                description: Email address
+                format: email
+                type: string
+            required:
+            - value
+            - primary
+            type: object
+          minItems: 1
+          type: array
+        externalId:
+          type: string
+        manager:
+          properties:
+            $ref:
+              description: The URI of the 'User' resource corresponding to the manager
+              type: string
+            displayName:
+              description: Family name of the user
+              type: string
+            value:
+              description: The identifier of the manager's User
+              type: string
+          required:
+          - value
+          type: object
+        name:
+          properties:
+            familyName:
+              description: Family name of the user
+              type: string
+            givenName:
+              description: Given name of the user
+              type: string
+          required:
+          - givenName
+          - familyName
+          type: object
+        preferredLanguage:
+          description: User's preferred language in ISO 639-1 language code with ISO 3166-1 country code format (e.g., 'en-US', 'fr-FR').
+          type: string
+        timezone:
+          description: User's timezone in Olson format (e.g., 'America/Los_Angeles'). Defaults to workspace timezone if not provided.
+          type: string
+        userName:
+          description: Unique identifier for the user
+          type: string
+      required:
+      - userName
+      - name
+      - emails
+      type: object
+  securitySchemes:
+    apiKeyAuth:
+      in: header
+      name: x-api-key
+      type: apiKey

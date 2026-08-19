@@ -1,0 +1,134 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Riot Slash API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Slash",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List employees with alerts statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/slash/employees/alert_statistics",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "  Retrieves a paginated list of employees who have been alerted by the Slash system in the workspace.\n  For each employee, returns detailed information including their identification data and a breakdown of their email alerts:\n  - number of alerted emails received by the employee;\n  - number of alerted emails reported by the employee;\n  - number of alerted emails marked as safe by the employee.\n\n\n**Scopes required:**\n- inbox:read"
+        },
+        {
+          "info": {
+            "name": "List employees with email impersonation statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/slash/employees/impersonation_statistics",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "  Retrieves a paginated list of employees whose identity has been used in email impersonation attacks in the workspace.\n  For each employee, returns detailed information including their identification data and a breakdown of email impersonation attacks:\n  - total number of attacks impersonating the employee;\n  - number of attacks confirmed as fraudulent;\n  - number of attacks pending review;\n  - number of attacks confirmed as safe.\n\n\n**Scopes required:**\n- inbox:read"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

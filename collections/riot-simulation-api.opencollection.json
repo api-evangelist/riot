@@ -1,0 +1,242 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Riot Simulation API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Simulation",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List attack login domains",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/attack_login_domains",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns the attack login domains assigned to a workspace, sorted by name. These domains are randomly selected as the link for each attack.\n\n\n**Scopes required:**\n- simulation:read"
+        },
+        {
+          "info": {
+            "name": "List campaigns",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/campaigns",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Lists the campaigns for a workspace with its cycles, sorted by their creation date in descending order (most recent entries first).\nA campaign cycle forms a group of attacks sent at a period of time. Periods of two cycles can't overlap.\nRecurring campaigns usually have multiple cycles, whereas one-off campaigns usually have only one.\n\n\n**Scopes required:**\n- simulation:read"
+        },
+        {
+          "info": {
+            "name": "Get campaigns statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/campaigns/statistics",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "campaign_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "campaign_cycle_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves statistics about campaigns in a workspace including attack events counts.\nDescription of the events can be found at https://docs.tryriot.com/api-reference/simulation/list-attacks#response-type\n\n\n**Scopes required:**\n- simulation:read"
+        },
+        {
+          "info": {
+            "name": "List attacks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/campaigns/:campaign_id/attacks",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "campaign_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "campaign_cycle_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "is_tricked",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves a list of attacks of a campaign with associated events, sorted by their creation date in descending order (most recent entries first).\n\n**Scopes required:**\n- simulation:read"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

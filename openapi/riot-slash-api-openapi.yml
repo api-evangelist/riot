@@ -1,0 +1,512 @@
+openapi: 3.2.0
+info:
+  description: "## Overview\nThe Riot API is a (mostly) RESTful API. Typically, both POST bodies and responses are JSON-encoded.\n\n## Base URL\nThe base URL for the Riot API is https://public-api.tryriot.com/v1.\n\n## Authentication\n\nEvery API request must include an authentication key in the `x-api-key` header.\n\nTo acquire an API key, customers must contact the technical team.\n\n## Authorization\n\nEach key is scoped to either a single organization or a single workspace, ensuring that access and data are restricted to the appropriate entity.\n\n- **Organization-scoped keys** can access any workspace belonging to the organization. Endpoints that take a `workspace_id` parameter accept any workspace of that organization.\n- **Workspace-scoped keys** are restricted to a single workspace. Requests targeting a different workspace through a `workspace_id` parameter are rejected with a **403** status code.\n\nKeys can also be limited by specific scopes, such as `awareness:read`, `simulation:read`, `breach:read`, or `workspace:read` which define the endpoints that can be accessed.\n\n## Pagination\n\nAll endpoints that return an array of objects support cursor-based pagination.\nEven for endpoints with a limited number of items (e.g., `/courses`), pagination is available to maintain consistency across all endpoints.\n\n**Request**\n\n- **`limit`** (query parameter): Maximum number of items per page. The maximum allowed value is `100`, with a default of `50`.\n- **`cursor`** (query parameter): Pagination cursor for retrieving the next page of results. On the first request, omit this parameter. For subsequent requests, pass the `next_cursor` value from the previous response's `metadata` object unchanged.\n\n**Response**\n\nPaginated responses include a `metadata` object alongside the `data` array:\n\n```json\n{\n  \"data\": [...],\n  \"metadata\": {\n    \"next_cursor\": \"eyJpZCI6...\",\n    \"limit\": 50\n  }\n}\n```\n\n- **`next_cursor`**: The cursor to pass in the next request. `null` when there are no more pages.\n- **`limit`**: The maximum number of items per page.\n\n**Link header**\n\nPaginated responses also include a standard `link` response header with `rel=\"next\"` when there are more results.\nThis header contains a fully constructed URL for the next page, including the cursor and any query parameters from the original request.\n\nExample: `<https://public-api.tryriot.com/v1/groups?workspace_id=abc&cursor=eyJpZCI6...>; rel=\"next\"`\n\nWhen the last page is reached, the `link` header is omitted.\n\n## Rate limits\n\nRate limiting is enforced across all API endpoints and is scoped by the authentication key. This ensures fair usage and prevents abuse of the system.\n\n- **Scope**: Rate limits are applied **per key**, meaning all requests made with the same key share the same limit.\n- **Configuration**: Specific rate limits are defined and managed by the technical team.\n- **Behavior**: The rate limiting mechanism operates within fixed time intervals. If the limit is exceeded within a given interval, further requests will return **429** status code until the next interval begins.\n\n## Webhooks\n\nRiot can push server-to-server events to a customer-configured HTTPS endpoint when something happens in a workspace (e.g. an inbox email being classified).\n\nThe implementation follows the [Standard Webhooks specification](https://github.com/standard-webhooks/standard-webhooks), so any Standard-Webhooks-compatible library can verify and consume payloads without bespoke code.\n\n**Envelope**\n\nEvery event body is wrapped in the Standard Webhooks envelope:\n\n```json\n{\n  \"type\": \"inbox_email_analysis.classified\",\n  \"timestamp\": \"2026-06-03T08:42:11.812Z\",\n  \"data\": { /* event-specific payload */ }\n}\n```\n\n**Headers**\n\n- `webhook-id`: unique event identifier. The same id is sent on every retry; use it as an idempotency key.\n- `webhook-timestamp`: Unix timestamp (seconds) of the delivery attempt.\n- `webhook-signature`: space-delimited list of `v1,<base64-hmac>` signatures, one per active endpoint secret, computed over `<webhook-id>.<webhook-timestamp>.<body>` using HMAC-SHA256 with the raw request body. Multiple signatures support zero-downtime secret rotation.\n\n**Delivery**\n\n- Method: `POST` with `content-type: application/json`.\n- Success: any `2xx` status returned within 15 seconds.\n- Failure: any non-`2xx` status, connection error, or timeout. Retries follow the Standard Webhooks recommended schedule: 10 attempts spread over ~75 hours (immediate, 5s, 5m, 30m, 2h, 5h, 10h, 14h, 20h, 24h).\n\n**Endpoint management**\n\nContact your account manager to add or rotate an endpoint. Self-service management is not available for now.\n\n**Compatibility**\n\nEvent payloads evolve over time. To stay forward-compatible, **ignore unknown fields** in the `data` object — new fields may be added at any time without notice and without a version bump.\n\nThe following changes to an existing event type are **not** considered breaking:\n\n- Adding a new field to the payload.\n- Adding a new event type.\n\nThe following changes **are** breaking and will be shipped under a new event type (e.g. `inbox_email_analysis.classified.v2`), leaving the original event type unchanged:\n\n- Removing or renaming a field.\n- Changing the type of a field.\n- Changing the meaning of an existing value (e.g. repurposing an enum value).\n\n**Event types**\n\nSee the **Webhook Events** section in the sidebar for the list of supported event types and their payload schemas.\n"
+  title: Riot Slash API
+  version: v1
+servers:
+- url: https://public-api.tryriot.com/
+security:
+- apiKeyAuth: []
+tags:
+- name: Slash
+paths:
+  /v1/slash/employees/alert_statistics:
+    get:
+      description: "  Retrieves a paginated list of employees who have been alerted by the Slash system in the workspace.\n  For each employee, returns detailed information including their identification data and a breakdown of their email alerts:\n  - number of alerted emails received by the employee;\n  - number of alerted emails reported by the employee;\n  - number of alerted emails marked as safe by the employee.\n\n\n**Scopes required:**\n- inbox:read"
+      operationId: inbound_protections_list_employees_with_alerts_stats_YGL572Y
+      parameters:
+      - in: header
+        name: x-item-limit
+        required: false
+        schema:
+          default: 50
+          deprecated: true
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: header
+        name: x-next-cursor
+        required: false
+        schema:
+          deprecated: true
+          type: string
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 50
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: query
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: query
+        name: created_after
+        required: true
+        schema:
+          format: date-time
+          type: string
+      - in: query
+        name: created_before
+        required: true
+        schema:
+          format: date-time
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      $ref: '#/components/schemas/PaginatedEmployeeWithAlertsPayload'
+                    type: array
+                  metadata:
+                    properties:
+                      limit:
+                        type: integer
+                      next_cursor:
+                        type:
+                        - string
+                        - 'null'
+                    required:
+                    - next_cursor
+                    - limit
+                    type: object
+                required:
+                - data
+                type: object
+          description: Employees with alerted emails stats
+          headers:
+            link:
+              description: 'Link header with rel="next" pointing to the next page URL. Format: `<url>; rel="next"`'
+              required: false
+              schema:
+                type: string
+            x-next-cursor:
+              description: Pagination cursor for the next page
+              required: false
+              schema:
+                deprecated: true
+                type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceNotFoundErrorResponse'
+          description: no description
+        '422':
+          $ref: '#/components/responses/UnprocessableContentErrorResponse'
+        '429':
+          $ref: '#/components/responses/RateLimitExceededErrorResponse'
+      security:
+      - apiKeyAuth:
+        - inbox:read
+      summary: List employees with alerts statistics
+      tags:
+      - Slash
+      x-riot-team-ownership: inbox
+  /v1/slash/employees/impersonation_statistics:
+    get:
+      description: "  Retrieves a paginated list of employees whose identity has been used in email impersonation attacks in the workspace.\n  For each employee, returns detailed information including their identification data and a breakdown of email impersonation attacks:\n  - total number of attacks impersonating the employee;\n  - number of attacks confirmed as fraudulent;\n  - number of attacks pending review;\n  - number of attacks confirmed as safe.\n\n\n**Scopes required:**\n- inbox:read"
+      operationId: inbound_protections_list_employees_with_impersonation_stats_YGL572Y
+      parameters:
+      - in: header
+        name: x-item-limit
+        required: false
+        schema:
+          default: 50
+          deprecated: true
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: header
+        name: x-next-cursor
+        required: false
+        schema:
+          deprecated: true
+          type: string
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 50
+          maximum: 100
+          minimum: 1
+          type: integer
+      - in: query
+        name: workspace_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      - in: query
+        name: created_after
+        required: true
+        schema:
+          format: date-time
+          type: string
+      - in: query
+        name: created_before
+        required: true
+        schema:
+          format: date-time
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      $ref: '#/components/schemas/PaginatedEmployeeWithImpersonationPayload'
+                    type: array
+                  metadata:
+                    properties:
+                      limit:
+                        type: integer
+                      next_cursor:
+                        type:
+                        - string
+                        - 'null'
+                    required:
+                    - next_cursor
+                    - limit
+                    type: object
+                required:
+                - data
+                type: object
+          description: Employees with email impersonation stats
+          headers:
+            link:
+              description: 'Link header with rel="next" pointing to the next page URL. Format: `<url>; rel="next"`'
+              required: false
+              schema:
+                type: string
+            x-next-cursor:
+              description: Pagination cursor for the next page
+              required: false
+              schema:
+                deprecated: true
+                type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceNotFoundErrorResponse'
+          description: no description
+        '422':
+          $ref: '#/components/responses/UnprocessableContentErrorResponse'
+        '429':
+          $ref: '#/components/responses/RateLimitExceededErrorResponse'
+      security:
+      - apiKeyAuth:
+        - inbox:read
+      summary: List employees with email impersonation statistics
+      tags:
+      - Slash
+      x-riot-team-ownership: inbox
+components:
+  schemas:
+    PaginatedEmployeeWithImpersonationPayload:
+      additionalProperties: false
+      properties:
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
+        impersonation_stats:
+          $ref: '#/components/schemas/ImpersonationStatsSchema'
+      required:
+      - impersonation_stats
+      - employee
+      title: PaginatedEmployeeWithImpersonationPayload
+      type: object
+    AlertedEmailsStatsSchema:
+      additionalProperties: false
+      properties:
+        marked_safe_alerts_count:
+          description: Number of alerted emails marked as safe by the employee
+          type: integer
+        received_alerts_count:
+          description: Number of alerted emails received by the employee
+          type: integer
+        reported_alerts_count:
+          description: Number of alerted emails reported by the employee
+          type: integer
+      required:
+      - marked_safe_alerts_count
+      - reported_alerts_count
+      - received_alerts_count
+      title: AlertedEmailsStatsSchema
+      type: object
+    UnauthorizedErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: unauthorized
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Unauthorized
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnauthorizedErrorResponse
+      type: object
+    UnprocessableContentErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                type: string
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnprocessableContentErrorResponse
+      type: object
+    WorkspaceNotFoundErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: workspace_not_found
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Workspace not found
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: WorkspaceNotFoundErrorResponse
+      type: object
+    RateLimitExceededErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: too_many_requests
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Too Many Requests
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: RateLimitExceededErrorResponse
+      type: object
+    ForbiddenErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: forbidden
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Forbidden
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: ForbiddenErrorResponse
+      type: object
+    PaginatedEmployeeWithAlertsPayload:
+      additionalProperties: false
+      properties:
+        emails_alerts_stats:
+          $ref: '#/components/schemas/AlertedEmailsStatsSchema'
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
+      required:
+      - emails_alerts_stats
+      - employee
+      title: PaginatedEmployeeWithAlertsPayload
+      type: object
+    EmployeeOverviewSchema:
+      additionalProperties: false
+      properties:
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        name:
+          description: Name of the employee
+          examples:
+          - John Doe
+          type:
+          - string
+          - 'null'
+        primary_email_address:
+          description: Email address
+          examples:
+          - john.doe@tryriot.com
+          format: email
+          type:
+          - string
+          - 'null'
+        username:
+          description: Username of the employee
+          type:
+          - string
+          - 'null'
+      required:
+      - primary_email_address
+      - username
+      - name
+      - id
+      title: EmployeeOverviewSchema
+      type: object
+    ImpersonationStatsSchema:
+      additionalProperties: false
+      properties:
+        attacks_impersonating_employee:
+          description: Total number of attacks impersonating the employee
+          type: integer
+        impersonation_attacks_confirmed:
+          description: Number of attacks impersonating the employee confirmed as fraudulent
+          type: integer
+        impersonation_attacks_denied:
+          description: Number of attacks impersonating the employee confirmed as safe
+          type: integer
+        impersonation_attacks_pending_review:
+          description: Number of attacks impersonating the employee in pending review
+          type: integer
+      required:
+      - impersonation_attacks_denied
+      - impersonation_attacks_pending_review
+      - impersonation_attacks_confirmed
+      - attacks_impersonating_employee
+      title: ImpersonationStatsSchema
+      type: object
+  responses:
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    UnprocessableContentErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
+      description: Unprocessable content
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
+  securitySchemes:
+    apiKeyAuth:
+      in: header
+      name: x-api-key
+      type: apiKey

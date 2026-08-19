@@ -1,0 +1,189 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Riot General API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "General",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List domains",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/domains",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves the domains sorted by name in ascending order.\n\n**Scopes required:**\n- workspace:read"
+        },
+        {
+          "info": {
+            "name": "List employees",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/employees",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "karma_score_gte",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "karma_score_lte",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves a list of workspace employees, sorted by their creation date in descending order (most recent entries first).\n\n**Scopes required:**\n- workspace:read"
+        },
+        {
+          "info": {
+            "name": "Get employee statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/employees/statistics",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves statistics about employees in a workspace grouped by status.\n\n**Scopes required:**\n- workspace:read"
+        },
+        {
+          "info": {
+            "name": "Get employee details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/employees/:employee_id",
+            "params": [
+              {
+                "name": "employee_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves details for a specific employee by ID.\n\n**Scopes required:**\n- workspace:read"
+        },
+        {
+          "info": {
+            "name": "Get organization",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/organization",
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns the organization with its workspaces.\n\n**Scopes required:**\n- workspace:read"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,531 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Riot SCIM API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "SCIM",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List SCIM groups",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Groups",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "startIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "count",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "filter",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Lists groups with SCIM pagination support. Supports startIndex, count, and filter parameters.\n\n**Scopes required:**\n- scim:read"
+        },
+        {
+          "info": {
+            "name": "Create a SCIM group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Groups",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Creates a new group from SCIM data.\n\n**Scopes required:**\n- scim:write"
+        },
+        {
+          "info": {
+            "name": "Get a SCIM group",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Groups/:group_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "group_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Gets a single group by ID.\n\n**Scopes required:**\n- scim:read"
+        },
+        {
+          "info": {
+            "name": "Update a SCIM group",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Groups/:group_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "group_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Updates an existing group (SCIM PUT).\n\n**Scopes required:**\n- scim:write"
+        },
+        {
+          "info": {
+            "name": "Partially update a SCIM group",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Groups/:group_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "group_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Partially updates an existing group using SCIM PATCH operations (RFC 7644 Section 3.5.2).\n\n**Scopes required:**\n- scim:write"
+        },
+        {
+          "info": {
+            "name": "Delete a SCIM group",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Groups/:group_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "group_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Deletes a group.\n\n**Scopes required:**\n- scim:write"
+        },
+        {
+          "info": {
+            "name": "List SCIM resource types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/ResourceTypes",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves the list of supported SCIM resource types.\n\n**Scopes required:**\n- scim:read"
+        },
+        {
+          "info": {
+            "name": "Get a SCIM resource type",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/ResourceTypes/:resource_type_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "resource_type_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves a specific SCIM resource type by ID.\n\n**Scopes required:**\n- scim:read"
+        },
+        {
+          "info": {
+            "name": "List SCIM schemas",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Schemas",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves the list of supported SCIM schemas.\n\n**Scopes required:**\n- scim:read"
+        },
+        {
+          "info": {
+            "name": "Get a SCIM schema",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Schemas/:schema",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "schema",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves a specific SCIM schema by ID.\n\n**Scopes required:**\n- scim:read"
+        },
+        {
+          "info": {
+            "name": "Get SCIM service provider configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/ServiceProviderConfiguration",
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves the SCIM service provider configuration, including supported features and capabilities.\n\n**Scopes required:**\n- scim:read"
+        },
+        {
+          "info": {
+            "name": "List SCIM users",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Users",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "startIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "count",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "filter",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Lists users with SCIM pagination support. Supports startIndex, count, and filter parameters.\n\n**Scopes required:**\n- scim:read"
+        },
+        {
+          "info": {
+            "name": "Create a SCIM user",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Users",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Creates a new user from SCIM data.\n\n**Scopes required:**\n- scim:write"
+        },
+        {
+          "info": {
+            "name": "Get a SCIM user",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Users/:user_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Gets a single user by ID.\n\n**Scopes required:**\n- scim:read"
+        },
+        {
+          "info": {
+            "name": "Update a SCIM user",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Users/:user_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Updates an existing user (SCIM PUT).\n\n**Scopes required:**\n- scim:write"
+        },
+        {
+          "info": {
+            "name": "Partially update a SCIM user",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Users/:user_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Partially updates an existing user using SCIM PATCH operations (RFC 7644 Section 3.5.2).\n\n**Scopes required:**\n- scim:write"
+        },
+        {
+          "info": {
+            "name": "Delete a SCIM user",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://public-api.tryriot.com/scim/:workspace_id/v2/Users/:user_id",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Deletes a user.\n\n**Scopes required:**\n- scim:write"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

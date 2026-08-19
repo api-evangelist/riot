@@ -1,0 +1,1211 @@
+{
+  "item": [
+    {
+      "id": "60989305-fbd2-4023-9738-bada39438fe3",
+      "name": "Slash",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "cdb9a8ab-4777-4695-8910-7723315fc098",
+          "name": "List employees with alerts statistics",
+          "request": {
+            "name": "List employees with alerts statistics",
+            "description": {
+              "content": "  Retrieves a paginated list of employees who have been alerted by the Slash system in the workspace.\n  For each employee, returns detailed information including their identification data and a breakdown of their email alerts:\n  - number of alerted emails received by the employee;\n  - number of alerted emails reported by the employee;\n  - number of alerted emails marked as safe by the employee.\n\n\n**Scopes required:**\n- inbox:read",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "slash",
+                "employees",
+                "alert_statistics"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "disabled": false,
+                  "key": "workspace_id",
+                  "value": "<uuid>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "created_after",
+                  "value": "<dateTime>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "created_before",
+                  "value": "<dateTime>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "key": "x-item-limit",
+                "value": "50",
+                "description": ""
+              },
+              {
+                "disabled": false,
+                "key": "x-next-cursor",
+                "value": "<string>",
+                "description": ""
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "349675b9-2574-4b74-ad39-c61f4c954aa5",
+              "name": "Employees with alerted emails stats",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "alert_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Link header with rel=\"next\" pointing to the next page URL. Format: `<url>; rel=\"next\"`",
+                  "key": "link",
+                  "value": "string"
+                },
+                {
+                  "disabled": false,
+                  "description": "Pagination cursor for the next page",
+                  "key": "x-next-cursor",
+                  "value": "string"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"emails_alerts_stats\": {\n        \"marked_safe_alerts_count\": 5552,\n        \"reported_alerts_count\": 8904,\n        \"received_alerts_count\": 3329\n      },\n      \"employee\": {\n        \"primary_email_address\": null,\n        \"username\": null,\n        \"name\": null,\n        \"id\": \"0131230b-a7bd-8d9c-76b6-adcc887ba899\"\n      }\n    },\n    {\n      \"emails_alerts_stats\": {\n        \"marked_safe_alerts_count\": 7203,\n        \"reported_alerts_count\": 4171,\n        \"received_alerts_count\": 794\n      },\n      \"employee\": {\n        \"primary_email_address\": null,\n        \"username\": \"string\",\n        \"name\": null,\n        \"id\": \"441960ff-fb65-90b2-0b0f-2a541903dfc4\"\n      }\n    }\n  ],\n  \"metadata\": {\n    \"next_cursor\": \"string\",\n    \"limit\": 8323\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1f60caf4-84eb-4a68-9b03-cce3e93690d8",
+              "name": "Missing API key or the key is invalid",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "alert_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "94802f9d-5978-421b-92d7-c0d29fab0d55",
+              "name": "Requested resource cannot be accessed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "alert_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4b01b88b-519c-4fa8-bd1a-4952fc093410",
+              "name": "no description",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "alert_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "47a733a0-141d-4387-b107-012c098d901a",
+              "name": "Unprocessable content",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "alert_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    },\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7323c0ce-d317-46d2-b397-eb4a689fae01",
+              "name": "Rate limit is exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "alert_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0dbaf30b-4c3a-417d-b149-c5cb33f193cb",
+          "name": "List employees with email impersonation statistics",
+          "request": {
+            "name": "List employees with email impersonation statistics",
+            "description": {
+              "content": "  Retrieves a paginated list of employees whose identity has been used in email impersonation attacks in the workspace.\n  For each employee, returns detailed information including their identification data and a breakdown of email impersonation attacks:\n  - total number of attacks impersonating the employee;\n  - number of attacks confirmed as fraudulent;\n  - number of attacks pending review;\n  - number of attacks confirmed as safe.\n\n\n**Scopes required:**\n- inbox:read",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "slash",
+                "employees",
+                "impersonation_statistics"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "disabled": false,
+                  "key": "workspace_id",
+                  "value": "<uuid>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "created_after",
+                  "value": "<dateTime>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "created_before",
+                  "value": "<dateTime>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "key": "x-item-limit",
+                "value": "50",
+                "description": ""
+              },
+              {
+                "disabled": false,
+                "key": "x-next-cursor",
+                "value": "<string>",
+                "description": ""
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b9bc29b6-963c-4b6a-a56c-0e1e3e5c17b8",
+              "name": "Employees with email impersonation stats",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "impersonation_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Link header with rel=\"next\" pointing to the next page URL. Format: `<url>; rel=\"next\"`",
+                  "key": "link",
+                  "value": "string"
+                },
+                {
+                  "disabled": false,
+                  "description": "Pagination cursor for the next page",
+                  "key": "x-next-cursor",
+                  "value": "string"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"impersonation_stats\": {\n        \"impersonation_attacks_denied\": 2677,\n        \"impersonation_attacks_pending_review\": 151,\n        \"impersonation_attacks_confirmed\": 238,\n        \"attacks_impersonating_employee\": 2499\n      },\n      \"employee\": {\n        \"primary_email_address\": \"YJHvf3K@S.qmg\",\n        \"username\": \"string\",\n        \"name\": \"string\",\n        \"id\": \"7dfc773d-5677-25a3-7590-bd8186bd1cbf\"\n      }\n    },\n    {\n      \"impersonation_stats\": {\n        \"impersonation_attacks_denied\": 2162,\n        \"impersonation_attacks_pending_review\": 3510,\n        \"impersonation_attacks_confirmed\": 9278,\n        \"attacks_impersonating_employee\": 9155\n      },\n      \"employee\": {\n        \"primary_email_address\": \"rFqZt8@ZyHHAmTeigQMWUCN.ym\",\n        \"username\": null,\n        \"name\": null,\n        \"id\": \"a41e283f-fc02-593f-e3c7-4a76ff5da283\"\n      }\n    }\n  ],\n  \"metadata\": {\n    \"next_cursor\": \"string\",\n    \"limit\": 5208\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d9145fbf-5b2b-4b5e-bb6c-8b8a63b618d5",
+              "name": "Missing API key or the key is invalid",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "impersonation_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "534115ea-420a-4c2b-a7bc-2b5e89c9bb07",
+              "name": "Requested resource cannot be accessed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "impersonation_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3895538c-46d2-4000-96b8-aed586e7e144",
+              "name": "no description",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "impersonation_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "aff08ffe-f649-4fc9-9897-5e1fd92014ab",
+              "name": "Unprocessable content",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "impersonation_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    },\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ae57fa80-557b-47ec-9419-a9ad9568bc63",
+              "name": "Rate limit is exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "slash",
+                    "employees",
+                    "impersonation_statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://public-api.tryriot.com/",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "141fd728-8e61-4992-b37e-ebb1b5ad14ab",
+    "name": "Riot Slash API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "## Overview\nThe Riot API is a (mostly) RESTful API. Typically, both POST bodies and responses are JSON-encoded.\n\n## Base URL\nThe base URL for the Riot API is https://public-api.tryriot.com/v1.\n\n## Authentication\n\nEvery API request must include an authentication key in the `x-api-key` header.\n\nTo acquire an API key, customers must contact the technical team.\n\n## Authorization\n\nEach key is scoped to either a single organization or a single workspace, ensuring that access and data are restricted to the appropriate entity.\n\n- **Organization-scoped keys** can access any workspace belonging to the organization. Endpoints that take a `workspace_id` parameter accept any workspace of that organization.\n- **Workspace-scoped keys** are restricted to a single workspace. Requests targeting a different workspace through a `workspace_id` parameter are rejected with a **403** status code.\n\nKeys can also be limited by specific scopes, such as `awareness:read`, `simulation:read`, `breach:read`, or `workspace:read` which define the endpoints that can be accessed.\n\n## Pagination\n\nAll endpoints that return an array of objects support cursor-based pagination.\nEven for endpoints with a limited number of items (e.g., `/courses`), pagination is available to maintain consistency across all endpoints.\n\n**Request**\n\n- **`limit`** (query parameter): Maximum number of items per page. The maximum allowed value is `100`, with a default of `50`.\n- **`cursor`** (query parameter): Pagination cursor for retrieving the next page of results. On the first request, omit this parameter. For subsequent requests, pass the `next_cursor` value from the previous response's `metadata` object unchanged.\n\n**Response**\n\nPaginated responses include a `metadata` object alongside the `data` array:\n\n```json\n{\n  \"data\": [...],\n  \"metadata\": {\n    \"next_cursor\": \"eyJpZCI6...\",\n    \"limit\": 50\n  }\n}\n```\n\n- **`next_cursor`**: The cursor to pass in the next request. `null` when there are no more pages.\n- **`limit`**: The maximum number of items per page.\n\n**Link header**\n\nPaginated responses also include a standard `link` response header with `rel=\"next\"` when there are more results.\nThis header contains a fully constructed URL for the next page, including the cursor and any query parameters from the original request.\n\nExample: `<https://public-api.tryriot.com/v1/groups?workspace_id=abc&cursor=eyJpZCI6...>; rel=\"next\"`\n\nWhen the last page is reached, the `link` header is omitted.\n\n## Rate limits\n\nRate limiting is enforced across all API endpoints and is scoped by the authentication key. This ensures fair usage and prevents abuse of the system.\n\n- **Scope**: Rate limits are applied **per key**, meaning all requests made with the same key share the same limit.\n- **Configuration**: Specific rate limits are defined and managed by the technical team.\n- **Behavior**: The rate limiting mechanism operates within fixed time intervals. If the limit is exceeded within a given interval, further requests will return **429** status code until the next interval begins.\n\n## Webhooks\n\nRiot can push server-to-server events to a customer-configured HTTPS endpoint when something happens in a workspace (e.g. an inbox email being classified).\n\nThe implementation follows the [Standard Webhooks specification](https://github.com/standard-webhooks/standard-webhooks), so any Standard-Webhooks-compatible library can verify and consume payloads without bespoke code.\n\n**Envelope**\n\nEvery event body is wrapped in the Standard Webhooks envelope:\n\n```json\n{\n  \"type\": \"inbox_email_analysis.classified\",\n  \"timestamp\": \"2026-06-03T08:42:11.812Z\",\n  \"data\": { /* event-specific payload */ }\n}\n```\n\n**Headers**\n\n- `webhook-id`: unique event identifier. The same id is sent on every retry; use it as an idempotency key.\n- `webhook-timestamp`: Unix timestamp (seconds) of the delivery attempt.\n- `webhook-signature`: space-delimited list of `v1,<base64-hmac>` signatures, one per active endpoint secret, computed over `<webhook-id>.<webhook-timestamp>.<body>` using HMAC-SHA256 with the raw request body. Multiple signatures support zero-downtime secret rotation.\n\n**Delivery**\n\n- Method: `POST` with `content-type: application/json`.\n- Success: any `2xx` status returned within 15 seconds.\n- Failure: any non-`2xx` status, connection error, or timeout. Retries follow the Standard Webhooks recommended schedule: 10 attempts spread over ~75 hours (immediate, 5s, 5m, 30m, 2h, 5h, 10h, 14h, 20h, 24h).\n\n**Endpoint management**\n\nContact your account manager to add or rotate an endpoint. Self-service management is not available for now.\n\n**Compatibility**\n\nEvent payloads evolve over time. To stay forward-compatible, **ignore unknown fields** in the `data` object — new fields may be added at any time without notice and without a version bump.\n\nThe following changes to an existing event type are **not** considered breaking:\n\n- Adding a new field to the payload.\n- Adding a new event type.\n\nThe following changes **are** breaking and will be shipped under a new event type (e.g. `inbox_email_analysis.classified.v2`), leaving the original event type unchanged:\n\n- Removing or renaming a field.\n- Changing the type of a field.\n- Changing the meaning of an existing value (e.g. repurposing an enum value).\n\n**Event types**\n\nSee the **Webhook Events** section in the sidebar for the list of supported event types and their payload schemas.\n",
+      "type": "text/plain"
+    }
+  }
+}

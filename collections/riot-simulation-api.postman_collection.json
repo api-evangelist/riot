@@ -1,0 +1,2008 @@
+{
+  "item": [
+    {
+      "id": "9321d890-aaa6-4865-83c9-a44908fdf3ae",
+      "name": "Simulation",
+      "description": {
+        "content": "Provides data about phishing campaigns, corresponding attacks and related events.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "597836d3-f7b5-4ff5-8b7e-9faaa6a91f67",
+          "name": "List attack login domains",
+          "request": {
+            "name": "List attack login domains",
+            "description": {
+              "content": "Returns the attack login domains assigned to a workspace, sorted by name. These domains are randomly selected as the link for each attack.\n\n\n**Scopes required:**\n- simulation:read",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "attack_login_domains"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "disabled": false,
+                  "key": "workspace_id",
+                  "value": "<uuid>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "key": "x-item-limit",
+                "value": "50",
+                "description": ""
+              },
+              {
+                "disabled": false,
+                "key": "x-next-cursor",
+                "value": "<string>",
+                "description": ""
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e609580e-7526-4b99-b6a9-f757f213f216",
+              "name": "Attack login domains list",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "attack_login_domains"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Link header with rel=\"next\" pointing to the next page URL. Format: `<url>; rel=\"next\"`",
+                  "key": "link",
+                  "value": "string"
+                },
+                {
+                  "disabled": false,
+                  "description": "Pagination cursor for the next page",
+                  "key": "x-next-cursor",
+                  "value": "string"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"name\": \"string\",\n      \"id\": \"2b320f6c-ad7c-1ed3-f092-03462eff621a\"\n    },\n    {\n      \"name\": \"string\",\n      \"id\": \"c206d717-dfa6-128f-57d5-85b76e2344ff\"\n    }\n  ],\n  \"metadata\": {\n    \"next_cursor\": \"string\",\n    \"limit\": 124\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cb2a185d-1b38-4d49-94e2-7702d9e934cf",
+              "name": "Missing API key or the key is invalid",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "attack_login_domains"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ea00f3b8-64b1-4b7b-b7d4-9463daa8b6d3",
+              "name": "Requested resource cannot be accessed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "attack_login_domains"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b9922c86-8ec9-45af-90c1-2dcba1b94476",
+              "name": "Unprocessable content",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "attack_login_domains"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    },\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7d287dab-253f-4e70-9acd-461cf7477485",
+              "name": "Rate limit is exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "attack_login_domains"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "222f5b4f-cddb-4ed8-bfa7-ce2c66ee4e69",
+          "name": "List campaigns",
+          "request": {
+            "name": "List campaigns",
+            "description": {
+              "content": "Lists the campaigns for a workspace with its cycles, sorted by their creation date in descending order (most recent entries first).\nA campaign cycle forms a group of attacks sent at a period of time. Periods of two cycles can't overlap.\nRecurring campaigns usually have multiple cycles, whereas one-off campaigns usually have only one.\n\n\n**Scopes required:**\n- simulation:read",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "campaigns"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "disabled": false,
+                  "key": "workspace_id",
+                  "value": "<uuid>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "created_after",
+                  "value": "<dateTime>"
+                },
+                {
+                  "disabled": false,
+                  "key": "created_before",
+                  "value": "<dateTime>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "key": "x-item-limit",
+                "value": "50",
+                "description": ""
+              },
+              {
+                "disabled": false,
+                "key": "x-next-cursor",
+                "value": "<string>",
+                "description": ""
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9bdd6155-88e6-4c79-b1aa-b60cde780bbc",
+              "name": "Campaigns list",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Link header with rel=\"next\" pointing to the next page URL. Format: `<url>; rel=\"next\"`",
+                  "key": "link",
+                  "value": "string"
+                },
+                {
+                  "disabled": false,
+                  "description": "Pagination cursor for the next page",
+                  "key": "x-next-cursor",
+                  "value": "string"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"cycles\": [\n        {\n          \"ends_at\": \"2003-06-03T05:26:17.526Z\",\n          \"starts_at\": \"1957-01-02T06:57:34.717Z\",\n          \"updated_at\": \"1950-06-10T23:50:17.572Z\",\n          \"created_at\": \"1946-12-21T00:05:30.013Z\",\n          \"name\": \"string\",\n          \"id\": \"94a40206-b43f-0d95-0419-60243f24b4a1\"\n        },\n        {\n          \"ends_at\": \"2023-12-23T01:58:48.649Z\",\n          \"starts_at\": \"1991-05-24T00:40:11.688Z\",\n          \"updated_at\": \"2017-06-03T21:41:34.150Z\",\n          \"created_at\": \"1967-04-30T19:20:28.432Z\",\n          \"name\": \"string\",\n          \"id\": \"86d7b378-1b5b-51ff-ed27-4577c5651bef\"\n        }\n      ],\n      \"status\": \"<string>\",\n      \"completed_at\": null,\n      \"launched_at\": null,\n      \"frequency\": null,\n      \"delivery\": \"one_off\",\n      \"name\": null,\n      \"updated_at\": \"2024-10-27T11:12:56.805Z\",\n      \"created_at\": \"1991-05-29T09:04:37.401Z\",\n      \"workspace\": {\n        \"id\": \"c2b206c5-123f-4c01-7a4a-5662a4ae610b\"\n      },\n      \"id\": \"0985219d-9933-9a46-d6da-a5c361faf29a\"\n    },\n    {\n      \"cycles\": [\n        {\n          \"ends_at\": \"1980-08-31T02:04:35.897Z\",\n          \"starts_at\": \"1979-11-27T22:05:19.820Z\",\n          \"updated_at\": \"2001-11-02T02:23:37.611Z\",\n          \"created_at\": \"2003-03-20T12:31:34.058Z\",\n          \"name\": \"string\",\n          \"id\": \"3cc8139e-fbf3-87c8-a624-0d5cbe90ca6c\"\n        },\n        {\n          \"ends_at\": \"2017-07-19T04:03:08.494Z\",\n          \"starts_at\": \"2017-01-31T20:55:31.714Z\",\n          \"updated_at\": \"1948-04-01T17:07:12.492Z\",\n          \"created_at\": \"1948-06-15T23:35:25.804Z\",\n          \"name\": \"string\",\n          \"id\": \"ffd76298-3cd3-239d-bcd5-209bc54d8f26\"\n        }\n      ],\n      \"status\": \"<string>\",\n      \"completed_at\": null,\n      \"launched_at\": null,\n      \"frequency\": null,\n      \"delivery\": \"recurring\",\n      \"name\": null,\n      \"updated_at\": \"1981-08-25T09:14:15.240Z\",\n      \"created_at\": \"1987-07-06T23:33:50.226Z\",\n      \"workspace\": {\n        \"id\": \"2e9dd0a6-15ba-954a-576d-5883f6e5b758\"\n      },\n      \"id\": \"e34812ed-736a-2b38-0ed9-4acb24e3f628\"\n    }\n  ],\n  \"metadata\": {\n    \"next_cursor\": null,\n    \"limit\": 1197\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dc5bdce2-b3a6-4671-9e8d-a6be9abef341",
+              "name": "Missing API key or the key is invalid",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1262a456-16ab-4838-b001-3dabe74a3d65",
+              "name": "Requested resource cannot be accessed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b991fdb2-2f11-4175-a7d9-05f9f59e3583",
+              "name": "Unprocessable content",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    },\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9a0d2e96-4d3c-46a2-9e8d-f77db06c00a8",
+              "name": "Rate limit is exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "status",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d9d7c27d-a421-4d0c-89c1-92efac0a94a3",
+          "name": "Get campaigns statistics",
+          "request": {
+            "name": "Get campaigns statistics",
+            "description": {
+              "content": "Retrieves statistics about campaigns in a workspace including attack events counts.\nDescription of the events can be found at https://docs.tryriot.com/api-reference/simulation/list-attacks#response-type\n\n\n**Scopes required:**\n- simulation:read",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "campaigns",
+                "statistics"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "workspace_id",
+                  "value": "<uuid>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "campaign_id",
+                  "value": "<uuid>"
+                },
+                {
+                  "disabled": false,
+                  "key": "campaign_cycle_id",
+                  "value": "<uuid>"
+                },
+                {
+                  "disabled": false,
+                  "key": "created_after",
+                  "value": "<dateTime>"
+                },
+                {
+                  "disabled": false,
+                  "key": "created_before",
+                  "value": "<dateTime>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "64292dc9-ecfc-429b-8b24-000c52781c67",
+              "name": "Campaign statistics",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    "statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"attack_events_per_employee\": {\n      \"mfa_code_submitted\": 4685,\n      \"scope_granted\": 6901,\n      \"social_login_clicked\": 7737,\n      \"phishing_remedial_course_completed\": 254,\n      \"remedial_started\": 8969,\n      \"remedial_completed\": 5991,\n      \"qr_code_scanned\": 2763,\n      \"phone_number_code_entered\": 5116,\n      \"phone_number_called\": 8706,\n      \"page_opened\": 4867,\n      \"manually_retried\": 8536,\n      \"manually_reported\": 9293,\n      \"file_opened\": 2299,\n      \"employee_tricked\": 377,\n      \"email_reported\": 7170,\n      \"email_opened\": 1952,\n      \"sms_answered\": 3573,\n      \"email_answered\": 816,\n      \"download_link_clicked\": 6298,\n      \"credentials_submitted\": 6030,\n      \"attack_voided\": 3661,\n      \"attack_sent\": 4012,\n      \"attachment_opened\": 786\n    },\n    \"reporting_rate\": 9652,\n    \"vulnerability_rate\": 45,\n    \"employees_weak_credentials_detected_count\": 1574,\n    \"employees_attacked_count\": 9809,\n    \"active_employees_attacked_count\": 9613\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a66a1267-947c-49bf-8244-f24a2af7febb",
+              "name": "Missing API key or the key is invalid",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    "statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9478271b-9bb9-4ce3-ae49-bcdd5dc386b8",
+              "name": "Requested resource cannot be accessed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    "statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "77349d1c-d36e-405d-89ec-221cb90986a6",
+              "name": "Unprocessable content",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    "statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    },\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7870d8d3-6f2d-4ca7-a302-9207a119fc24",
+              "name": "Rate limit is exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    "statistics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "be8ea70b-41fe-4311-8986-b58ce8b09168",
+          "name": "List attacks",
+          "request": {
+            "name": "List attacks",
+            "description": {
+              "content": "Retrieves a list of attacks of a campaign with associated events, sorted by their creation date in descending order (most recent entries first).\n\n**Scopes required:**\n- simulation:read",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "campaigns",
+                ":campaign_id",
+                "attacks"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "disabled": false,
+                  "key": "workspace_id",
+                  "value": "<uuid>",
+                  "description": "(Required) "
+                },
+                {
+                  "disabled": false,
+                  "key": "campaign_cycle_id",
+                  "value": "<uuid>"
+                },
+                {
+                  "disabled": false,
+                  "key": "created_after",
+                  "value": "<dateTime>"
+                },
+                {
+                  "disabled": false,
+                  "key": "created_before",
+                  "value": "<dateTime>"
+                },
+                {
+                  "disabled": false,
+                  "key": "is_tricked",
+                  "value": "<boolean>"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "campaign_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "disabled": false,
+                "key": "x-item-limit",
+                "value": "50",
+                "description": ""
+              },
+              {
+                "disabled": false,
+                "key": "x-next-cursor",
+                "value": "<string>",
+                "description": ""
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "x-api-key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "4735f131-ade8-4a4c-bf9f-f4eb2755c4c7",
+              "name": "Attacks list",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    ":campaign_id",
+                    "attacks"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "is_tricked",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "campaign_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Link header with rel=\"next\" pointing to the next page URL. Format: `<url>; rel=\"next\"`",
+                  "key": "link",
+                  "value": "string"
+                },
+                {
+                  "disabled": false,
+                  "description": "Pagination cursor for the next page",
+                  "key": "x-next-cursor",
+                  "value": "string"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"events\": [\n        {\n          \"data\": null,\n          \"type\": \"manually_reported\",\n          \"created_at\": \"1973-03-28T03:02:12.227Z\",\n          \"id\": \"2d02c3a9-f871-71d2-df8b-e0c2957afb68\"\n        },\n        {\n          \"data\": null,\n          \"type\": \"email_answered\",\n          \"created_at\": \"1996-01-24T17:54:28.914Z\",\n          \"id\": \"a861ea2d-a9bd-bb92-4d84-0ead3f451d48\"\n        }\n      ],\n      \"campaign_cycle\": null,\n      \"difficulty\": \"easy\",\n      \"template\": {\n        \"name\": \"string\"\n      },\n      \"service\": {\n        \"name\": \"string\"\n      },\n      \"sender\": null,\n      \"reported_at\": null,\n      \"tricked_at\": null,\n      \"sent_at\": \"1971-05-24T12:01:25.676Z\",\n      \"created_at\": \"2003-03-29T02:00:42.628Z\",\n      \"employee\": {\n        \"primary_email_address\": \"8wg@eeexNvpiMII.jweh\",\n        \"username\": \"string\",\n        \"name\": null,\n        \"id\": \"177372fb-de98-692a-83ed-e2ebac567353\"\n      },\n      \"id\": \"a3b4ef3f-a5fe-283d-ef47-c0e4f5f2c029\"\n    },\n    {\n      \"events\": [\n        {\n          \"data\": null,\n          \"type\": \"email_opened\",\n          \"created_at\": \"1969-04-15T07:47:50.255Z\",\n          \"id\": \"f3e96978-4c69-0138-5f42-c09744fdd40c\"\n        },\n        {\n          \"data\": null,\n          \"type\": \"remedial_started\",\n          \"created_at\": \"1949-11-28T22:37:40.584Z\",\n          \"id\": \"56ccbfb9-8f11-e3df-a73f-f68814fae048\"\n        }\n      ],\n      \"campaign_cycle\": null,\n      \"difficulty\": \"easy\",\n      \"template\": {\n        \"name\": \"string\"\n      },\n      \"service\": {\n        \"name\": \"string\"\n      },\n      \"sender\": null,\n      \"reported_at\": null,\n      \"tricked_at\": \"2026-01-03T03:42:40.189Z\",\n      \"sent_at\": null,\n      \"created_at\": \"1991-06-21T00:57:33.622Z\",\n      \"employee\": {\n        \"primary_email_address\": \"XmHP0xN@aYRuKjnhXSjuAKeUq.jre\",\n        \"username\": \"string\",\n        \"name\": null,\n        \"id\": \"7bb8e816-c3a5-5aca-f76e-cc8d996bde81\"\n      },\n      \"id\": \"dfe1cab7-0172-5cb6-4d54-4cc0704ffa06\"\n    }\n  ],\n  \"metadata\": {\n    \"next_cursor\": \"string\",\n    \"limit\": 8188\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "38ce8023-5b50-4193-87e5-eb85a42c3c8e",
+              "name": "Missing API key or the key is invalid",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    ":campaign_id",
+                    "attacks"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "is_tricked",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "campaign_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "acfdf4a8-d065-4677-85ae-a4268f336559",
+              "name": "Requested resource cannot be accessed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    ":campaign_id",
+                    "attacks"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "is_tricked",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "campaign_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5babcbf3-b497-4bda-89b8-106363cb45d5",
+              "name": "Unprocessable content",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    ":campaign_id",
+                    "attacks"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "is_tricked",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "campaign_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    },\n    {\n      \"title\": \"string\",\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fc182504-ce2e-4558-95b5-7be61c513759",
+              "name": "Rate limit is exceeded",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "campaigns",
+                    ":campaign_id",
+                    "attacks"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "workspace_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "campaign_cycle_id",
+                      "value": "<uuid>"
+                    },
+                    {
+                      "key": "created_after",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "created_before",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "is_tricked",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "campaign_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-api-key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-item-limit",
+                    "value": "50",
+                    "description": ""
+                  },
+                  {
+                    "disabled": false,
+                    "key": "x-next-cursor",
+                    "value": "<string>",
+                    "description": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    },\n    {\n      \"title\": {},\n      \"source\": {\n        \"pointer\": \"string\"\n      },\n      \"detail\": \"string\",\n      \"code\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://public-api.tryriot.com/",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "95bbffa5-0697-4491-a4b8-b8674bd344ed",
+    "name": "Riot Simulation API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "## Overview\nThe Riot API is a (mostly) RESTful API. Typically, both POST bodies and responses are JSON-encoded.\n\n## Base URL\nThe base URL for the Riot API is https://public-api.tryriot.com/v1.\n\n## Authentication\n\nEvery API request must include an authentication key in the `x-api-key` header.\n\nTo acquire an API key, customers must contact the technical team.\n\n## Authorization\n\nEach key is scoped to either a single organization or a single workspace, ensuring that access and data are restricted to the appropriate entity.\n\n- **Organization-scoped keys** can access any workspace belonging to the organization. Endpoints that take a `workspace_id` parameter accept any workspace of that organization.\n- **Workspace-scoped keys** are restricted to a single workspace. Requests targeting a different workspace through a `workspace_id` parameter are rejected with a **403** status code.\n\nKeys can also be limited by specific scopes, such as `awareness:read`, `simulation:read`, `breach:read`, or `workspace:read` which define the endpoints that can be accessed.\n\n## Pagination\n\nAll endpoints that return an array of objects support cursor-based pagination.\nEven for endpoints with a limited number of items (e.g., `/courses`), pagination is available to maintain consistency across all endpoints.\n\n**Request**\n\n- **`limit`** (query parameter): Maximum number of items per page. The maximum allowed value is `100`, with a default of `50`.\n- **`cursor`** (query parameter): Pagination cursor for retrieving the next page of results. On the first request, omit this parameter. For subsequent requests, pass the `next_cursor` value from the previous response's `metadata` object unchanged.\n\n**Response**\n\nPaginated responses include a `metadata` object alongside the `data` array:\n\n```json\n{\n  \"data\": [...],\n  \"metadata\": {\n    \"next_cursor\": \"eyJpZCI6...\",\n    \"limit\": 50\n  }\n}\n```\n\n- **`next_cursor`**: The cursor to pass in the next request. `null` when there are no more pages.\n- **`limit`**: The maximum number of items per page.\n\n**Link header**\n\nPaginated responses also include a standard `link` response header with `rel=\"next\"` when there are more results.\nThis header contains a fully constructed URL for the next page, including the cursor and any query parameters from the original request.\n\nExample: `<https://public-api.tryriot.com/v1/groups?workspace_id=abc&cursor=eyJpZCI6...>; rel=\"next\"`\n\nWhen the last page is reached, the `link` header is omitted.\n\n## Rate limits\n\nRate limiting is enforced across all API endpoints and is scoped by the authentication key. This ensures fair usage and prevents abuse of the system.\n\n- **Scope**: Rate limits are applied **per key**, meaning all requests made with the same key share the same limit.\n- **Configuration**: Specific rate limits are defined and managed by the technical team.\n- **Behavior**: The rate limiting mechanism operates within fixed time intervals. If the limit is exceeded within a given interval, further requests will return **429** status code until the next interval begins.\n\n## Webhooks\n\nRiot can push server-to-server events to a customer-configured HTTPS endpoint when something happens in a workspace (e.g. an inbox email being classified).\n\nThe implementation follows the [Standard Webhooks specification](https://github.com/standard-webhooks/standard-webhooks), so any Standard-Webhooks-compatible library can verify and consume payloads without bespoke code.\n\n**Envelope**\n\nEvery event body is wrapped in the Standard Webhooks envelope:\n\n```json\n{\n  \"type\": \"inbox_email_analysis.classified\",\n  \"timestamp\": \"2026-06-03T08:42:11.812Z\",\n  \"data\": { /* event-specific payload */ }\n}\n```\n\n**Headers**\n\n- `webhook-id`: unique event identifier. The same id is sent on every retry; use it as an idempotency key.\n- `webhook-timestamp`: Unix timestamp (seconds) of the delivery attempt.\n- `webhook-signature`: space-delimited list of `v1,<base64-hmac>` signatures, one per active endpoint secret, computed over `<webhook-id>.<webhook-timestamp>.<body>` using HMAC-SHA256 with the raw request body. Multiple signatures support zero-downtime secret rotation.\n\n**Delivery**\n\n- Method: `POST` with `content-type: application/json`.\n- Success: any `2xx` status returned within 15 seconds.\n- Failure: any non-`2xx` status, connection error, or timeout. Retries follow the Standard Webhooks recommended schedule: 10 attempts spread over ~75 hours (immediate, 5s, 5m, 30m, 2h, 5h, 10h, 14h, 20h, 24h).\n\n**Endpoint management**\n\nContact your account manager to add or rotate an endpoint. Self-service management is not available for now.\n\n**Compatibility**\n\nEvent payloads evolve over time. To stay forward-compatible, **ignore unknown fields** in the `data` object — new fields may be added at any time without notice and without a version bump.\n\nThe following changes to an existing event type are **not** considered breaking:\n\n- Adding a new field to the payload.\n- Adding a new event type.\n\nThe following changes **are** breaking and will be shipped under a new event type (e.g. `inbox_email_analysis.classified.v2`), leaving the original event type unchanged:\n\n- Removing or renaming a field.\n- Changing the type of a field.\n- Changing the meaning of an existing value (e.g. repurposing an enum value).\n\n**Event types**\n\nSee the **Webhook Events** section in the sidebar for the list of supported event types and their payload schemas.\n",
+      "type": "text/plain"
+    }
+  }
+}

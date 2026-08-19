@@ -1,0 +1,17 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Riot Webhook Events API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [],
+  "bundled": true
+}

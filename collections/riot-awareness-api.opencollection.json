@@ -1,0 +1,192 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Riot Awareness API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-api-key",
+      "value": "{{x-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Awareness",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List courses",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/courses",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Lists all active awareness courses of a workspace and their delivery settings.\n\n**Scopes required:**\n- awareness:read"
+        },
+        {
+          "info": {
+            "name": "List all employees' courses progress",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/courses/employees_progress",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves a paginated list of all employees and their progress across all courses in the workspace's awareness program, as well as courses manually assigned to them.\nFor each employee, returns detailed information including their identification data and a comprehensive breakdown of their course progress.\nFor program courses, the response includes the completion status of each course (completed, missed, or upcoming) for all program years up to the employee's current program year.\nFor manually ass"
+        },
+        {
+          "info": {
+            "name": "Get awareness program statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/courses/statistics",
+            "params": [
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Retrieves statistics about awareness program in general for a given workspace. Feedbacks of only last 90 days are considered.\n\n**Scopes required:**\n- awareness:read"
+        },
+        {
+          "info": {
+            "name": "List courses status of employees",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://public-api.tryriot.com/v1/courses/:course_id",
+            "headers": [
+              {
+                "name": "x-item-limit",
+                "value": ""
+              },
+              {
+                "name": "x-next-cursor",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "course_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "x-api-key",
+              "value": "{{x-api-key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Lists employees enrolled in the course, ordered by their creation date (most recent first).\n\nFor courses in the workspace's awareness program, the current year's enrolment status is provided\nalong with a history of course statuses from previous years.\n\nFor courses manually assigned to employees, `years` is always empty and `status` is either\n`completed` or `upcoming` based on whether the employee finished the course.\n\n\n**Scopes required:**\n- awareness:read"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
