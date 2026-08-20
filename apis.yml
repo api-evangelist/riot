@@ -18,6 +18,20 @@ specificationVersion: '0.23'
 created: '2026-08-05'
 modified: '2026-08-05'
 tags:
+- Cybersecurity
+- Security Awareness
+- Human Risk Management
+- Phishing Simulation
+- employee-security
+- Security Posture Management
+- breach-detection
+- Email Security
+- SaaS Security
+- SCIM
+- Webhook
+- OCSF
+- France
+tags_raw:
 - cybersecurity
 - security-awareness
 - human-risk-management
@@ -98,7 +112,8 @@ apis:
   description: Provides an overview of the organization and employees' data.
   humanURL: https://docs.tryriot.com/
   baseURL: https://public-api.tryriot.com/v1
-  tags:
+  tags: []
+  tags_raw:
   - General
   properties:
   - type: OpenAPI
@@ -129,6 +144,8 @@ apis:
   humanURL: https://docs.tryriot.com/
   baseURL: https://public-api.tryriot.com/v1
   tags:
+  - Group
+  tags_raw:
   - Groups
   properties:
   - type: OpenAPI
@@ -339,6 +356,8 @@ apis:
   humanURL: https://docs.tryriot.com/
   baseURL: https://public-api.tryriot.com/v1
   tags:
+  - Team Inbox
+  tags_raw:
   - Team inbox
   properties:
   - type: OpenAPI
