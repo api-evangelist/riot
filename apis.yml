@@ -31,18 +31,18 @@ created: '2026-08-05'
 modified: '2026-08-05'
 tags:
 - Cybersecurity
-- Security Awareness
-- Human Risk Management
-- Phishing Simulation
+- security-awareness
+- human-risk-management
+- phishing-simulation
 - employee-security
-- Security Posture Management
+- security-posture-management
 - breach-detection
-- Email Security
-- SaaS Security
+- email-security
+- saas-security
 - SCIM
 - Webhook
-- OCSF
-- France
+- ocsf
+- france
 tags_raw:
 - cybersecurity
 - security-awareness
