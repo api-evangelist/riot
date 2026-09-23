@@ -1,20 +1,7 @@
 {
   "provider": "riot",
   "sources": [
-    "riot-awareness-api-openapi.yml",
-    "riot-breaches-api-openapi.yml",
-    "riot-general-api-openapi.yml",
-    "riot-groups-api-openapi.yml",
-    "riot-inbox-api-openapi.yml",
-    "riot-scim-api-openapi.yml",
-    "riot-simulation-api-openapi.yml",
-    "riot-slash-api-openapi.yml",
-    "riot-sonar-api-openapi.yml",
-    "riot-team-awareness-api-openapi.yml",
-    "riot-team-inbox-api-openapi.yml",
-    "riot-team-platform-api-openapi.yml",
-    "riot-team-simulation-api-openapi.yml",
-    "riot-webhook-events-api-openapi.yml"
+    "_original/riot-openapi.json"
   ],
   "outputs": [
     "riot-awareness-api-openapi.yml",
@@ -25,32 +12,34 @@
     "riot-scim-api-openapi.yml",
     "riot-simulation-api-openapi.yml",
     "riot-slash-api-openapi.yml",
-    "riot-sonar-api-openapi.yml",
-    "riot-team-awareness-api-openapi.yml",
-    "riot-team-inbox-api-openapi.yml",
-    "riot-team-platform-api-openapi.yml",
-    "riot-team-simulation-api-openapi.yml",
-    "riot-webhook-events-api-openapi.yml"
+    "riot-sonar-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
-    "riot-awareness-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-breaches-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-general-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-groups-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-inbox-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-scim-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-simulation-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-slash-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-sonar-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-team-awareness-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-team-inbox-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-team-platform-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-team-simulation-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
-    "riot-webhook-events-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
+    "1 archived document(s) dropped as subsets of other archived documents",
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "riot-openapi.json: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
+    "riot-openapi.json: declared missing tag: Breaches",
+    "riot-openapi.json: declared missing tag: Groups",
+    "riot-openapi.json: declared missing tag: Inbox",
+    "riot-openapi.json: declared missing tag: SCIM",
+    "riot-openapi.json: declared missing tag: Slash",
+    "riot-openapi.json: declared missing tag: Sonar",
+    "riot-openapi.json: multi-axis tagging (14 tags, 9 first tags, 2.00x duplication over 42 operations) \u2014 split on first tag, 42 operations narrowed",
     "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "_original/riot-public-api-openapi.yml: archived document superseded by a larger archived document",
+    "riot-awareness-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "riot-breaches-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "riot-general-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "riot-groups-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "riot-inbox-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "riot-scim-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "riot-simulation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "riot-slash-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "riot-sonar-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
