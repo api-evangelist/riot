@@ -388,55 +388,14 @@ paths:
       x-riot-team-ownership: awareness
 components:
   schemas:
-    CourseDeliverySettingSchema:
-      enum:
-      - a_week_after_event
-      - directly_after_event
-      - first_day
-      - first_month
-      - none
-      - sent_after_the_first_year
-      - yearly
-      - yearly_at_end_of_program
-      title: CourseDeliverySettingSchema
-      type: string
-    EmployeeCourseStatusSchema:
-      enum:
-      - completed
-      - missed
-      - upcoming
-      title: EmployeeCourseStatusSchema
-      type: string
-    EmployeeCourseStatusPerYearSchema:
+    CourseNotFoundErrorResponse:
       additionalProperties: false
       properties:
-        completed_at:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        due_at:
-          format: date-time
-          type: string
-        quiz_score:
-          description: Score obtained on the in-course quiz for that year, formatted as `"correct/total"`. `null` if the course has not been completed yet or has no quiz.
-          examples:
-          - 4/5
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/EmployeeCourseStatusSchema'
-        year:
-          description: The year of the course in the program
-          type: integer
+        error:
+          const: Course is not included in the program
       required:
-      - quiz_score
-      - completed_at
-      - due_at
-      - year
-      - status
-      title: EmployeeCourseStatusPerYearSchema
+      - error
+      title: CourseNotFoundErrorResponse
       type: object
     RateLimitExceededErrorResponse:
       additionalProperties: false
@@ -467,6 +426,178 @@ components:
       required:
       - errors
       title: RateLimitExceededErrorResponse
+      type: object
+    PaginatedCourseStatusPayload:
+      additionalProperties: false
+      properties:
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
+        quiz_score:
+          description: Score obtained on the in-course quiz, formatted as `"correct/total"`. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment. `null` if not completed yet or no quiz.
+          examples:
+          - 4/5
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/EmployeeCourseStatusSchema'
+        years:
+          description: The history of employee's course statuses until current program year.
+          items:
+            $ref: '#/components/schemas/EmployeeCourseStatusPerYearSchema'
+          type: array
+      required:
+      - years
+      - quiz_score
+      - status
+      - employee
+      title: PaginatedCourseStatusPayload
+      type: object
+    PaginatedEmployeesCoursesProgressPayload:
+      additionalProperties: false
+      properties:
+        courses_progress:
+          description: List of courses progress for the employee
+          items:
+            $ref: '#/components/schemas/CourseProgressSchema'
+          type: array
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
+      required:
+      - courses_progress
+      - employee
+      title: PaginatedEmployeesCoursesProgressPayload
+      type: object
+    WorkspaceCourseSettingsSchema:
+      additionalProperties: false
+      properties:
+        delivery:
+          $ref: '#/components/schemas/CourseDeliverySettingSchema'
+        year:
+          description: The year of the course in the program
+          type: integer
+      required:
+      - year
+      - delivery
+      title: WorkspaceCourseSettingsSchema
+      type: object
+    CourseProgressSchema:
+      additionalProperties: false
+      properties:
+        course:
+          $ref: '#/components/schemas/CourseOverviewSchema'
+        quiz_score:
+          description: Score obtained on the in-course quiz, formatted as `"correct/total"`. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment. `null` if not completed yet or no quiz.
+          examples:
+          - 4/5
+          type:
+          - string
+          - 'null'
+        status:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EmployeeCourseStatusSchema'
+          description: The current status of the employee for this course. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment.
+        years:
+          description: The history of employee's course statuses until current program year. Empty for manually assigned courses, which are not tied to a program year.
+          items:
+            $ref: '#/components/schemas/EmployeeCourseStatusPerYearSchema'
+          type: array
+      required:
+      - years
+      - quiz_score
+      - status
+      - course
+      title: CourseProgressSchema
+      type: object
+    CourseDeliverySettingSchema:
+      enum:
+      - a_week_after_event
+      - directly_after_event
+      - first_day
+      - first_month
+      - none
+      - sent_after_the_first_year
+      - yearly
+      - yearly_at_end_of_program
+      title: CourseDeliverySettingSchema
+      type: string
+    CourseTheme:
+      description: The theme of the course
+      enum:
+      - digital_footprint
+      - gdpr
+      - general
+      - irl
+      - it
+      - legal
+      - passwords
+      - social_engineering
+      - technical
+      examples:
+      - passwords
+      title: CourseTheme
+      type: string
+    UnauthorizedErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: unauthorized
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Unauthorized
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnauthorizedErrorResponse
+      type: object
+    EmployeeCourseStatusPerYearSchema:
+      additionalProperties: false
+      properties:
+        completed_at:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        due_at:
+          format: date-time
+          type: string
+        quiz_score:
+          description: Score obtained on the in-course quiz for that year, formatted as `"correct/total"`. `null` if the course has not been completed yet or has no quiz.
+          examples:
+          - 4/5
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/EmployeeCourseStatusSchema'
+        year:
+          description: The year of the course in the program
+          type: integer
+      required:
+      - quiz_score
+      - completed_at
+      - due_at
+      - year
+      - status
+      title: EmployeeCourseStatusPerYearSchema
       type: object
     EmployeeOverviewSchema:
       additionalProperties: false
@@ -502,49 +633,6 @@ components:
       - id
       title: EmployeeOverviewSchema
       type: object
-    WorkspaceCourseSettingsSchema:
-      additionalProperties: false
-      properties:
-        delivery:
-          $ref: '#/components/schemas/CourseDeliverySettingSchema'
-        year:
-          description: The year of the course in the program
-          type: integer
-      required:
-      - year
-      - delivery
-      title: WorkspaceCourseSettingsSchema
-      type: object
-    UnauthorizedErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: unauthorized
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Unauthorized
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: UnauthorizedErrorResponse
-      type: object
     CoursesStatisticsPayload:
       additionalProperties: false
       properties:
@@ -574,6 +662,34 @@ components:
       - negative_feedbacks
       - positive_feedbacks
       title: CoursesStatisticsPayload
+      type: object
+    CourseOverviewSchema:
+      additionalProperties: false
+      properties:
+        description:
+          description: Description of the course, provided in the workspace's default locale.
+          examples:
+          - Learn how to manage your digital presence effectively
+          type: string
+        id:
+          format: uuid
+          type: string
+        name:
+          description: Name of the course, provided in the workspace's default locale.
+          examples:
+          - Digital Footprint
+          type: string
+        slug:
+          description: Slug of the course
+          examples:
+          - digital_footprint
+          type: string
+      required:
+      - description
+      - name
+      - slug
+      - id
+      title: CourseOverviewSchema
       type: object
     PaginatedCoursePayload:
       additionalProperties: false
@@ -623,88 +739,13 @@ components:
       - id
       title: PaginatedCoursePayload
       type: object
-    CourseOverviewSchema:
-      additionalProperties: false
-      properties:
-        description:
-          description: Description of the course, provided in the workspace's default locale.
-          examples:
-          - Learn how to manage your digital presence effectively
-          type: string
-        id:
-          format: uuid
-          type: string
-        name:
-          description: Name of the course, provided in the workspace's default locale.
-          examples:
-          - Digital Footprint
-          type: string
-        slug:
-          description: Slug of the course
-          examples:
-          - digital_footprint
-          type: string
-      required:
-      - description
-      - name
-      - slug
-      - id
-      title: CourseOverviewSchema
-      type: object
-    CourseTheme:
-      description: The theme of the course
+    EmployeeCourseStatusSchema:
       enum:
-      - digital_footprint
-      - gdpr
-      - general
-      - irl
-      - it
-      - legal
-      - passwords
-      - social_engineering
-      - technical
-      examples:
-      - passwords
-      title: CourseTheme
+      - completed
+      - missed
+      - upcoming
+      title: EmployeeCourseStatusSchema
       type: string
-    CourseProgressSchema:
-      additionalProperties: false
-      properties:
-        course:
-          $ref: '#/components/schemas/CourseOverviewSchema'
-        quiz_score:
-          description: Score obtained on the in-course quiz, formatted as `"correct/total"`. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment. `null` if not completed yet or no quiz.
-          examples:
-          - 4/5
-          type:
-          - string
-          - 'null'
-        status:
-          anyOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/EmployeeCourseStatusSchema'
-          description: The current status of the employee for this course. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment.
-        years:
-          description: The history of employee's course statuses until current program year. Empty for manually assigned courses, which are not tied to a program year.
-          items:
-            $ref: '#/components/schemas/EmployeeCourseStatusPerYearSchema'
-          type: array
-      required:
-      - years
-      - quiz_score
-      - status
-      - course
-      title: CourseProgressSchema
-      type: object
-    CourseNotFoundErrorResponse:
-      additionalProperties: false
-      properties:
-        error:
-          const: Course is not included in the program
-      required:
-      - error
-      title: CourseNotFoundErrorResponse
-      type: object
     ForbiddenErrorResponse:
       additionalProperties: false
       properties:
@@ -764,47 +805,6 @@ components:
       required:
       - errors
       title: UnprocessableContentErrorResponse
-      type: object
-    PaginatedCourseStatusPayload:
-      additionalProperties: false
-      properties:
-        employee:
-          $ref: '#/components/schemas/EmployeeOverviewSchema'
-        quiz_score:
-          description: Score obtained on the in-course quiz, formatted as `"correct/total"`. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment. `null` if not completed yet or no quiz.
-          examples:
-          - 4/5
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/EmployeeCourseStatusSchema'
-        years:
-          description: The history of employee's course statuses until current program year.
-          items:
-            $ref: '#/components/schemas/EmployeeCourseStatusPerYearSchema'
-          type: array
-      required:
-      - years
-      - quiz_score
-      - status
-      - employee
-      title: PaginatedCourseStatusPayload
-      type: object
-    PaginatedEmployeesCoursesProgressPayload:
-      additionalProperties: false
-      properties:
-        courses_progress:
-          description: List of courses progress for the employee
-          items:
-            $ref: '#/components/schemas/CourseProgressSchema'
-          type: array
-        employee:
-          $ref: '#/components/schemas/EmployeeOverviewSchema'
-      required:
-      - courses_progress
-      - employee
-      title: PaginatedEmployeesCoursesProgressPayload
       type: object
   responses:
     UnauthorizedErrorResponse:

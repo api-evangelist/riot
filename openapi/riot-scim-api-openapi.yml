@@ -757,65 +757,6 @@ paths:
       x-riot-team-ownership: platform
 components:
   schemas:
-    ParrotWeb.PublicApi.Scim.Schemas.PatchSchema:
-      properties:
-        Operations:
-          items:
-            properties:
-              op:
-                description: The operation to perform
-                enum:
-                - add
-                - replace
-                - remove
-                type: string
-              path:
-                description: Optional path to the attribute (required for remove)
-                type: string
-              value:
-                description: The value to add or replace (required for add and replace)
-            required:
-            - op
-            type: object
-          minItems: 1
-          type: array
-        schemas:
-          description: Must be ["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
-          items:
-            type: string
-          type: array
-      required:
-      - schemas
-      - Operations
-      type: object
-    ParrotWeb.PublicApi.Scim.Schemas.GroupSchema:
-      properties:
-        displayName:
-          description: Human-readable name for the group
-          type: string
-        externalId:
-          description: Identifier for the resource as defined by the provisioning client
-          type: string
-        members:
-          items:
-            properties:
-              $ref:
-                description: URI of the corresponding User resource
-                type: string
-              display:
-                description: Human-readable name, primarily for display purposes
-                type: string
-              value:
-                description: Identifier of the group member
-                format: uuid
-                type: string
-            required:
-            - value
-            type: object
-          type: array
-      required:
-      - displayName
-      type: object
     ParrotWeb.PublicApi.Scim.Schemas.UserSchema:
       properties:
         active:
@@ -888,6 +829,65 @@ components:
       - userName
       - name
       - emails
+      type: object
+    ParrotWeb.PublicApi.Scim.Schemas.PatchSchema:
+      properties:
+        Operations:
+          items:
+            properties:
+              op:
+                description: The operation to perform
+                enum:
+                - add
+                - replace
+                - remove
+                type: string
+              path:
+                description: Optional path to the attribute (required for remove)
+                type: string
+              value:
+                description: The value to add or replace (required for add and replace)
+            required:
+            - op
+            type: object
+          minItems: 1
+          type: array
+        schemas:
+          description: Must be ["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
+          items:
+            type: string
+          type: array
+      required:
+      - schemas
+      - Operations
+      type: object
+    ParrotWeb.PublicApi.Scim.Schemas.GroupSchema:
+      properties:
+        displayName:
+          description: Human-readable name for the group
+          type: string
+        externalId:
+          description: Identifier for the resource as defined by the provisioning client
+          type: string
+        members:
+          items:
+            properties:
+              $ref:
+                description: URI of the corresponding User resource
+                type: string
+              display:
+                description: Human-readable name, primarily for display purposes
+                type: string
+              value:
+                description: Identifier of the group member
+                format: uuid
+                type: string
+            required:
+            - value
+            type: object
+          type: array
+      required:
+      - displayName
       type: object
   securitySchemes:
     apiKeyAuth:

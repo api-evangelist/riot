@@ -213,7 +213,62 @@ paths:
       - Groups
       x-riot-team-ownership: platform
 components:
+  responses:
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    UnprocessableContentErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
+      description: Unprocessable content
   schemas:
+    RateLimitExceededErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: too_many_requests
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Too Many Requests
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: RateLimitExceededErrorResponse
+      type: object
     ForbiddenErrorResponse:
       additionalProperties: false
       properties:
@@ -243,6 +298,61 @@ components:
       required:
       - errors
       title: ForbiddenErrorResponse
+      type: object
+    PaginatedGroupEmployeePayload:
+      additionalProperties: false
+      properties:
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        name:
+          description: Full name of the employee
+          type: string
+        primary_email_address:
+          description: Primary email address of the employee
+          format: email
+          type: string
+        username:
+          description: Username of the employee
+          examples:
+          - john.doe
+          type:
+          - string
+          - 'null'
+      required:
+      - username
+      - primary_email_address
+      - name
+      - id
+      title: PaginatedGroupEmployeePayload
+      type: object
+    PaginatedGroupPayload:
+      additionalProperties: false
+      properties:
+        created_at:
+          description: Group creation date
+          format: date-time
+          type: string
+        description:
+          description: Description of the group
+          type:
+          - string
+          - 'null'
+        id:
+          description: UUID of the group
+          format: uuid
+          type: string
+        name:
+          description: Name of the group
+          examples:
+          - Marketing Team
+          type: string
+      required:
+      - created_at
+      - name
+      - id
+      title: PaginatedGroupPayload
       type: object
     UnprocessableContentErrorResponse:
       additionalProperties: false
@@ -274,64 +384,6 @@ components:
       - errors
       title: UnprocessableContentErrorResponse
       type: object
-    PaginatedGroupEmployeePayload:
-      additionalProperties: false
-      properties:
-        id:
-          description: UUID of the employee
-          format: uuid
-          type: string
-        name:
-          description: Full name of the employee
-          type: string
-        primary_email_address:
-          description: Primary email address of the employee
-          format: email
-          type: string
-        username:
-          description: Username of the employee
-          examples:
-          - john.doe
-          type:
-          - string
-          - 'null'
-      required:
-      - username
-      - primary_email_address
-      - name
-      - id
-      title: PaginatedGroupEmployeePayload
-      type: object
-    RateLimitExceededErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: too_many_requests
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Too Many Requests
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: RateLimitExceededErrorResponse
-      type: object
     UnauthorizedErrorResponse:
       additionalProperties: false
       properties:
@@ -362,58 +414,6 @@ components:
       - errors
       title: UnauthorizedErrorResponse
       type: object
-    PaginatedGroupPayload:
-      additionalProperties: false
-      properties:
-        created_at:
-          description: Group creation date
-          format: date-time
-          type: string
-        description:
-          description: Description of the group
-          type:
-          - string
-          - 'null'
-        id:
-          description: UUID of the group
-          format: uuid
-          type: string
-        name:
-          description: Name of the group
-          examples:
-          - Marketing Team
-          type: string
-      required:
-      - created_at
-      - name
-      - id
-      title: PaginatedGroupPayload
-      type: object
-  responses:
-    UnauthorizedErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorResponse'
-      description: Missing API key or the key is invalid
-    ForbiddenErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorResponse'
-      description: Requested resource cannot be accessed
-    UnprocessableContentErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
-      description: Unprocessable content
-    RateLimitExceededErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
-      description: Rate limit is exceeded
   securitySchemes:
     apiKeyAuth:
       in: header

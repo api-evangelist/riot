@@ -62,6 +62,15 @@ webhooks:
       - Sonar
 components:
   schemas:
+    Provider:
+      description: Cloud provider the permission belongs to.
+      enum:
+      - google
+      - microsoft
+      examples:
+      - google
+      title: Provider
+      type: string
     RevokeDriveItemPermissionRequestCreatedProviderData:
       additionalProperties: false
       properties:
@@ -91,6 +100,18 @@ components:
       - owner_id
       title: RevokeDriveItemPermissionRequestCreatedProviderData
       type: object
+    RevokeDriveItemPermissionRequestCreatedData:
+      additionalProperties: false
+      properties:
+        provider:
+          $ref: '#/components/schemas/Provider'
+        provider_data:
+          $ref: '#/components/schemas/RevokeDriveItemPermissionRequestCreatedProviderData'
+      required:
+      - provider_data
+      - provider
+      title: RevokeDriveItemPermissionRequestCreatedData
+      type: object
     RevokeDriveItemPermissionRequestCreatedEvent:
       additionalProperties: false
       properties:
@@ -108,27 +129,6 @@ components:
       - type
       title: RevokeDriveItemPermissionRequestCreatedEvent
       type: object
-    RevokeDriveItemPermissionRequestCreatedData:
-      additionalProperties: false
-      properties:
-        provider:
-          $ref: '#/components/schemas/Provider'
-        provider_data:
-          $ref: '#/components/schemas/RevokeDriveItemPermissionRequestCreatedProviderData'
-      required:
-      - provider_data
-      - provider
-      title: RevokeDriveItemPermissionRequestCreatedData
-      type: object
-    Provider:
-      description: Cloud provider the permission belongs to.
-      enum:
-      - google
-      - microsoft
-      examples:
-      - google
-      title: Provider
-      type: string
   securitySchemes:
     apiKeyAuth:
       in: header

@@ -262,7 +262,7 @@ paths:
       x-riot-team-ownership: inbox
 components:
   schemas:
-    ForbiddenErrorResponse:
+    WorkspaceNotFoundErrorResponse:
       additionalProperties: false
       properties:
         errors:
@@ -270,7 +270,7 @@ components:
             additionalProperties: false
             properties:
               code:
-                const: forbidden
+                const: workspace_not_found
               detail:
                 type: string
               source:
@@ -281,7 +281,7 @@ components:
                 - pointer
                 type: object
               title:
-                const: Forbidden
+                const: Workspace not found
             required:
             - title
             - source
@@ -290,67 +290,7 @@ components:
           type: array
       required:
       - errors
-      title: ForbiddenErrorResponse
-      type: object
-    AlertedEmailsStatsSchema:
-      additionalProperties: false
-      properties:
-        marked_safe_alerts_count:
-          description: Number of alerted emails marked as safe by the employee
-          type: integer
-        received_alerts_count:
-          description: Number of alerted emails received by the employee
-          type: integer
-        reported_alerts_count:
-          description: Number of alerted emails reported by the employee
-          type: integer
-      required:
-      - marked_safe_alerts_count
-      - reported_alerts_count
-      - received_alerts_count
-      title: AlertedEmailsStatsSchema
-      type: object
-    UnprocessableContentErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                type: string
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                type: string
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: UnprocessableContentErrorResponse
-      type: object
-    PaginatedEmployeeWithImpersonationPayload:
-      additionalProperties: false
-      properties:
-        employee:
-          $ref: '#/components/schemas/EmployeeOverviewSchema'
-        impersonation_stats:
-          $ref: '#/components/schemas/ImpersonationStatsSchema'
-      required:
-      - impersonation_stats
-      - employee
-      title: PaginatedEmployeeWithImpersonationPayload
+      title: WorkspaceNotFoundErrorResponse
       type: object
     RateLimitExceededErrorResponse:
       additionalProperties: false
@@ -381,6 +321,58 @@ components:
       required:
       - errors
       title: RateLimitExceededErrorResponse
+      type: object
+    ForbiddenErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: forbidden
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Forbidden
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: ForbiddenErrorResponse
+      type: object
+    ImpersonationStatsSchema:
+      additionalProperties: false
+      properties:
+        attacks_impersonating_employee:
+          description: Total number of attacks impersonating the employee
+          type: integer
+        impersonation_attacks_confirmed:
+          description: Number of attacks impersonating the employee confirmed as fraudulent
+          type: integer
+        impersonation_attacks_denied:
+          description: Number of attacks impersonating the employee confirmed as safe
+          type: integer
+        impersonation_attacks_pending_review:
+          description: Number of attacks impersonating the employee in pending review
+          type: integer
+      required:
+      - impersonation_attacks_denied
+      - impersonation_attacks_pending_review
+      - impersonation_attacks_confirmed
+      - attacks_impersonating_employee
+      title: ImpersonationStatsSchema
       type: object
     EmployeeOverviewSchema:
       additionalProperties: false
@@ -416,28 +408,6 @@ components:
       - id
       title: EmployeeOverviewSchema
       type: object
-    ImpersonationStatsSchema:
-      additionalProperties: false
-      properties:
-        attacks_impersonating_employee:
-          description: Total number of attacks impersonating the employee
-          type: integer
-        impersonation_attacks_confirmed:
-          description: Number of attacks impersonating the employee confirmed as fraudulent
-          type: integer
-        impersonation_attacks_denied:
-          description: Number of attacks impersonating the employee confirmed as safe
-          type: integer
-        impersonation_attacks_pending_review:
-          description: Number of attacks impersonating the employee in pending review
-          type: integer
-      required:
-      - impersonation_attacks_denied
-      - impersonation_attacks_pending_review
-      - impersonation_attacks_confirmed
-      - attacks_impersonating_employee
-      title: ImpersonationStatsSchema
-      type: object
     UnauthorizedErrorResponse:
       additionalProperties: false
       properties:
@@ -468,36 +438,6 @@ components:
       - errors
       title: UnauthorizedErrorResponse
       type: object
-    WorkspaceNotFoundErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: workspace_not_found
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Workspace not found
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: WorkspaceNotFoundErrorResponse
-      type: object
     PaginatedEmployeeWithAlertsPayload:
       additionalProperties: false
       properties:
@@ -510,25 +450,85 @@ components:
       - employee
       title: PaginatedEmployeeWithAlertsPayload
       type: object
+    PaginatedEmployeeWithImpersonationPayload:
+      additionalProperties: false
+      properties:
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
+        impersonation_stats:
+          $ref: '#/components/schemas/ImpersonationStatsSchema'
+      required:
+      - impersonation_stats
+      - employee
+      title: PaginatedEmployeeWithImpersonationPayload
+      type: object
+    UnprocessableContentErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                type: string
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnprocessableContentErrorResponse
+      type: object
+    AlertedEmailsStatsSchema:
+      additionalProperties: false
+      properties:
+        marked_safe_alerts_count:
+          description: Number of alerted emails marked as safe by the employee
+          type: integer
+        received_alerts_count:
+          description: Number of alerted emails received by the employee
+          type: integer
+        reported_alerts_count:
+          description: Number of alerted emails reported by the employee
+          type: integer
+      required:
+      - marked_safe_alerts_count
+      - reported_alerts_count
+      - received_alerts_count
+      title: AlertedEmailsStatsSchema
+      type: object
   responses:
-    UnauthorizedErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorResponse'
-      description: Missing API key or the key is invalid
-    RateLimitExceededErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
-      description: Rate limit is exceeded
     ForbiddenErrorResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ForbiddenErrorResponse'
       description: Requested resource cannot be accessed
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
     UnprocessableContentErrorResponse:
       content:
         application/json:
