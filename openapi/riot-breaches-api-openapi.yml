@@ -298,6 +298,66 @@ paths:
       x-riot-team-ownership: simulation
 components:
   schemas:
+    RateLimitExceededErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: too_many_requests
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Too Many Requests
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: RateLimitExceededErrorResponse
+      type: object
+    UnauthorizedErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: unauthorized
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Unauthorized
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnauthorizedErrorResponse
+      type: object
     BreachCriticalitySchema:
       enum:
       - high
@@ -339,82 +399,6 @@ components:
       - employee
       title: PaginatedBreachCompromisedEmployeePayload
       type: object
-    BreachStatusSchema:
-      description: The breach is considered resolved when all impacted employees have acknowledged the breach
-      enum:
-      - active
-      - resolved
-      title: BreachStatusSchema
-      type: string
-    BreachNotFoundErrorResponse:
-      additionalProperties: false
-      properties:
-        error:
-          const: Breach not found
-      required:
-      - error
-      title: BreachNotFoundErrorResponse
-      type: object
-    RateLimitExceededErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: too_many_requests
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Too Many Requests
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: RateLimitExceededErrorResponse
-      type: object
-    ForbiddenErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: forbidden
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Forbidden
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: ForbiddenErrorResponse
-      type: object
     BreachedAccountPayload:
       additionalProperties: false
       properties:
@@ -431,6 +415,15 @@ components:
       - compromised_at
       - email
       title: BreachedAccountPayload
+      type: object
+    BreachNotFoundErrorResponse:
+      additionalProperties: false
+      properties:
+        error:
+          const: Breach not found
+      required:
+      - error
+      title: BreachNotFoundErrorResponse
       type: object
     UnprocessableContentErrorResponse:
       additionalProperties: false
@@ -461,6 +454,36 @@ components:
       required:
       - errors
       title: UnprocessableContentErrorResponse
+      type: object
+    ForbiddenErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: forbidden
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Forbidden
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: ForbiddenErrorResponse
       type: object
     EmployeeOverviewSchema:
       additionalProperties: false
@@ -495,6 +518,28 @@ components:
       - name
       - id
       title: EmployeeOverviewSchema
+      type: object
+    BreachesStatisticsPayload:
+      additionalProperties: false
+      properties:
+        acknowledged_employees_count:
+          description: Number of employees that have acknowledged breaches
+          type: integer
+        breaches_count:
+          description: Total number of breaches
+          type: integer
+        impacted_employees_count:
+          description: Number of employees impacted by breaches
+          type: integer
+        warned_employees_count:
+          description: Number of employees warned about a breach
+          type: integer
+      required:
+      - breaches_count
+      - acknowledged_employees_count
+      - warned_employees_count
+      - impacted_employees_count
+      title: BreachesStatisticsPayload
       type: object
     PaginatedBreachPayload:
       additionalProperties: false
@@ -549,83 +594,38 @@ components:
       - id
       title: PaginatedBreachPayload
       type: object
-    BreachesStatisticsPayload:
-      additionalProperties: false
-      properties:
-        acknowledged_employees_count:
-          description: Number of employees that have acknowledged breaches
-          type: integer
-        breaches_count:
-          description: Total number of breaches
-          type: integer
-        impacted_employees_count:
-          description: Number of employees impacted by breaches
-          type: integer
-        warned_employees_count:
-          description: Number of employees warned about a breach
-          type: integer
-      required:
-      - breaches_count
-      - acknowledged_employees_count
-      - warned_employees_count
-      - impacted_employees_count
-      title: BreachesStatisticsPayload
-      type: object
-    UnauthorizedErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: unauthorized
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Unauthorized
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: UnauthorizedErrorResponse
-      type: object
+    BreachStatusSchema:
+      description: The breach is considered resolved when all impacted employees have acknowledged the breach
+      enum:
+      - active
+      - resolved
+      title: BreachStatusSchema
+      type: string
   responses:
-    ForbiddenErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorResponse'
-      description: Requested resource cannot be accessed
-    RateLimitExceededErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
-      description: Rate limit is exceeded
-    UnauthorizedErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorResponse'
-      description: Missing API key or the key is invalid
     UnprocessableContentErrorResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UnprocessableContentErrorResponse'
       description: Unprocessable content
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
   securitySchemes:
     apiKeyAuth:
       in: header

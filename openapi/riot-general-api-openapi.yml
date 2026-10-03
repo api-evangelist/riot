@@ -379,89 +379,35 @@ paths:
       x-riot-team-ownership: platform
 components:
   schemas:
-    CyberPostureOverviewSchema:
+    PaginatedDomainPayload:
       additionalProperties: false
       properties:
-        grade:
-          $ref: '#/components/schemas/EmployeeCyberPostureGrade'
-        score_percentage:
-          description: Employee cyber posture score (0-100)
-          examples:
-          - 87.5
-          type: number
-      required:
-      - grade
-      - score_percentage
-      title: CyberPostureOverviewSchema
-      type: object
-    EmployeeKarmaSchema:
-      additionalProperties: false
-      properties:
-        score:
-          type: integer
-        security_level:
-          $ref: '#/components/schemas/EmployeeSecurityLevel'
-      required:
-      - security_level
-      - score
-      title: EmployeeKarmaSchema
-      type: object
-    RateLimitExceededErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: too_many_requests
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Too Many Requests
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: RateLimitExceededErrorResponse
-      type: object
-    OrganizationWorkspaceSchema:
-      additionalProperties: false
-      properties:
-        created_at:
-          format: date-time
-          type: string
-        cyber_posture:
-          anyOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/CyberPostureSchema'
-          description: Latest cyber posture summary for the workspace.
         id:
+          description: UUID of the domain
           format: uuid
           type: string
         name:
+          description: Domain name
+          examples:
+          - acme.com
           type: string
-        updated_at:
-          format: date-time
-          type: string
+        simulation_spoofed_domains:
+          description: Alphabetically sorted sender domains that simulation may spoof when sending phishing or smishing attacks.
+          examples:
+          - - micr0osoft.com
+            - noreply.link
+            - slack-notifications.com
+          items:
+            type: string
+          type: array
+        status:
+          $ref: '#/components/schemas/DomainStatus'
       required:
-      - cyber_posture
-      - updated_at
-      - created_at
+      - simulation_spoofed_domains
+      - status
       - name
       - id
-      title: OrganizationWorkspaceSchema
+      title: PaginatedDomainPayload
       type: object
     EmployeeCurrentMissionSchema:
       additionalProperties: false
@@ -505,27 +451,85 @@ components:
       - d
       title: CyberPostureGrade
       type: string
-    EmployeeDepartmentSchema:
+    UnprocessableContentErrorResponse:
       additionalProperties: false
       properties:
-        name:
-          description: Name of the department
-          examples:
-          - Devs
-          type: string
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                type: string
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
       required:
-      - name
-      title: EmployeeDepartmentSchema
+      - errors
+      title: UnprocessableContentErrorResponse
       type: object
-    EmployeeMissionStatsSchema:
+    EmployeeEmailAddressSchema:
       additionalProperties: false
       properties:
-        streak_count:
-          description: Current consecutive completed-missions streak
+        address:
+          description: Email address
+          examples:
+          - john.doe@tryriot.com
+          format: email
+          type: string
+        is_primary:
+          type: boolean
+        source:
+          $ref: '#/components/schemas/EmployeeEmailAddressSource'
+      required:
+      - is_primary
+      - source
+      - address
+      title: EmployeeEmailAddressSchema
+      type: object
+    EmployeeStatisticsPayload:
+      additionalProperties: false
+      properties:
+        activated:
+          description: Number of active employees
+          type: integer
+        archived:
+          description: Number of archived employees
+          type: integer
+        deactivated:
+          description: Number of deactivated employees
+          type: integer
+        total:
+          description: Total number of employees
           type: integer
       required:
-      - streak_count
-      title: EmployeeMissionStatsSchema
+      - archived
+      - deactivated
+      - activated
+      - total
+      title: EmployeeStatisticsPayload
+      type: object
+    EmployeeNotFoundErrorResponse:
+      additionalProperties: false
+      properties:
+        error:
+          const: Employee not found
+      required:
+      - error
+      title: EmployeeNotFoundErrorResponse
       type: object
     CyberPostureSchema:
       additionalProperties: false
@@ -539,35 +543,6 @@ components:
       - grade
       - percentage
       title: CyberPostureSchema
-      type: object
-    OrganizationPayload:
-      additionalProperties: false
-      properties:
-        created_at:
-          format: date-time
-          type: string
-        cyber_posture:
-          anyOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/CyberPostureSchema'
-          description: Latest cyber posture summary for the organization.
-        id:
-          format: uuid
-          type: string
-        updated_at:
-          format: date-time
-          type: string
-        workspaces:
-          items:
-            $ref: '#/components/schemas/OrganizationWorkspaceSchema'
-          type: array
-      required:
-      - workspaces
-      - cyber_posture
-      - updated_at
-      - created_at
-      - id
-      title: OrganizationPayload
       type: object
     UnauthorizedErrorResponse:
       additionalProperties: false
@@ -599,64 +574,106 @@ components:
       - errors
       title: UnauthorizedErrorResponse
       type: object
-    EmployeeEmailAddressSchema:
+    EmployeeSecurityLevel:
+      enum:
+      - bad
+      - dangerous
+      - excellent
+      - exceptional
+      - good
+      - great
+      - ok
+      title: EmployeeSecurityLevel
+      type: string
+    EmployeeCyberPostureGrade:
+      enum:
+      - a
+      - b
+      - c
+      - d
+      title: EmployeeCyberPostureGrade
+      type: string
+    EmployeeLanguage:
+      description: Language of the employee
+      enum:
+      - arabic
+      - bulgarian
+      - catalan
+      - chinese
+      - chinese_traditional_taiwan
+      - czech
+      - danish
+      - dutch
+      - english
+      - finnish
+      - french
+      - french_quebec
+      - german
+      - greek
+      - hindi
+      - hungarian
+      - indonesian
+      - italian
+      - japanese
+      - korean
+      - norwegian_bokmal
+      - polish
+      - portuguese
+      - portuguese_brazilian
+      - romanian
+      - russian
+      - slovak
+      - slovenian
+      - spanish
+      - thai
+      - turkish
+      - ukrainian
+      - vietnamese
+      examples:
+      - english
+      title: EmployeeLanguage
+      type: string
+    RateLimitExceededErrorResponse:
       additionalProperties: false
       properties:
-        address:
-          description: Email address
-          examples:
-          - john.doe@tryriot.com
-          format: email
-          type: string
-        is_primary:
-          type: boolean
-        source:
-          $ref: '#/components/schemas/EmployeeEmailAddressSource'
-      required:
-      - is_primary
-      - source
-      - address
-      title: EmployeeEmailAddressSchema
-      type: object
-    WorkspaceOverviewSchema:
-      additionalProperties: false
-      properties:
-        id:
-          format: uuid
-          type: string
-      required:
-      - id
-      title: WorkspaceOverviewSchema
-      type: object
-    PaginatedDomainPayload:
-      additionalProperties: false
-      properties:
-        id:
-          description: UUID of the domain
-          format: uuid
-          type: string
-        name:
-          description: Domain name
-          examples:
-          - acme.com
-          type: string
-        simulation_spoofed_domains:
-          description: Alphabetically sorted sender domains that simulation may spoof when sending phishing or smishing attacks.
-          examples:
-          - - micr0osoft.com
-            - noreply.link
-            - slack-notifications.com
+        errors:
           items:
-            type: string
+            additionalProperties: false
+            properties:
+              code:
+                const: too_many_requests
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Too Many Requests
+            required:
+            - title
+            - source
+            - detail
+            type: object
           type: array
-        status:
-          $ref: '#/components/schemas/DomainStatus'
       required:
-      - simulation_spoofed_domains
-      - status
-      - name
-      - id
-      title: PaginatedDomainPayload
+      - errors
+      title: RateLimitExceededErrorResponse
+      type: object
+    EmployeeKarmaSchema:
+      additionalProperties: false
+      properties:
+        score:
+          type: integer
+        security_level:
+          $ref: '#/components/schemas/EmployeeSecurityLevel'
+      required:
+      - security_level
+      - score
+      title: EmployeeKarmaSchema
       type: object
     EmployeeStatusSchema:
       description: "        - `active`: default status.\n        - `deactivated`: employee has been manually deactivated.\n        - `pending`: employee is currently being synced via workspace's AD\n"
@@ -667,47 +684,59 @@ components:
       - unlicensed
       title: EmployeeStatusSchema
       type: string
-    EmployeeCyberPostureGrade:
-      enum:
-      - a
-      - b
-      - c
-      - d
-      title: EmployeeCyberPostureGrade
-      type: string
-    EmployeeOverviewSchema:
+    CyberPostureOverviewSchema:
+      additionalProperties: false
+      properties:
+        grade:
+          $ref: '#/components/schemas/EmployeeCyberPostureGrade'
+        score_percentage:
+          description: Employee cyber posture score (0-100)
+          examples:
+          - 87.5
+          type: number
+      required:
+      - grade
+      - score_percentage
+      title: CyberPostureOverviewSchema
+      type: object
+    OrganizationPayload:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        cyber_posture:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CyberPostureSchema'
+          description: Latest cyber posture summary for the organization.
+        id:
+          format: uuid
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        workspaces:
+          items:
+            $ref: '#/components/schemas/OrganizationWorkspaceSchema'
+          type: array
+      required:
+      - workspaces
+      - cyber_posture
+      - updated_at
+      - created_at
+      - id
+      title: OrganizationPayload
+      type: object
+    WorkspaceOverviewSchema:
       additionalProperties: false
       properties:
         id:
-          description: UUID of the employee
           format: uuid
           type: string
-        name:
-          description: Name of the employee
-          examples:
-          - John Doe
-          type:
-          - string
-          - 'null'
-        primary_email_address:
-          description: Email address
-          examples:
-          - john.doe@tryriot.com
-          format: email
-          type:
-          - string
-          - 'null'
-        username:
-          description: Username of the employee
-          type:
-          - string
-          - 'null'
       required:
-      - primary_email_address
-      - username
-      - name
       - id
-      title: EmployeeOverviewSchema
+      title: WorkspaceOverviewSchema
       type: object
     PaginatedEmployeePayload:
       additionalProperties: false
@@ -859,68 +888,37 @@ components:
       - id
       title: PaginatedEmployeePayload
       type: object
-    EmployeeLanguage:
-      description: Language of the employee
-      enum:
-      - arabic
-      - bulgarian
-      - catalan
-      - chinese
-      - chinese_traditional_taiwan
-      - czech
-      - danish
-      - dutch
-      - english
-      - finnish
-      - french
-      - french_quebec
-      - german
-      - greek
-      - hindi
-      - hungarian
-      - indonesian
-      - italian
-      - japanese
-      - korean
-      - norwegian_bokmal
-      - polish
-      - portuguese
-      - portuguese_brazilian
-      - romanian
-      - russian
-      - slovak
-      - slovenian
-      - spanish
-      - thai
-      - turkish
-      - ukrainian
-      - vietnamese
-      examples:
-      - english
-      title: EmployeeLanguage
-      type: string
-    EmployeeStatisticsPayload:
+    EmployeeMissionStatsSchema:
       additionalProperties: false
       properties:
-        activated:
-          description: Number of active employees
-          type: integer
-        archived:
-          description: Number of archived employees
-          type: integer
-        deactivated:
-          description: Number of deactivated employees
-          type: integer
-        total:
-          description: Total number of employees
+        streak_count:
+          description: Current consecutive completed-missions streak
           type: integer
       required:
-      - archived
-      - deactivated
-      - activated
-      - total
-      title: EmployeeStatisticsPayload
+      - streak_count
+      title: EmployeeMissionStatsSchema
       type: object
+    EmployeeEmailAddressSource:
+      description: ' Source of the email.
+
+        `custom` - the email is provided by the employee''s admin or set during CSV import
+
+        `employee` - the email is provided by the employee via portal
+
+        `google`, `microsoft`, `okta`, `slack` - imported via corresponding synchronization
+
+        '
+      enum:
+      - custom
+      - employee
+      - google
+      - microsoft
+      - okta
+      - slack
+      examples:
+      - google
+      title: EmployeeEmailAddressSource
+      type: string
     WorkspaceNotFoundErrorResponse:
       additionalProperties: false
       properties:
@@ -951,14 +949,78 @@ components:
       - errors
       title: WorkspaceNotFoundErrorResponse
       type: object
-    EmployeeNotFoundErrorResponse:
+    OrganizationWorkspaceSchema:
       additionalProperties: false
       properties:
-        error:
-          const: Employee not found
+        created_at:
+          format: date-time
+          type: string
+        cyber_posture:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CyberPostureSchema'
+          description: Latest cyber posture summary for the workspace.
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
       required:
-      - error
-      title: EmployeeNotFoundErrorResponse
+      - cyber_posture
+      - updated_at
+      - created_at
+      - name
+      - id
+      title: OrganizationWorkspaceSchema
+      type: object
+    EmployeeOverviewSchema:
+      additionalProperties: false
+      properties:
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        name:
+          description: Name of the employee
+          examples:
+          - John Doe
+          type:
+          - string
+          - 'null'
+        primary_email_address:
+          description: Email address
+          examples:
+          - john.doe@tryriot.com
+          format: email
+          type:
+          - string
+          - 'null'
+        username:
+          description: Username of the employee
+          type:
+          - string
+          - 'null'
+      required:
+      - primary_email_address
+      - username
+      - name
+      - id
+      title: EmployeeOverviewSchema
+      type: object
+    EmployeeDepartmentSchema:
+      additionalProperties: false
+      properties:
+        name:
+          description: Name of the department
+          examples:
+          - Devs
+          type: string
+      required:
+      - name
+      title: EmployeeDepartmentSchema
       type: object
     ForbiddenErrorResponse:
       additionalProperties: false
@@ -990,17 +1052,6 @@ components:
       - errors
       title: ForbiddenErrorResponse
       type: object
-    EmployeeSecurityLevel:
-      enum:
-      - bad
-      - dangerous
-      - excellent
-      - exceptional
-      - good
-      - great
-      - ok
-      title: EmployeeSecurityLevel
-      type: string
     DomainStatus:
       description: 'Verification status of the domain.
 
@@ -1020,82 +1071,31 @@ components:
       - verified
       title: DomainStatus
       type: string
-    EmployeeEmailAddressSource:
-      description: ' Source of the email.
-
-        `custom` - the email is provided by the employee''s admin or set during CSV import
-
-        `employee` - the email is provided by the employee via portal
-
-        `google`, `microsoft`, `okta`, `slack` - imported via corresponding synchronization
-
-        '
-      enum:
-      - custom
-      - employee
-      - google
-      - microsoft
-      - okta
-      - slack
-      examples:
-      - google
-      title: EmployeeEmailAddressSource
-      type: string
-    UnprocessableContentErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                type: string
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                type: string
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: UnprocessableContentErrorResponse
-      type: object
   responses:
-    UnauthorizedErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorResponse'
-      description: Missing API key or the key is invalid
-    ForbiddenErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorResponse'
-      description: Requested resource cannot be accessed
-    RateLimitExceededErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
-      description: Rate limit is exceeded
     UnprocessableContentErrorResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UnprocessableContentErrorResponse'
       description: Unprocessable content
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
   securitySchemes:
     apiKeyAuth:
       in: header

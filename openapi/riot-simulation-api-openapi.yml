@@ -431,34 +431,282 @@ paths:
       x-riot-team-ownership: simulation
 components:
   schemas:
-    CampaignsStatisticsPayload:
+    AttackTemplateSchema:
       additionalProperties: false
       properties:
-        active_employees_attacked_count:
-          description: Number of active employees who were attacked
-          type: integer
-        attack_events_per_employee:
-          $ref: '#/components/schemas/EmployeeEventsSchema'
-        employees_attacked_count:
-          description: Number of employees who were attacked, active or not
-          type: integer
-        employees_weak_credentials_detected_count:
-          description: Number of employees with weak credentials detected
-          type: integer
-        reporting_rate:
-          description: 'If filtered by campaing_id and/or campaign_cycle_id: percentage of attacks that were reported by employees rounded to the nearest integer. Otherwise: percentage of employees who have reported rounded to the nearest integer.'
-          type: integer
-        vulnerability_rate:
-          description: 'If filtered by campaign_id and/or campaign_cycle_id: percentage of attacks that successfully tricked employees, rounded to the nearest integer. Otherwise: percentage of employees tricked, rounded to the nearest integer.'
-          type: integer
+        name:
+          description: 'This field could be a default template''s name from the library, like ''deleted-files'', or a custom name if a custom template has been used.
+
+            '
+          examples:
+          - security-issue-detected
+          type: string
       required:
-      - attack_events_per_employee
-      - reporting_rate
-      - vulnerability_rate
-      - employees_weak_credentials_detected_count
-      - employees_attacked_count
-      - active_employees_attacked_count
-      title: CampaignsStatisticsPayload
+      - name
+      title: AttackTemplateSchema
+      type: object
+    AttackEventSchema:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        data:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/AttackEventDataSchema'
+          description: Available only for `credentials_submitted' event type.
+        id:
+          format: uuid
+          type: string
+        type:
+          $ref: '#/components/schemas/AttackEventTypeSchema'
+      required:
+      - data
+      - type
+      - created_at
+      - id
+      title: AttackEventSchema
+      type: object
+    UnprocessableContentErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                type: string
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnprocessableContentErrorResponse
+      type: object
+    CampaignCycleSchema:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        ends_at:
+          format: date-time
+          type: string
+        id:
+          format: uuid
+          type: string
+        name:
+          examples:
+          - Batch 1
+          type: string
+        starts_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+      - ends_at
+      - starts_at
+      - updated_at
+      - created_at
+      - name
+      - id
+      title: CampaignCycleSchema
+      type: object
+    PaginatedCampaignPayload:
+      additionalProperties: false
+      properties:
+        completed_at:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        created_at:
+          format: date-time
+          type: string
+        cycles:
+          description: 'A campaign cycle forms a group of attacks sent at a period of time. Periods of two cycles can''t overlap.
+
+            Recurring campaigns usually have multiple cycles, whereas one-off campaigns usually have only one.
+
+            '
+          items:
+            $ref: '#/components/schemas/CampaignCycleSchema'
+          type: array
+        delivery:
+          $ref: '#/components/schemas/CampaignDelivery'
+        frequency:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CampaignFrequency'
+        id:
+          format: uuid
+          type: string
+        launched_at:
+          format: date-time
+          type:
+          - string
+          - 'null'
+        name:
+          description: Name of the campaign. Returns a custom name if it has been given during the creation, default to a generated name.
+          examples:
+          - One-off campaign on 5 employees
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/CampaignStatusSchema'
+        updated_at:
+          format: date-time
+          type: string
+        workspace:
+          $ref: '#/components/schemas/WorkspaceOverviewSchema'
+      required:
+      - cycles
+      - status
+      - completed_at
+      - launched_at
+      - frequency
+      - delivery
+      - name
+      - updated_at
+      - created_at
+      - workspace
+      - id
+      title: PaginatedCampaignPayload
+      type: object
+    CampaignStatusSchema:
+      enum:
+      - active
+      - completed
+      - draft
+      - paused
+      - scheduled
+      title: CampaignStatusSchema
+      type: string
+    UnauthorizedErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: unauthorized
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Unauthorized
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnauthorizedErrorResponse
+      type: object
+    CampaignCycleOverviewSchema:
+      additionalProperties: false
+      properties:
+        id:
+          format: uuid
+          type: string
+      required:
+      - id
+      title: CampaignCycleOverviewSchema
+      type: object
+    AttackEventTypeSchema:
+      enum:
+      - attachment_opened
+      - attack_sent
+      - attack_voided
+      - credentials_submitted
+      - download_link_clicked
+      - email_answered
+      - email_opened
+      - email_reported
+      - employee_tricked
+      - file_opened
+      - manually_reported
+      - manually_retried
+      - mfa_code_submitted
+      - page_opened
+      - phishing_remedial_course_completed
+      - phone_number_called
+      - phone_number_code_entered
+      - qr_code_scanned
+      - remedial_completed
+      - remedial_started
+      - scope_granted
+      - sms_answered
+      - social_login_clicked
+      title: AttackEventTypeSchema
+      type: string
+    DifficultySchema:
+      enum:
+      - easy
+      - hard
+      - medium
+      title: DifficultySchema
+      type: string
+    AttackSenderSchema:
+      additionalProperties: false
+      properties:
+        email:
+          examples:
+          - marketing@noreply.link
+          type: string
+        name:
+          examples:
+          - Marketing team
+          type: string
+      required:
+      - email
+      - name
+      title: AttackSenderSchema
+      type: object
+    CampaignDelivery:
+      enum:
+      - one_off
+      - recurring
+      title: CampaignDelivery
+      type: string
+    AttackServiceSchema:
+      additionalProperties: false
+      properties:
+        name:
+          description: Name of the service being used in the phishing attack. Returns 'This service is no longer available' for services that have been deprecated.
+          examples:
+          - Microsoft
+          type: string
+      required:
+      - name
+      title: AttackServiceSchema
       type: object
     RateLimitExceededErrorResponse:
       additionalProperties: false
@@ -490,51 +738,21 @@ components:
       - errors
       title: RateLimitExceededErrorResponse
       type: object
-    DifficultySchema:
-      enum:
-      - easy
-      - hard
-      - medium
-      title: DifficultySchema
-      type: string
-    AttackEventDataSchema:
+    PaginatedAttackLoginDomainPayload:
       additionalProperties: false
       properties:
-        password_length:
-          type:
-          - integer
-          - 'null'
-        score:
-          type:
-          - integer
-          - 'null'
-      required:
-      - password_length
-      - score
-      title: AttackEventDataSchema
-      type: object
-    AttackEventSchema:
-      additionalProperties: false
-      properties:
-        created_at:
-          format: date-time
-          type: string
-        data:
-          anyOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/AttackEventDataSchema'
-          description: Available only for `credentials_submitted' event type.
         id:
           format: uuid
           type: string
-        type:
-          $ref: '#/components/schemas/AttackEventTypeSchema'
+        name:
+          description: The attack login domain, used as the link for each attack
+          examples:
+          - secure-signin.co
+          type: string
       required:
-      - data
-      - type
-      - created_at
+      - name
       - id
-      title: AttackEventSchema
+      title: PaginatedAttackLoginDomainPayload
       type: object
     EmployeeEventsSchema:
       additionalProperties: false
@@ -634,161 +852,34 @@ components:
       - attachment_opened
       title: EmployeeEventsSchema
       type: object
-    CampaignStatusSchema:
-      enum:
-      - active
-      - completed
-      - draft
-      - paused
-      - scheduled
-      title: CampaignStatusSchema
-      type: string
-    PaginatedCampaignPayload:
+    CampaignsStatisticsPayload:
       additionalProperties: false
       properties:
-        completed_at:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        created_at:
-          format: date-time
-          type: string
-        cycles:
-          description: 'A campaign cycle forms a group of attacks sent at a period of time. Periods of two cycles can''t overlap.
-
-            Recurring campaigns usually have multiple cycles, whereas one-off campaigns usually have only one.
-
-            '
-          items:
-            $ref: '#/components/schemas/CampaignCycleSchema'
-          type: array
-        delivery:
-          $ref: '#/components/schemas/CampaignDelivery'
-        frequency:
-          anyOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/CampaignFrequency'
-        id:
-          format: uuid
-          type: string
-        launched_at:
-          format: date-time
-          type:
-          - string
-          - 'null'
-        name:
-          description: Name of the campaign. Returns a custom name if it has been given during the creation, default to a generated name.
-          examples:
-          - One-off campaign on 5 employees
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/CampaignStatusSchema'
-        updated_at:
-          format: date-time
-          type: string
-        workspace:
-          $ref: '#/components/schemas/WorkspaceOverviewSchema'
+        active_employees_attacked_count:
+          description: Number of active employees who were attacked
+          type: integer
+        attack_events_per_employee:
+          $ref: '#/components/schemas/EmployeeEventsSchema'
+        employees_attacked_count:
+          description: Number of employees who were attacked, active or not
+          type: integer
+        employees_weak_credentials_detected_count:
+          description: Number of employees with weak credentials detected
+          type: integer
+        reporting_rate:
+          description: 'If filtered by campaing_id and/or campaign_cycle_id: percentage of attacks that were reported by employees rounded to the nearest integer. Otherwise: percentage of employees who have reported rounded to the nearest integer.'
+          type: integer
+        vulnerability_rate:
+          description: 'If filtered by campaign_id and/or campaign_cycle_id: percentage of attacks that successfully tricked employees, rounded to the nearest integer. Otherwise: percentage of employees tricked, rounded to the nearest integer.'
+          type: integer
       required:
-      - cycles
-      - status
-      - completed_at
-      - launched_at
-      - frequency
-      - delivery
-      - name
-      - updated_at
-      - created_at
-      - workspace
-      - id
-      title: PaginatedCampaignPayload
-      type: object
-    CampaignCycleSchema:
-      additionalProperties: false
-      properties:
-        created_at:
-          format: date-time
-          type: string
-        ends_at:
-          format: date-time
-          type: string
-        id:
-          format: uuid
-          type: string
-        name:
-          examples:
-          - Batch 1
-          type: string
-        starts_at:
-          format: date-time
-          type: string
-        updated_at:
-          format: date-time
-          type: string
-      required:
-      - ends_at
-      - starts_at
-      - updated_at
-      - created_at
-      - name
-      - id
-      title: CampaignCycleSchema
-      type: object
-    UnauthorizedErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: unauthorized
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Unauthorized
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: UnauthorizedErrorResponse
-      type: object
-    CampaignFrequency:
-      enum:
-      - custom
-      - daily
-      - monthly
-      - quarterly
-      - weekly
-      - yearly
-      title: CampaignFrequency
-      type: string
-    AttackTemplateSchema:
-      additionalProperties: false
-      properties:
-        name:
-          description: 'This field could be a default template''s name from the library, like ''deleted-files'', or a custom name if a custom template has been used.
-
-            '
-          examples:
-          - security-issue-detected
-          type: string
-      required:
-      - name
-      title: AttackTemplateSchema
+      - attack_events_per_employee
+      - reporting_rate
+      - vulnerability_rate
+      - employees_weak_credentials_detected_count
+      - employees_attacked_count
+      - active_employees_attacked_count
+      title: CampaignsStatisticsPayload
       type: object
     WorkspaceOverviewSchema:
       additionalProperties: false
@@ -800,157 +891,6 @@ components:
       - id
       title: WorkspaceOverviewSchema
       type: object
-    AttackServiceSchema:
-      additionalProperties: false
-      properties:
-        name:
-          description: Name of the service being used in the phishing attack. Returns 'This service is no longer available' for services that have been deprecated.
-          examples:
-          - Microsoft
-          type: string
-      required:
-      - name
-      title: AttackServiceSchema
-      type: object
-    PaginatedAttackLoginDomainPayload:
-      additionalProperties: false
-      properties:
-        id:
-          format: uuid
-          type: string
-        name:
-          description: The attack login domain, used as the link for each attack
-          examples:
-          - secure-signin.co
-          type: string
-      required:
-      - name
-      - id
-      title: PaginatedAttackLoginDomainPayload
-      type: object
-    EmployeeOverviewSchema:
-      additionalProperties: false
-      properties:
-        id:
-          description: UUID of the employee
-          format: uuid
-          type: string
-        name:
-          description: Name of the employee
-          examples:
-          - John Doe
-          type:
-          - string
-          - 'null'
-        primary_email_address:
-          description: Email address
-          examples:
-          - john.doe@tryriot.com
-          format: email
-          type:
-          - string
-          - 'null'
-        username:
-          description: Username of the employee
-          type:
-          - string
-          - 'null'
-      required:
-      - primary_email_address
-      - username
-      - name
-      - id
-      title: EmployeeOverviewSchema
-      type: object
-    CampaignCycleOverviewSchema:
-      additionalProperties: false
-      properties:
-        id:
-          format: uuid
-          type: string
-      required:
-      - id
-      title: CampaignCycleOverviewSchema
-      type: object
-    CampaignDelivery:
-      enum:
-      - one_off
-      - recurring
-      title: CampaignDelivery
-      type: string
-    ForbiddenErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: forbidden
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Forbidden
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: ForbiddenErrorResponse
-      type: object
-    AttackSenderSchema:
-      additionalProperties: false
-      properties:
-        email:
-          examples:
-          - marketing@noreply.link
-          type: string
-        name:
-          examples:
-          - Marketing team
-          type: string
-      required:
-      - email
-      - name
-      title: AttackSenderSchema
-      type: object
-    AttackEventTypeSchema:
-      enum:
-      - attachment_opened
-      - attack_sent
-      - attack_voided
-      - credentials_submitted
-      - download_link_clicked
-      - email_answered
-      - email_opened
-      - email_reported
-      - employee_tricked
-      - file_opened
-      - manually_reported
-      - manually_retried
-      - mfa_code_submitted
-      - page_opened
-      - phishing_remedial_course_completed
-      - phone_number_called
-      - phone_number_code_entered
-      - qr_code_scanned
-      - remedial_completed
-      - remedial_started
-      - scope_granted
-      - sms_answered
-      - social_login_clicked
-      title: AttackEventTypeSchema
-      type: string
     PaginatedAttackPayload:
       additionalProperties: false
       properties:
@@ -1043,7 +983,57 @@ components:
       - id
       title: PaginatedAttackPayload
       type: object
-    UnprocessableContentErrorResponse:
+    AttackEventDataSchema:
+      additionalProperties: false
+      properties:
+        password_length:
+          type:
+          - integer
+          - 'null'
+        score:
+          type:
+          - integer
+          - 'null'
+      required:
+      - password_length
+      - score
+      title: AttackEventDataSchema
+      type: object
+    EmployeeOverviewSchema:
+      additionalProperties: false
+      properties:
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        name:
+          description: Name of the employee
+          examples:
+          - John Doe
+          type:
+          - string
+          - 'null'
+        primary_email_address:
+          description: Email address
+          examples:
+          - john.doe@tryriot.com
+          format: email
+          type:
+          - string
+          - 'null'
+        username:
+          description: Username of the employee
+          type:
+          - string
+          - 'null'
+      required:
+      - primary_email_address
+      - username
+      - name
+      - id
+      title: EmployeeOverviewSchema
+      type: object
+    ForbiddenErrorResponse:
       additionalProperties: false
       properties:
         errors:
@@ -1051,7 +1041,7 @@ components:
             additionalProperties: false
             properties:
               code:
-                type: string
+                const: forbidden
               detail:
                 type: string
               source:
@@ -1062,7 +1052,7 @@ components:
                 - pointer
                 type: object
               title:
-                type: string
+                const: Forbidden
             required:
             - title
             - source
@@ -1071,33 +1061,43 @@ components:
           type: array
       required:
       - errors
-      title: UnprocessableContentErrorResponse
+      title: ForbiddenErrorResponse
       type: object
+    CampaignFrequency:
+      enum:
+      - custom
+      - daily
+      - monthly
+      - quarterly
+      - weekly
+      - yearly
+      title: CampaignFrequency
+      type: string
   responses:
-    UnauthorizedErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorResponse'
-      description: Missing API key or the key is invalid
-    ForbiddenErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorResponse'
-      description: Requested resource cannot be accessed
-    RateLimitExceededErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
-      description: Rate limit is exceeded
     UnprocessableContentErrorResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UnprocessableContentErrorResponse'
       description: Unprocessable content
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
   securitySchemes:
     apiKeyAuth:
       in: header
