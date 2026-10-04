@@ -387,7 +387,92 @@ paths:
       - Awareness
       x-riot-team-ownership: awareness
 components:
+  responses:
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    UnprocessableContentErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
+      description: Unprocessable content
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
   schemas:
+    CoursesStatisticsPayload:
+      additionalProperties: false
+      properties:
+        active_employees:
+          description: Number of active employees in the workspace
+          type: integer
+        average_courses_completed:
+          description: Average number of courses completed per employee. Only active employees are considered
+          type: integer
+        covered_employees:
+          description: Number of employees covered by the program
+          type: integer
+        negative_feedbacks:
+          description: Number of negative feedbacks about courses
+          type: integer
+        neutral_feedbacks:
+          description: Number of neutral feedbacks about courses
+          type: integer
+        positive_feedbacks:
+          description: Number of positive feedbacks about courses
+          type: integer
+      required:
+      - average_courses_completed
+      - active_employees
+      - covered_employees
+      - neutral_feedbacks
+      - negative_feedbacks
+      - positive_feedbacks
+      title: CoursesStatisticsPayload
+      type: object
+    ForbiddenErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: forbidden
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Forbidden
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: ForbiddenErrorResponse
+      type: object
     EmployeeCourseStatusPerYearSchema:
       additionalProperties: false
       properties:
@@ -419,6 +504,35 @@ components:
       - status
       title: EmployeeCourseStatusPerYearSchema
       type: object
+    CourseProgressSchema:
+      additionalProperties: false
+      properties:
+        course:
+          $ref: '#/components/schemas/CourseOverviewSchema'
+        quiz_score:
+          description: Score obtained on the in-course quiz, formatted as `"correct/total"`. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment. `null` if not completed yet or no quiz.
+          examples:
+          - 4/5
+          type:
+          - string
+          - 'null'
+        status:
+          anyOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/EmployeeCourseStatusSchema'
+          description: The current status of the employee for this course. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment.
+        years:
+          description: The history of employee's course statuses until current program year. Empty for manually assigned courses, which are not tied to a program year.
+          items:
+            $ref: '#/components/schemas/EmployeeCourseStatusPerYearSchema'
+          type: array
+      required:
+      - years
+      - quiz_score
+      - status
+      - course
+      title: CourseProgressSchema
+      type: object
     UnprocessableContentErrorResponse:
       additionalProperties: false
       properties:
@@ -448,38 +562,6 @@ components:
       required:
       - errors
       title: UnprocessableContentErrorResponse
-      type: object
-    EmployeeCourseStatusSchema:
-      enum:
-      - completed
-      - missed
-      - upcoming
-      title: EmployeeCourseStatusSchema
-      type: string
-    CourseDeliverySettingSchema:
-      enum:
-      - a_week_after_event
-      - directly_after_event
-      - first_day
-      - first_month
-      - none
-      - sent_after_the_first_year
-      - yearly
-      - yearly_at_end_of_program
-      title: CourseDeliverySettingSchema
-      type: string
-    WorkspaceCourseSettingsSchema:
-      additionalProperties: false
-      properties:
-        delivery:
-          $ref: '#/components/schemas/CourseDeliverySettingSchema'
-        year:
-          description: The year of the course in the program
-          type: integer
-      required:
-      - year
-      - delivery
-      title: WorkspaceCourseSettingsSchema
       type: object
     UnauthorizedErrorResponse:
       additionalProperties: false
@@ -511,35 +593,72 @@ components:
       - errors
       title: UnauthorizedErrorResponse
       type: object
-    CoursesStatisticsPayload:
+    EmployeeCourseStatusSchema:
+      enum:
+      - completed
+      - missed
+      - upcoming
+      title: EmployeeCourseStatusSchema
+      type: string
+    PaginatedCourseStatusPayload:
       additionalProperties: false
       properties:
-        active_employees:
-          description: Number of active employees in the workspace
-          type: integer
-        average_courses_completed:
-          description: Average number of courses completed per employee. Only active employees are considered
-          type: integer
-        covered_employees:
-          description: Number of employees covered by the program
-          type: integer
-        negative_feedbacks:
-          description: Number of negative feedbacks about courses
-          type: integer
-        neutral_feedbacks:
-          description: Number of neutral feedbacks about courses
-          type: integer
-        positive_feedbacks:
-          description: Number of positive feedbacks about courses
-          type: integer
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
+        quiz_score:
+          description: Score obtained on the in-course quiz, formatted as `"correct/total"`. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment. `null` if not completed yet or no quiz.
+          examples:
+          - 4/5
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/EmployeeCourseStatusSchema'
+        years:
+          description: The history of employee's course statuses until current program year.
+          items:
+            $ref: '#/components/schemas/EmployeeCourseStatusPerYearSchema'
+          type: array
       required:
-      - average_courses_completed
-      - active_employees
-      - covered_employees
-      - neutral_feedbacks
-      - negative_feedbacks
-      - positive_feedbacks
-      title: CoursesStatisticsPayload
+      - years
+      - quiz_score
+      - status
+      - employee
+      title: PaginatedCourseStatusPayload
+      type: object
+    EmployeeOverviewSchema:
+      additionalProperties: false
+      properties:
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        name:
+          description: Name of the employee
+          examples:
+          - John Doe
+          type:
+          - string
+          - 'null'
+        primary_email_address:
+          description: Email address
+          examples:
+          - john.doe@tryriot.com
+          format: email
+          type:
+          - string
+          - 'null'
+        username:
+          description: Username of the employee
+          type:
+          - string
+          - 'null'
+      required:
+      - primary_email_address
+      - username
+      - name
+      - id
+      title: EmployeeOverviewSchema
       type: object
     CourseTheme:
       description: The theme of the course
@@ -587,41 +706,6 @@ components:
       - errors
       title: RateLimitExceededErrorResponse
       type: object
-    CourseNotFoundErrorResponse:
-      additionalProperties: false
-      properties:
-        error:
-          const: Course is not included in the program
-      required:
-      - error
-      title: CourseNotFoundErrorResponse
-      type: object
-    PaginatedCourseStatusPayload:
-      additionalProperties: false
-      properties:
-        employee:
-          $ref: '#/components/schemas/EmployeeOverviewSchema'
-        quiz_score:
-          description: Score obtained on the in-course quiz, formatted as `"correct/total"`. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment. `null` if not completed yet or no quiz.
-          examples:
-          - 4/5
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/EmployeeCourseStatusSchema'
-        years:
-          description: The history of employee's course statuses until current program year.
-          items:
-            $ref: '#/components/schemas/EmployeeCourseStatusPerYearSchema'
-          type: array
-      required:
-      - years
-      - quiz_score
-      - status
-      - employee
-      title: PaginatedCourseStatusPayload
-      type: object
     CourseOverviewSchema:
       additionalProperties: false
       properties:
@@ -649,6 +733,43 @@ components:
       - slug
       - id
       title: CourseOverviewSchema
+      type: object
+    CourseNotFoundErrorResponse:
+      additionalProperties: false
+      properties:
+        error:
+          const: Course is not included in the program
+      required:
+      - error
+      title: CourseNotFoundErrorResponse
+      type: object
+    WorkspaceCourseSettingsSchema:
+      additionalProperties: false
+      properties:
+        delivery:
+          $ref: '#/components/schemas/CourseDeliverySettingSchema'
+        year:
+          description: The year of the course in the program
+          type: integer
+      required:
+      - year
+      - delivery
+      title: WorkspaceCourseSettingsSchema
+      type: object
+    PaginatedEmployeesCoursesProgressPayload:
+      additionalProperties: false
+      properties:
+        courses_progress:
+          description: List of courses progress for the employee
+          items:
+            $ref: '#/components/schemas/CourseProgressSchema'
+          type: array
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
+      required:
+      - courses_progress
+      - employee
+      title: PaginatedEmployeesCoursesProgressPayload
       type: object
     PaginatedCoursePayload:
       additionalProperties: false
@@ -698,139 +819,18 @@ components:
       - id
       title: PaginatedCoursePayload
       type: object
-    PaginatedEmployeesCoursesProgressPayload:
-      additionalProperties: false
-      properties:
-        courses_progress:
-          description: List of courses progress for the employee
-          items:
-            $ref: '#/components/schemas/CourseProgressSchema'
-          type: array
-        employee:
-          $ref: '#/components/schemas/EmployeeOverviewSchema'
-      required:
-      - courses_progress
-      - employee
-      title: PaginatedEmployeesCoursesProgressPayload
-      type: object
-    EmployeeOverviewSchema:
-      additionalProperties: false
-      properties:
-        id:
-          description: UUID of the employee
-          format: uuid
-          type: string
-        name:
-          description: Name of the employee
-          examples:
-          - John Doe
-          type:
-          - string
-          - 'null'
-        primary_email_address:
-          description: Email address
-          examples:
-          - john.doe@tryriot.com
-          format: email
-          type:
-          - string
-          - 'null'
-        username:
-          description: Username of the employee
-          type:
-          - string
-          - 'null'
-      required:
-      - primary_email_address
-      - username
-      - name
-      - id
-      title: EmployeeOverviewSchema
-      type: object
-    CourseProgressSchema:
-      additionalProperties: false
-      properties:
-        course:
-          $ref: '#/components/schemas/CourseOverviewSchema'
-        quiz_score:
-          description: Score obtained on the in-course quiz, formatted as `"correct/total"`. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment. `null` if not completed yet or no quiz.
-          examples:
-          - 4/5
-          type:
-          - string
-          - 'null'
-        status:
-          anyOf:
-          - type: 'null'
-          - $ref: '#/components/schemas/EmployeeCourseStatusSchema'
-          description: The current status of the employee for this course. For program courses, this reflects the current program year; for manually assigned courses, this reflects the latest assignment.
-        years:
-          description: The history of employee's course statuses until current program year. Empty for manually assigned courses, which are not tied to a program year.
-          items:
-            $ref: '#/components/schemas/EmployeeCourseStatusPerYearSchema'
-          type: array
-      required:
-      - years
-      - quiz_score
-      - status
-      - course
-      title: CourseProgressSchema
-      type: object
-    ForbiddenErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: forbidden
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Forbidden
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: ForbiddenErrorResponse
-      type: object
-  responses:
-    UnprocessableContentErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
-      description: Unprocessable content
-    UnauthorizedErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorResponse'
-      description: Missing API key or the key is invalid
-    RateLimitExceededErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
-      description: Rate limit is exceeded
-    ForbiddenErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorResponse'
-      description: Requested resource cannot be accessed
+    CourseDeliverySettingSchema:
+      enum:
+      - a_week_after_event
+      - directly_after_event
+      - first_day
+      - first_month
+      - none
+      - sent_after_the_first_year
+      - yearly
+      - yearly_at_end_of_program
+      title: CourseDeliverySettingSchema
+      type: string
   securitySchemes:
     apiKeyAuth:
       in: header

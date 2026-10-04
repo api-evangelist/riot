@@ -213,6 +213,31 @@ paths:
       - Groups
       x-riot-team-ownership: platform
 components:
+  responses:
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
+    UnprocessableContentErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
+      description: Unprocessable content
   schemas:
     RateLimitExceededErrorResponse:
       additionalProperties: false
@@ -274,35 +299,33 @@ components:
       - errors
       title: UnauthorizedErrorResponse
       type: object
-    UnprocessableContentErrorResponse:
+    PaginatedGroupEmployeePayload:
       additionalProperties: false
       properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                type: string
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                type: string
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        name:
+          description: Full name of the employee
+          type: string
+        primary_email_address:
+          description: Primary email address of the employee
+          format: email
+          type: string
+        username:
+          description: Username of the employee
+          examples:
+          - john.doe
+          type:
+          - string
+          - 'null'
       required:
-      - errors
-      title: UnprocessableContentErrorResponse
+      - username
+      - primary_email_address
+      - name
+      - id
+      title: PaginatedGroupEmployeePayload
       type: object
     ForbiddenErrorResponse:
       additionalProperties: false
@@ -334,34 +357,6 @@ components:
       - errors
       title: ForbiddenErrorResponse
       type: object
-    PaginatedGroupEmployeePayload:
-      additionalProperties: false
-      properties:
-        id:
-          description: UUID of the employee
-          format: uuid
-          type: string
-        name:
-          description: Full name of the employee
-          type: string
-        primary_email_address:
-          description: Primary email address of the employee
-          format: email
-          type: string
-        username:
-          description: Username of the employee
-          examples:
-          - john.doe
-          type:
-          - string
-          - 'null'
-      required:
-      - username
-      - primary_email_address
-      - name
-      - id
-      title: PaginatedGroupEmployeePayload
-      type: object
     PaginatedGroupPayload:
       additionalProperties: false
       properties:
@@ -389,31 +384,36 @@ components:
       - id
       title: PaginatedGroupPayload
       type: object
-  responses:
     UnprocessableContentErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
-      description: Unprocessable content
-    ForbiddenErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorResponse'
-      description: Requested resource cannot be accessed
-    UnauthorizedErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorResponse'
-      description: Missing API key or the key is invalid
-    RateLimitExceededErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
-      description: Rate limit is exceeded
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                type: string
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnprocessableContentErrorResponse
+      type: object
   securitySchemes:
     apiKeyAuth:
       in: header

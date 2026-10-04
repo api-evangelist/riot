@@ -298,6 +298,13 @@ paths:
       x-riot-team-ownership: simulation
 components:
   schemas:
+    BreachStatusSchema:
+      description: The breach is considered resolved when all impacted employees have acknowledged the breach
+      enum:
+      - active
+      - resolved
+      title: BreachStatusSchema
+      type: string
     RateLimitExceededErrorResponse:
       additionalProperties: false
       properties:
@@ -358,13 +365,6 @@ components:
       - errors
       title: UnauthorizedErrorResponse
       type: object
-    BreachCriticalitySchema:
-      enum:
-      - high
-      - low
-      - medium
-      title: BreachCriticalitySchema
-      type: string
     PaginatedBreachCompromisedEmployeePayload:
       additionalProperties: false
       properties:
@@ -415,109 +415,6 @@ components:
       - compromised_at
       - email
       title: BreachedAccountPayload
-      type: object
-    BreachNotFoundErrorResponse:
-      additionalProperties: false
-      properties:
-        error:
-          const: Breach not found
-      required:
-      - error
-      title: BreachNotFoundErrorResponse
-      type: object
-    UnprocessableContentErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                type: string
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                type: string
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: UnprocessableContentErrorResponse
-      type: object
-    ForbiddenErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: forbidden
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Forbidden
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: ForbiddenErrorResponse
-      type: object
-    EmployeeOverviewSchema:
-      additionalProperties: false
-      properties:
-        id:
-          description: UUID of the employee
-          format: uuid
-          type: string
-        name:
-          description: Name of the employee
-          examples:
-          - John Doe
-          type:
-          - string
-          - 'null'
-        primary_email_address:
-          description: Email address
-          examples:
-          - john.doe@tryriot.com
-          format: email
-          type:
-          - string
-          - 'null'
-        username:
-          description: Username of the employee
-          type:
-          - string
-          - 'null'
-      required:
-      - primary_email_address
-      - username
-      - name
-      - id
-      title: EmployeeOverviewSchema
       type: object
     BreachesStatisticsPayload:
       additionalProperties: false
@@ -594,32 +491,135 @@ components:
       - id
       title: PaginatedBreachPayload
       type: object
-    BreachStatusSchema:
-      description: The breach is considered resolved when all impacted employees have acknowledged the breach
+    ForbiddenErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: forbidden
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Forbidden
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: ForbiddenErrorResponse
+      type: object
+    UnprocessableContentErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                type: string
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnprocessableContentErrorResponse
+      type: object
+    BreachNotFoundErrorResponse:
+      additionalProperties: false
+      properties:
+        error:
+          const: Breach not found
+      required:
+      - error
+      title: BreachNotFoundErrorResponse
+      type: object
+    EmployeeOverviewSchema:
+      additionalProperties: false
+      properties:
+        id:
+          description: UUID of the employee
+          format: uuid
+          type: string
+        name:
+          description: Name of the employee
+          examples:
+          - John Doe
+          type:
+          - string
+          - 'null'
+        primary_email_address:
+          description: Email address
+          examples:
+          - john.doe@tryriot.com
+          format: email
+          type:
+          - string
+          - 'null'
+        username:
+          description: Username of the employee
+          type:
+          - string
+          - 'null'
+      required:
+      - primary_email_address
+      - username
+      - name
+      - id
+      title: EmployeeOverviewSchema
+      type: object
+    BreachCriticalitySchema:
       enum:
-      - active
-      - resolved
-      title: BreachStatusSchema
+      - high
+      - low
+      - medium
+      title: BreachCriticalitySchema
       type: string
   responses:
-    UnprocessableContentErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
-      description: Unprocessable content
-    ForbiddenErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorResponse'
-      description: Requested resource cannot be accessed
     UnauthorizedErrorResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UnauthorizedErrorResponse'
       description: Missing API key or the key is invalid
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
+    UnprocessableContentErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
+      description: Unprocessable content
     RateLimitExceededErrorResponse:
       content:
         application/json:

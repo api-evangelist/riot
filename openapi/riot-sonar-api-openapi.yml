@@ -62,6 +62,44 @@ webhooks:
       - Sonar
 components:
   schemas:
+    RevokeDriveItemPermissionRequestCreatedEvent:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/RevokeDriveItemPermissionRequestCreatedData'
+        timestamp:
+          description: ISO 8601 timestamp at which the event was created in Riot. This is the event time, not the delivery attempt time. The delivery time is sent in the `webhook-timestamp` header.
+          format: date-time
+          type: string
+        type:
+          const: revoke_drive_item_permission_request.created
+      required:
+      - data
+      - timestamp
+      - type
+      title: RevokeDriveItemPermissionRequestCreatedEvent
+      type: object
+    Provider:
+      description: Cloud provider the permission belongs to.
+      enum:
+      - google
+      - microsoft
+      examples:
+      - google
+      title: Provider
+      type: string
+    RevokeDriveItemPermissionRequestCreatedData:
+      additionalProperties: false
+      properties:
+        provider:
+          $ref: '#/components/schemas/Provider'
+        provider_data:
+          $ref: '#/components/schemas/RevokeDriveItemPermissionRequestCreatedProviderData'
+      required:
+      - provider_data
+      - provider
+      title: RevokeDriveItemPermissionRequestCreatedData
+      type: object
     RevokeDriveItemPermissionRequestCreatedProviderData:
       additionalProperties: false
       properties:
@@ -90,44 +128,6 @@ components:
       - permission_id
       - owner_id
       title: RevokeDriveItemPermissionRequestCreatedProviderData
-      type: object
-    Provider:
-      description: Cloud provider the permission belongs to.
-      enum:
-      - google
-      - microsoft
-      examples:
-      - google
-      title: Provider
-      type: string
-    RevokeDriveItemPermissionRequestCreatedData:
-      additionalProperties: false
-      properties:
-        provider:
-          $ref: '#/components/schemas/Provider'
-        provider_data:
-          $ref: '#/components/schemas/RevokeDriveItemPermissionRequestCreatedProviderData'
-      required:
-      - provider_data
-      - provider
-      title: RevokeDriveItemPermissionRequestCreatedData
-      type: object
-    RevokeDriveItemPermissionRequestCreatedEvent:
-      additionalProperties: false
-      properties:
-        data:
-          $ref: '#/components/schemas/RevokeDriveItemPermissionRequestCreatedData'
-        timestamp:
-          description: ISO 8601 timestamp at which the event was created in Riot. This is the event time, not the delivery attempt time. The delivery time is sent in the `webhook-timestamp` header.
-          format: date-time
-          type: string
-        type:
-          const: revoke_drive_item_permission_request.created
-      required:
-      - data
-      - timestamp
-      - type
-      title: RevokeDriveItemPermissionRequestCreatedEvent
       type: object
   securitySchemes:
     apiKeyAuth:

@@ -288,23 +288,316 @@ webhooks:
       - Inbox
 components:
   schemas:
-    InboxEmailAnalysisClassifiedObservable:
+    EmailsReportedStatsSchema:
       additionalProperties: false
       properties:
-        type:
-          $ref: '#/components/schemas/ObservableType'
-        type_id:
-          $ref: '#/components/schemas/ObservableTypeId'
-        value:
-          description: Observable value (e.g. an email address or filename).
+        reported_emails_count:
+          description: Number of emails reported by the employee
+          type: integer
+        reported_fraudulent_emails_count:
+          description: Number of emails reported by the employee classified as fraudulent
+          type: integer
+        reported_safe_emails_count:
+          description: Number of emails reported by the employee classified as safe
+          type: integer
+        reported_spam_emails_count:
+          description: Number of emails reported by the employee classified as spam
+          type: integer
+      required:
+      - reported_spam_emails_count
+      - reported_safe_emails_count
+      - reported_fraudulent_emails_count
+      - reported_emails_count
+      title: EmailsReportedStatsSchema
+      type: object
+    InboxEmailAnalysisClassifiedUnmapped:
+      additionalProperties: false
+      properties:
+        riot:
+          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedUnmappedRiot'
+      required:
+      - riot
+      title: InboxEmailAnalysisClassifiedUnmapped
+      type: object
+    ExplanationSource:
+      description: Signal source identifier.
+      enum:
+      - bec
+      - bucket_classification
+      - low_confidence
+      - skip_reason
+      - static_tag
+      examples:
+      - static_tag
+      title: ExplanationSource
+      type: string
+    ObservableType:
+      description: OCSF observable type name.
+      enum:
+      - Email Address
+      - File
+      examples:
+      - Email Address
+      title: ObservableType
+      type: string
+    PaginatedEmployeeWithReportsPayload:
+      additionalProperties: false
+      properties:
+        emails_reported_stats:
+          $ref: '#/components/schemas/EmailsReportedStatsSchema'
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
+      required:
+      - emails_reported_stats
+      - employee
+      title: PaginatedEmployeeWithReportsPayload
+      type: object
+    ReportsStatistics:
+      additionalProperties: false
+      properties:
+        employee_reporting_rate:
+          description: Rate of employee participation in reporting as a percentage (0.0 to 100.0)
           examples:
-          - no-reply@suspicious.example
+          - 17.0
+          type: number
+        reporters_count:
+          description: Number of unique employees who submitted at least one report
+          type: integer
+        total_count:
+          description: Total number of reports submitted by employees
+          type: integer
+      required:
+      - employee_reporting_rate
+      - reporters_count
+      - total_count
+      title: ReportsStatistics
+      type: object
+    InboxEmailAnalysisClassifiedEvent:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedData'
+        timestamp:
+          description: ISO 8601 timestamp at which the event was created in Riot. This is the event time, not the delivery attempt time. The delivery time is sent in the `webhook-timestamp` header.
+          format: date-time
+          type: string
+        type:
+          const: inbox_email_analysis.classified
+      required:
+      - data
+      - timestamp
+      - type
+      title: InboxEmailAnalysisClassifiedEvent
+      type: object
+    ReportAttackFromMessageIdResponse:
+      additionalProperties: false
+      properties:
+        already_reported:
+          description: '`true` if the matched attack was already marked as reported prior to this call. `false` if this call newly marked it as reported, or if the attack was already tricked, or if `matched` is `false`.'
+          type: boolean
+        already_tricked:
+          description: '`true` if the matched attack was already marked as tricked prior to this call (in which case it is not marked as reported by this call). `false` otherwise.'
+          type: boolean
+        matched:
+          description: '`true` if the Message-ID matched a Riot phishing simulation belonging to the caller''s organization. `false` otherwise.'
+          type: boolean
+      required:
+      - already_tricked
+      - already_reported
+      - matched
+      title: ReportAttackFromMessageIdResponse
+      type: object
+    InboxEmailAnalysisClassifiedFindingInfo:
+      additionalProperties: false
+      properties:
+        analytic:
+          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedAnalytic'
+        src_url:
+          description: Link to the inbox ticket in the Riot Hub.
+          examples:
+          - https://hub.tryriot.com/inbox/01HW...
+          type: string
+        types:
+          items:
+            $ref: '#/components/schemas/DetectionType'
+          type: array
+        uid:
+          description: Unique identifier of the analysis.
+          format: uuid
           type: string
       required:
-      - type_id
-      - type
-      - value
-      title: InboxEmailAnalysisClassifiedObservable
+      - src_url
+      - types
+      - analytic
+      - uid
+      title: InboxEmailAnalysisClassifiedFindingInfo
+      type: object
+    ForbiddenErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: forbidden
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Forbidden
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: ForbiddenErrorResponse
+      type: object
+    InboxEmailAnalysisClassifiedActor:
+      additionalProperties: false
+      properties:
+        user:
+          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedUser'
+      required:
+      - user
+      title: InboxEmailAnalysisClassifiedActor
+      type: object
+    InboxEmailAnalysisClassifiedMetadata:
+      additionalProperties: false
+      properties:
+        log_name:
+          const: inbox_email_analysis.classified
+        product:
+          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedProduct'
+        uid:
+          description: Unique identifier of the analysis.
+          format: uuid
+          type: string
+        version:
+          description: OCSF schema version this payload conforms to.
+          examples:
+          - 1.4.0
+          type: string
+      required:
+      - uid
+      - log_name
+      - product
+      - version
+      title: InboxEmailAnalysisClassifiedMetadata
+      type: object
+    GetInboxStatisticsResponse:
+      additionalProperties: false
+      properties:
+        reports:
+          $ref: '#/components/schemas/ReportsStatistics'
+        tickets:
+          $ref: '#/components/schemas/TicketsStatistics'
+      required:
+      - reports
+      - tickets
+      title: GetInboxStatisticsResponse
+      type: object
+    SeverityId:
+      description: 'OCSF severity id derived from the verdict: `1` (safe), `2` (spam), `4` (fraudulent).'
+      enum:
+      - 1
+      - 2
+      - 4
+      examples:
+      - 4
+      title: SeverityId
+      type: integer
+    SeverityName:
+      description: OCSF severity name.
+      enum:
+      - High
+      - Informational
+      - Low
+      examples:
+      - High
+      title: SeverityName
+      type: string
+    InboxEmailAnalysisClassifiedUnmappedRiot:
+      additionalProperties: false
+      properties:
+        analysis_status:
+          $ref: '#/components/schemas/AnalysisStatus'
+        classification_bucket:
+          description: Name of the bucket that matched, when classification went through bucketing.
+          examples:
+          - credential_harvesting
+          type: string
+        explanations:
+          description: Signals that contributed to the verdict. Scenarios are excluded.
+          items:
+            $ref: '#/components/schemas/InboxEmailAnalysisClassifiedExplanation'
+          type: array
+        report_source:
+          $ref: '#/components/schemas/ReportSource'
+        reported_at:
+          description: ISO 8601 timestamp at which the email was reported.
+          format: date-time
+          type: string
+        workspace_id:
+          description: Workspace the analysis belongs to.
+          format: uuid
+          type: string
+      required:
+      - reported_at
+      - report_source
+      - analysis_status
+      - workspace_id
+      title: InboxEmailAnalysisClassifiedUnmappedRiot
+      type: object
+    InboxEmailAnalysisClassifiedExplanation:
+      additionalProperties: true
+      properties:
+        description:
+          description: Human-readable description of the signal.
+          examples:
+          - Sender domain was registered less than 7 days ago.
+          type: string
+        evidence_key:
+          description: Stable identifier of the evidence backing this signal.
+          examples:
+          - sender_domain_age
+          type:
+          - string
+          - 'null'
+        evidence_label:
+          description: Human-readable label for the evidence.
+          examples:
+          - Sender domain age
+          type:
+          - string
+          - 'null'
+        evidences:
+          description: Free-form evidence objects backing the signal.
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+        sentiment:
+          $ref: '#/components/schemas/ExplanationSentiment'
+        source:
+          $ref: '#/components/schemas/ExplanationSource'
+      required:
+      - evidences
+      - evidence_label
+      - evidence_key
+      - description
+      - sentiment
+      - source
+      title: InboxEmailAnalysisClassifiedExplanation
       type: object
     UnprocessableContentErrorResponse:
       additionalProperties: false
@@ -336,31 +629,181 @@ components:
       - errors
       title: UnprocessableContentErrorResponse
       type: object
-    InboxEmailAnalysisClassifiedFindingInfo:
+    InboxEmailAnalysisClassifiedObservable:
       additionalProperties: false
       properties:
-        analytic:
-          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedAnalytic'
-        src_url:
-          description: Link to the inbox ticket in the Riot Hub.
+        type:
+          $ref: '#/components/schemas/ObservableType'
+        type_id:
+          $ref: '#/components/schemas/ObservableTypeId'
+        value:
+          description: Observable value (e.g. an email address or filename).
           examples:
-          - https://hub.tryriot.com/inbox/01HW...
-          type: string
-        types:
-          items:
-            $ref: '#/components/schemas/DetectionType'
-          type: array
-        uid:
-          description: Unique identifier of the analysis.
-          format: uuid
+          - no-reply@suspicious.example
           type: string
       required:
-      - src_url
-      - types
-      - analytic
-      - uid
-      title: InboxEmailAnalysisClassifiedFindingInfo
+      - type_id
+      - type
+      - value
+      title: InboxEmailAnalysisClassifiedObservable
       type: object
+    ExplanationSentiment:
+      description: Sentiment carried by the signal.
+      enum:
+      - info
+      - safe
+      - threat
+      - warning
+      examples:
+      - threat
+      title: ExplanationSentiment
+      type: string
+    UnauthorizedErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: unauthorized
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Unauthorized
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnauthorizedErrorResponse
+      type: object
+    InboxEmailAnalysisClassifiedAnalytic:
+      additionalProperties: false
+      properties:
+        type:
+          description: OCSF analytic type. Always `Rule`.
+          examples:
+          - Rule
+          type: string
+        type_id:
+          description: OCSF analytic type id. Always `1`.
+          type: integer
+      required:
+      - type_id
+      - type
+      title: InboxEmailAnalysisClassifiedAnalytic
+      type: object
+    DetectionType:
+      description: Detection type derived from the verdict.
+      enum:
+      - Phishing
+      - Safe
+      - Spam
+      examples:
+      - Phishing
+      title: DetectionType
+      type: string
+    InboxEmailAnalysisClassifiedProductFeature:
+      additionalProperties: false
+      properties:
+        name:
+          description: OCSF product feature name.
+          examples:
+          - Phishing Reports
+          type: string
+      required:
+      - name
+      title: InboxEmailAnalysisClassifiedProductFeature
+      type: object
+    ObservableTypeId:
+      description: OCSF observable type id. `5` for `Email Address`, `7` for `File`.
+      enum:
+      - 5
+      - 7
+      examples:
+      - 5
+      title: ObservableTypeId
+      type: integer
+    ReportSource:
+      description: How the email was reported.
+      enum:
+      - access_list
+      - alert
+      - direct
+      - forwarded
+      - gmail
+      - native_outlook
+      - outlook
+      - public_api
+      - sender_impersonation
+      - slash_flagged
+      examples:
+      - outlook
+      title: ReportSource
+      type: string
+    InboxEmailAnalysisClassifiedEmail:
+      additionalProperties: false
+      properties:
+        from:
+          description: Sender address as it appeared in the reported email.
+          examples:
+          - no-reply@suspicious.example
+          type: string
+        message_uid:
+          description: RFC 5322 Message-ID of the reported email.
+          examples:
+          - <abc@mail.example>
+          type: string
+        subject:
+          description: Subject of the reported email.
+          examples:
+          - Action required
+          type: string
+      required: []
+      title: InboxEmailAnalysisClassifiedEmail
+      type: object
+    InboxEmailAnalysisClassifiedProduct:
+      additionalProperties: false
+      properties:
+        feature:
+          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedProductFeature'
+        name:
+          description: Product name. Always `Riot`.
+          examples:
+          - Riot
+          type: string
+        vendor_name:
+          description: Vendor name. Always `Riot`.
+          examples:
+          - Riot
+          type: string
+      required:
+      - feature
+      - vendor_name
+      - name
+      title: InboxEmailAnalysisClassifiedProduct
+      type: object
+    AnalysisStatus:
+      description: Final verdict assigned to the email.
+      enum:
+      - fraudulent
+      - safe
+      - spam
+      examples:
+      - fraudulent
+      title: AnalysisStatus
+      type: string
     InboxEmailAnalysisClassifiedData:
       additionalProperties: false
       properties:
@@ -452,103 +895,41 @@ components:
       - class_uid
       title: InboxEmailAnalysisClassifiedData
       type: object
-    TicketsStatistics:
+    EmployeeOverviewSchema:
       additionalProperties: false
       properties:
-        fraudulent_distribution:
-          $ref: '#/components/schemas/FraudulentTicketsStatistics'
-        fraudulent_rate:
-          description: Rate of fraudulent tickets compared to total tickets count as a percentage (0.0 to 100.0)
-          examples:
-          - 10.0
-          type: number
-        safe_rate:
-          description: Rate of safe tickets compared to total tickets count as a percentage (0.0 to 100.0)
-          examples:
-          - 75.0
-          type: number
-        spam_rate:
-          description: Rate of spam tickets compared to total tickets count as a percentage (0.0 to 100.0)
-          examples:
-          - 10.0
-          type: number
-        total_count:
-          description: Total number of tickets in the system
-          type: integer
-        unreviewed_count:
-          description: Number of tickets that have not been reviewed yet
-          type: integer
-      required:
-      - fraudulent_rate
-      - spam_rate
-      - safe_rate
-      - unreviewed_count
-      - total_count
-      title: TicketsStatistics
-      type: object
-    InboxEmailAnalysisClassifiedExplanation:
-      additionalProperties: true
-      properties:
-        description:
-          description: Human-readable description of the signal.
-          examples:
-          - Sender domain was registered less than 7 days ago.
+        id:
+          description: UUID of the employee
+          format: uuid
           type: string
-        evidence_key:
-          description: Stable identifier of the evidence backing this signal.
+        name:
+          description: Name of the employee
           examples:
-          - sender_domain_age
+          - John Doe
           type:
           - string
           - 'null'
-        evidence_label:
-          description: Human-readable label for the evidence.
+        primary_email_address:
+          description: Email address
           examples:
-          - Sender domain age
+          - john.doe@tryriot.com
+          format: email
           type:
           - string
           - 'null'
-        evidences:
-          description: Free-form evidence objects backing the signal.
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-        sentiment:
-          $ref: '#/components/schemas/ExplanationSentiment'
-        source:
-          $ref: '#/components/schemas/ExplanationSource'
+        username:
+          description: Username of the employee
+          type:
+          - string
+          - 'null'
       required:
-      - evidences
-      - evidence_label
-      - evidence_key
-      - description
-      - sentiment
-      - source
-      title: InboxEmailAnalysisClassifiedExplanation
+      - primary_email_address
+      - username
+      - name
+      - id
+      title: EmployeeOverviewSchema
       type: object
-    ObservableType:
-      description: OCSF observable type name.
-      enum:
-      - Email Address
-      - File
-      examples:
-      - Email Address
-      title: ObservableType
-      type: string
-    GetInboxStatisticsResponse:
-      additionalProperties: false
-      properties:
-        reports:
-          $ref: '#/components/schemas/ReportsStatistics'
-        tickets:
-          $ref: '#/components/schemas/TicketsStatistics'
-      required:
-      - reports
-      - tickets
-      title: GetInboxStatisticsResponse
-      type: object
-    UnauthorizedErrorResponse:
+    RateLimitExceededErrorResponse:
       additionalProperties: false
       properties:
         errors:
@@ -556,7 +937,7 @@ components:
             additionalProperties: false
             properties:
               code:
-                const: unauthorized
+                const: too_many_requests
               detail:
                 type: string
               source:
@@ -567,7 +948,7 @@ components:
                 - pointer
                 type: object
               title:
-                const: Unauthorized
+                const: Too Many Requests
             required:
             - title
             - source
@@ -576,78 +957,19 @@ components:
           type: array
       required:
       - errors
-      title: UnauthorizedErrorResponse
+      title: RateLimitExceededErrorResponse
       type: object
-    ReportAttackFromMessageIdResponse:
+    ReportAttackFromMessageIdRequest:
       additionalProperties: false
       properties:
-        already_reported:
-          description: '`true` if the matched attack was already marked as reported prior to this call. `false` if this call newly marked it as reported, or if the attack was already tricked, or if `matched` is `false`.'
-          type: boolean
-        already_tricked:
-          description: '`true` if the matched attack was already marked as tricked prior to this call (in which case it is not marked as reported by this call). `false` otherwise.'
-          type: boolean
-        matched:
-          description: '`true` if the Message-ID matched a Riot phishing simulation belonging to the caller''s organization. `false` otherwise.'
-          type: boolean
-      required:
-      - already_tricked
-      - already_reported
-      - matched
-      title: ReportAttackFromMessageIdResponse
-      type: object
-    InboxEmailAnalysisClassifiedProductFeature:
-      additionalProperties: false
-      properties:
-        name:
-          description: OCSF product feature name.
+        message_id:
+          description: The RFC 5322 Message-ID header of the reported email.
           examples:
-          - Phishing Reports
+          - <8e3b1a2c-0f1d-4e9b-9c1e-1234567890ab@noreply.link>
           type: string
       required:
-      - name
-      title: InboxEmailAnalysisClassifiedProductFeature
-      type: object
-    InboxEmailAnalysisClassifiedUnmappedRiot:
-      additionalProperties: false
-      properties:
-        analysis_status:
-          $ref: '#/components/schemas/AnalysisStatus'
-        classification_bucket:
-          description: Name of the bucket that matched, when classification went through bucketing.
-          examples:
-          - credential_harvesting
-          type: string
-        explanations:
-          description: Signals that contributed to the verdict. Scenarios are excluded.
-          items:
-            $ref: '#/components/schemas/InboxEmailAnalysisClassifiedExplanation'
-          type: array
-        report_source:
-          $ref: '#/components/schemas/ReportSource'
-        reported_at:
-          description: ISO 8601 timestamp at which the email was reported.
-          format: date-time
-          type: string
-        workspace_id:
-          description: Workspace the analysis belongs to.
-          format: uuid
-          type: string
-      required:
-      - reported_at
-      - report_source
-      - analysis_status
-      - workspace_id
-      title: InboxEmailAnalysisClassifiedUnmappedRiot
-      type: object
-    InboxEmailAnalysisClassifiedActor:
-      additionalProperties: false
-      properties:
-        user:
-          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedUser'
-      required:
-      - user
-      title: InboxEmailAnalysisClassifiedActor
+      - message_id
+      title: ReportAttackFromMessageIdRequest
       type: object
     FraudulentTicketsStatistics:
       additionalProperties: false
@@ -685,18 +1007,6 @@ components:
       - service_imitation_rate
       title: FraudulentTicketsStatistics
       type: object
-    PaginatedEmployeeWithReportsPayload:
-      additionalProperties: false
-      properties:
-        emails_reported_stats:
-          $ref: '#/components/schemas/EmailsReportedStatsSchema'
-        employee:
-          $ref: '#/components/schemas/EmployeeOverviewSchema'
-      required:
-      - emails_reported_stats
-      - employee
-      title: PaginatedEmployeeWithReportsPayload
-      type: object
     InboxEmailAnalysisClassifiedEvidence:
       additionalProperties: false
       properties:
@@ -706,275 +1016,6 @@ components:
       - email
       title: InboxEmailAnalysisClassifiedEvidence
       type: object
-    InboxEmailAnalysisClassifiedUnmapped:
-      additionalProperties: false
-      properties:
-        riot:
-          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedUnmappedRiot'
-      required:
-      - riot
-      title: InboxEmailAnalysisClassifiedUnmapped
-      type: object
-    InboxEmailAnalysisClassifiedProduct:
-      additionalProperties: false
-      properties:
-        feature:
-          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedProductFeature'
-        name:
-          description: Product name. Always `Riot`.
-          examples:
-          - Riot
-          type: string
-        vendor_name:
-          description: Vendor name. Always `Riot`.
-          examples:
-          - Riot
-          type: string
-      required:
-      - feature
-      - vendor_name
-      - name
-      title: InboxEmailAnalysisClassifiedProduct
-      type: object
-    RateLimitExceededErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: too_many_requests
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Too Many Requests
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: RateLimitExceededErrorResponse
-      type: object
-    SeverityName:
-      description: OCSF severity name.
-      enum:
-      - High
-      - Informational
-      - Low
-      examples:
-      - High
-      title: SeverityName
-      type: string
-    SeverityId:
-      description: 'OCSF severity id derived from the verdict: `1` (safe), `2` (spam), `4` (fraudulent).'
-      enum:
-      - 1
-      - 2
-      - 4
-      examples:
-      - 4
-      title: SeverityId
-      type: integer
-    ExplanationSentiment:
-      description: Sentiment carried by the signal.
-      enum:
-      - info
-      - safe
-      - threat
-      - warning
-      examples:
-      - threat
-      title: ExplanationSentiment
-      type: string
-    ReportAttackFromMessageIdRequest:
-      additionalProperties: false
-      properties:
-        message_id:
-          description: The RFC 5322 Message-ID header of the reported email.
-          examples:
-          - <8e3b1a2c-0f1d-4e9b-9c1e-1234567890ab@noreply.link>
-          type: string
-      required:
-      - message_id
-      title: ReportAttackFromMessageIdRequest
-      type: object
-    EmailsReportedStatsSchema:
-      additionalProperties: false
-      properties:
-        reported_emails_count:
-          description: Number of emails reported by the employee
-          type: integer
-        reported_fraudulent_emails_count:
-          description: Number of emails reported by the employee classified as fraudulent
-          type: integer
-        reported_safe_emails_count:
-          description: Number of emails reported by the employee classified as safe
-          type: integer
-        reported_spam_emails_count:
-          description: Number of emails reported by the employee classified as spam
-          type: integer
-      required:
-      - reported_spam_emails_count
-      - reported_safe_emails_count
-      - reported_fraudulent_emails_count
-      - reported_emails_count
-      title: EmailsReportedStatsSchema
-      type: object
-    ReportSource:
-      description: How the email was reported.
-      enum:
-      - access_list
-      - alert
-      - direct
-      - forwarded
-      - gmail
-      - native_outlook
-      - outlook
-      - public_api
-      - sender_impersonation
-      - slash_flagged
-      examples:
-      - outlook
-      title: ReportSource
-      type: string
-    DetectionType:
-      description: Detection type derived from the verdict.
-      enum:
-      - Phishing
-      - Safe
-      - Spam
-      examples:
-      - Phishing
-      title: DetectionType
-      type: string
-    InboxEmailAnalysisClassifiedUser:
-      additionalProperties: false
-      properties:
-        email_addr:
-          description: Primary email address of the reporter, when known.
-          examples:
-          - jane.doe@acme.example
-          type: string
-        name:
-          description: Display name of the reporter.
-          examples:
-          - Jane Doe
-          type: string
-      required:
-      - name
-      title: InboxEmailAnalysisClassifiedUser
-      type: object
-    InboxEmailAnalysisClassifiedMetadata:
-      additionalProperties: false
-      properties:
-        log_name:
-          const: inbox_email_analysis.classified
-        product:
-          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedProduct'
-        uid:
-          description: Unique identifier of the analysis.
-          format: uuid
-          type: string
-        version:
-          description: OCSF schema version this payload conforms to.
-          examples:
-          - 1.4.0
-          type: string
-      required:
-      - uid
-      - log_name
-      - product
-      - version
-      title: InboxEmailAnalysisClassifiedMetadata
-      type: object
-    ReportsStatistics:
-      additionalProperties: false
-      properties:
-        employee_reporting_rate:
-          description: Rate of employee participation in reporting as a percentage (0.0 to 100.0)
-          examples:
-          - 17.0
-          type: number
-        reporters_count:
-          description: Number of unique employees who submitted at least one report
-          type: integer
-        total_count:
-          description: Total number of reports submitted by employees
-          type: integer
-      required:
-      - employee_reporting_rate
-      - reporters_count
-      - total_count
-      title: ReportsStatistics
-      type: object
-    InboxEmailAnalysisClassifiedEvent:
-      additionalProperties: false
-      properties:
-        data:
-          $ref: '#/components/schemas/InboxEmailAnalysisClassifiedData'
-        timestamp:
-          description: ISO 8601 timestamp at which the event was created in Riot. This is the event time, not the delivery attempt time. The delivery time is sent in the `webhook-timestamp` header.
-          format: date-time
-          type: string
-        type:
-          const: inbox_email_analysis.classified
-      required:
-      - data
-      - timestamp
-      - type
-      title: InboxEmailAnalysisClassifiedEvent
-      type: object
-    InboxEmailAnalysisClassifiedEmail:
-      additionalProperties: false
-      properties:
-        from:
-          description: Sender address as it appeared in the reported email.
-          examples:
-          - no-reply@suspicious.example
-          type: string
-        message_uid:
-          description: RFC 5322 Message-ID of the reported email.
-          examples:
-          - <abc@mail.example>
-          type: string
-        subject:
-          description: Subject of the reported email.
-          examples:
-          - Action required
-          type: string
-      required: []
-      title: InboxEmailAnalysisClassifiedEmail
-      type: object
-    ObservableTypeId:
-      description: OCSF observable type id. `5` for `Email Address`, `7` for `File`.
-      enum:
-      - 5
-      - 7
-      examples:
-      - 5
-      title: ObservableTypeId
-      type: integer
-    AnalysisStatus:
-      description: Final verdict assigned to the email.
-      enum:
-      - fraudulent
-      - safe
-      - spam
-      examples:
-      - fraudulent
-      title: AnalysisStatus
-      type: string
     WorkspaceNotFoundErrorResponse:
       additionalProperties: false
       properties:
@@ -1005,123 +1046,82 @@ components:
       - errors
       title: WorkspaceNotFoundErrorResponse
       type: object
-    EmployeeOverviewSchema:
+    InboxEmailAnalysisClassifiedUser:
       additionalProperties: false
       properties:
-        id:
-          description: UUID of the employee
-          format: uuid
+        email_addr:
+          description: Primary email address of the reporter, when known.
+          examples:
+          - jane.doe@acme.example
           type: string
         name:
-          description: Name of the employee
+          description: Display name of the reporter.
           examples:
-          - John Doe
-          type:
-          - string
-          - 'null'
-        primary_email_address:
-          description: Email address
-          examples:
-          - john.doe@tryriot.com
-          format: email
-          type:
-          - string
-          - 'null'
-        username:
-          description: Username of the employee
-          type:
-          - string
-          - 'null'
-      required:
-      - primary_email_address
-      - username
-      - name
-      - id
-      title: EmployeeOverviewSchema
-      type: object
-    ForbiddenErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: forbidden
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Forbidden
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: ForbiddenErrorResponse
-      type: object
-    ExplanationSource:
-      description: Signal source identifier.
-      enum:
-      - bec
-      - bucket_classification
-      - low_confidence
-      - skip_reason
-      - static_tag
-      examples:
-      - static_tag
-      title: ExplanationSource
-      type: string
-    InboxEmailAnalysisClassifiedAnalytic:
-      additionalProperties: false
-      properties:
-        type:
-          description: OCSF analytic type. Always `Rule`.
-          examples:
-          - Rule
+          - Jane Doe
           type: string
-        type_id:
-          description: OCSF analytic type id. Always `1`.
+      required:
+      - name
+      title: InboxEmailAnalysisClassifiedUser
+      type: object
+    TicketsStatistics:
+      additionalProperties: false
+      properties:
+        fraudulent_distribution:
+          $ref: '#/components/schemas/FraudulentTicketsStatistics'
+        fraudulent_rate:
+          description: Rate of fraudulent tickets compared to total tickets count as a percentage (0.0 to 100.0)
+          examples:
+          - 10.0
+          type: number
+        safe_rate:
+          description: Rate of safe tickets compared to total tickets count as a percentage (0.0 to 100.0)
+          examples:
+          - 75.0
+          type: number
+        spam_rate:
+          description: Rate of spam tickets compared to total tickets count as a percentage (0.0 to 100.0)
+          examples:
+          - 10.0
+          type: number
+        total_count:
+          description: Total number of tickets in the system
+          type: integer
+        unreviewed_count:
+          description: Number of tickets that have not been reviewed yet
           type: integer
       required:
-      - type_id
-      - type
-      title: InboxEmailAnalysisClassifiedAnalytic
+      - fraudulent_rate
+      - spam_rate
+      - safe_rate
+      - unreviewed_count
+      - total_count
+      title: TicketsStatistics
       type: object
   responses:
-    UnprocessableContentErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
-      description: Unprocessable content
-    UnauthorizedErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorResponse'
-      description: Missing API key or the key is invalid
-    RateLimitExceededErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
-      description: Rate limit is exceeded
     ForbiddenErrorResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ForbiddenErrorResponse'
       description: Requested resource cannot be accessed
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    UnprocessableContentErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
+      description: Unprocessable content
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
   securitySchemes:
     apiKeyAuth:
       in: header

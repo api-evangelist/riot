@@ -322,65 +322,29 @@ components:
       - errors
       title: UnauthorizedErrorResponse
       type: object
-    UnprocessableContentErrorResponse:
+    PaginatedEmployeeWithImpersonationPayload:
       additionalProperties: false
       properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                type: string
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                type: string
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
+        impersonation_stats:
+          $ref: '#/components/schemas/ImpersonationStatsSchema'
       required:
-      - errors
-      title: UnprocessableContentErrorResponse
+      - impersonation_stats
+      - employee
+      title: PaginatedEmployeeWithImpersonationPayload
       type: object
-    WorkspaceNotFoundErrorResponse:
+    PaginatedEmployeeWithAlertsPayload:
       additionalProperties: false
       properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: workspace_not_found
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Workspace not found
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
+        emails_alerts_stats:
+          $ref: '#/components/schemas/AlertedEmailsStatsSchema'
+        employee:
+          $ref: '#/components/schemas/EmployeeOverviewSchema'
       required:
-      - errors
-      title: WorkspaceNotFoundErrorResponse
+      - emails_alerts_stats
+      - employee
+      title: PaginatedEmployeeWithAlertsPayload
       type: object
     ForbiddenErrorResponse:
       additionalProperties: false
@@ -412,17 +376,83 @@ components:
       - errors
       title: ForbiddenErrorResponse
       type: object
-    PaginatedEmployeeWithAlertsPayload:
+    WorkspaceNotFoundErrorResponse:
       additionalProperties: false
       properties:
-        emails_alerts_stats:
-          $ref: '#/components/schemas/AlertedEmailsStatsSchema'
-        employee:
-          $ref: '#/components/schemas/EmployeeOverviewSchema'
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: workspace_not_found
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Workspace not found
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
       required:
-      - emails_alerts_stats
-      - employee
-      title: PaginatedEmployeeWithAlertsPayload
+      - errors
+      title: WorkspaceNotFoundErrorResponse
+      type: object
+    UnprocessableContentErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                type: string
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnprocessableContentErrorResponse
+      type: object
+    AlertedEmailsStatsSchema:
+      additionalProperties: false
+      properties:
+        marked_safe_alerts_count:
+          description: Number of alerted emails marked as safe by the employee
+          type: integer
+        received_alerts_count:
+          description: Number of alerted emails received by the employee
+          type: integer
+        reported_alerts_count:
+          description: Number of alerted emails reported by the employee
+          type: integer
+      required:
+      - marked_safe_alerts_count
+      - reported_alerts_count
+      - received_alerts_count
+      title: AlertedEmailsStatsSchema
       type: object
     EmployeeOverviewSchema:
       additionalProperties: false
@@ -458,18 +488,6 @@ components:
       - id
       title: EmployeeOverviewSchema
       type: object
-    PaginatedEmployeeWithImpersonationPayload:
-      additionalProperties: false
-      properties:
-        employee:
-          $ref: '#/components/schemas/EmployeeOverviewSchema'
-        impersonation_stats:
-          $ref: '#/components/schemas/ImpersonationStatsSchema'
-      required:
-      - impersonation_stats
-      - employee
-      title: PaginatedEmployeeWithImpersonationPayload
-      type: object
     ImpersonationStatsSchema:
       additionalProperties: false
       properties:
@@ -492,43 +510,25 @@ components:
       - attacks_impersonating_employee
       title: ImpersonationStatsSchema
       type: object
-    AlertedEmailsStatsSchema:
-      additionalProperties: false
-      properties:
-        marked_safe_alerts_count:
-          description: Number of alerted emails marked as safe by the employee
-          type: integer
-        received_alerts_count:
-          description: Number of alerted emails received by the employee
-          type: integer
-        reported_alerts_count:
-          description: Number of alerted emails reported by the employee
-          type: integer
-      required:
-      - marked_safe_alerts_count
-      - reported_alerts_count
-      - received_alerts_count
-      title: AlertedEmailsStatsSchema
-      type: object
   responses:
-    UnprocessableContentErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
-      description: Unprocessable content
-    ForbiddenErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenErrorResponse'
-      description: Requested resource cannot be accessed
     UnauthorizedErrorResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/UnauthorizedErrorResponse'
       description: Missing API key or the key is invalid
+    ForbiddenErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenErrorResponse'
+      description: Requested resource cannot be accessed
+    UnprocessableContentErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
+      description: Unprocessable content
     RateLimitExceededErrorResponse:
       content:
         application/json:

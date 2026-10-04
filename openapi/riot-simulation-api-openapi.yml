@@ -431,20 +431,6 @@ paths:
       x-riot-team-ownership: simulation
 components:
   schemas:
-    AttackTemplateSchema:
-      additionalProperties: false
-      properties:
-        name:
-          description: 'This field could be a default template''s name from the library, like ''deleted-files'', or a custom name if a custom template has been used.
-
-            '
-          examples:
-          - security-issue-detected
-          type: string
-      required:
-      - name
-      title: AttackTemplateSchema
-      type: object
     AttackEventSchema:
       additionalProperties: false
       properties:
@@ -468,35 +454,15 @@ components:
       - id
       title: AttackEventSchema
       type: object
-    UnprocessableContentErrorResponse:
+    WorkspaceOverviewSchema:
       additionalProperties: false
       properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                type: string
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                type: string
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
+        id:
+          format: uuid
+          type: string
       required:
-      - errors
-      title: UnprocessableContentErrorResponse
+      - id
+      title: WorkspaceOverviewSchema
       type: object
     CampaignCycleSchema:
       additionalProperties: false
@@ -528,6 +494,52 @@ components:
       - name
       - id
       title: CampaignCycleSchema
+      type: object
+    ForbiddenErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: forbidden
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Forbidden
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: ForbiddenErrorResponse
+      type: object
+    AttackEventDataSchema:
+      additionalProperties: false
+      properties:
+        password_length:
+          type:
+          - integer
+          - 'null'
+        score:
+          type:
+          - integer
+          - 'null'
+      required:
+      - password_length
+      - score
+      title: AttackEventDataSchema
       type: object
     PaginatedCampaignPayload:
       additionalProperties: false
@@ -590,169 +602,6 @@ components:
       - workspace
       - id
       title: PaginatedCampaignPayload
-      type: object
-    CampaignStatusSchema:
-      enum:
-      - active
-      - completed
-      - draft
-      - paused
-      - scheduled
-      title: CampaignStatusSchema
-      type: string
-    UnauthorizedErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: unauthorized
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Unauthorized
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: UnauthorizedErrorResponse
-      type: object
-    CampaignCycleOverviewSchema:
-      additionalProperties: false
-      properties:
-        id:
-          format: uuid
-          type: string
-      required:
-      - id
-      title: CampaignCycleOverviewSchema
-      type: object
-    AttackEventTypeSchema:
-      enum:
-      - attachment_opened
-      - attack_sent
-      - attack_voided
-      - credentials_submitted
-      - download_link_clicked
-      - email_answered
-      - email_opened
-      - email_reported
-      - employee_tricked
-      - file_opened
-      - manually_reported
-      - manually_retried
-      - mfa_code_submitted
-      - page_opened
-      - phishing_remedial_course_completed
-      - phone_number_called
-      - phone_number_code_entered
-      - qr_code_scanned
-      - remedial_completed
-      - remedial_started
-      - scope_granted
-      - sms_answered
-      - social_login_clicked
-      title: AttackEventTypeSchema
-      type: string
-    DifficultySchema:
-      enum:
-      - easy
-      - hard
-      - medium
-      title: DifficultySchema
-      type: string
-    AttackSenderSchema:
-      additionalProperties: false
-      properties:
-        email:
-          examples:
-          - marketing@noreply.link
-          type: string
-        name:
-          examples:
-          - Marketing team
-          type: string
-      required:
-      - email
-      - name
-      title: AttackSenderSchema
-      type: object
-    CampaignDelivery:
-      enum:
-      - one_off
-      - recurring
-      title: CampaignDelivery
-      type: string
-    AttackServiceSchema:
-      additionalProperties: false
-      properties:
-        name:
-          description: Name of the service being used in the phishing attack. Returns 'This service is no longer available' for services that have been deprecated.
-          examples:
-          - Microsoft
-          type: string
-      required:
-      - name
-      title: AttackServiceSchema
-      type: object
-    RateLimitExceededErrorResponse:
-      additionalProperties: false
-      properties:
-        errors:
-          items:
-            additionalProperties: false
-            properties:
-              code:
-                const: too_many_requests
-              detail:
-                type: string
-              source:
-                properties:
-                  pointer:
-                    type: string
-                required:
-                - pointer
-                type: object
-              title:
-                const: Too Many Requests
-            required:
-            - title
-            - source
-            - detail
-            type: object
-          type: array
-      required:
-      - errors
-      title: RateLimitExceededErrorResponse
-      type: object
-    PaginatedAttackLoginDomainPayload:
-      additionalProperties: false
-      properties:
-        id:
-          format: uuid
-          type: string
-        name:
-          description: The attack login domain, used as the link for each attack
-          examples:
-          - secure-signin.co
-          type: string
-      required:
-      - name
-      - id
-      title: PaginatedAttackLoginDomainPayload
       type: object
     EmployeeEventsSchema:
       additionalProperties: false
@@ -852,36 +701,26 @@ components:
       - attachment_opened
       title: EmployeeEventsSchema
       type: object
-    CampaignsStatisticsPayload:
-      additionalProperties: false
-      properties:
-        active_employees_attacked_count:
-          description: Number of active employees who were attacked
-          type: integer
-        attack_events_per_employee:
-          $ref: '#/components/schemas/EmployeeEventsSchema'
-        employees_attacked_count:
-          description: Number of employees who were attacked, active or not
-          type: integer
-        employees_weak_credentials_detected_count:
-          description: Number of employees with weak credentials detected
-          type: integer
-        reporting_rate:
-          description: 'If filtered by campaing_id and/or campaign_cycle_id: percentage of attacks that were reported by employees rounded to the nearest integer. Otherwise: percentage of employees who have reported rounded to the nearest integer.'
-          type: integer
-        vulnerability_rate:
-          description: 'If filtered by campaign_id and/or campaign_cycle_id: percentage of attacks that successfully tricked employees, rounded to the nearest integer. Otherwise: percentage of employees tricked, rounded to the nearest integer.'
-          type: integer
-      required:
-      - attack_events_per_employee
-      - reporting_rate
-      - vulnerability_rate
-      - employees_weak_credentials_detected_count
-      - employees_attacked_count
-      - active_employees_attacked_count
-      title: CampaignsStatisticsPayload
-      type: object
-    WorkspaceOverviewSchema:
+    CampaignFrequency:
+      enum:
+      - custom
+      - daily
+      - monthly
+      - quarterly
+      - weekly
+      - yearly
+      title: CampaignFrequency
+      type: string
+    CampaignStatusSchema:
+      enum:
+      - active
+      - completed
+      - draft
+      - paused
+      - scheduled
+      title: CampaignStatusSchema
+      type: string
+    CampaignCycleOverviewSchema:
       additionalProperties: false
       properties:
         id:
@@ -889,7 +728,7 @@ components:
           type: string
       required:
       - id
-      title: WorkspaceOverviewSchema
+      title: CampaignCycleOverviewSchema
       type: object
     PaginatedAttackPayload:
       additionalProperties: false
@@ -983,21 +822,162 @@ components:
       - id
       title: PaginatedAttackPayload
       type: object
-    AttackEventDataSchema:
+    DifficultySchema:
+      enum:
+      - easy
+      - hard
+      - medium
+      title: DifficultySchema
+      type: string
+    UnprocessableContentErrorResponse:
       additionalProperties: false
       properties:
-        password_length:
-          type:
-          - integer
-          - 'null'
-        score:
-          type:
-          - integer
-          - 'null'
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                type: string
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                type: string
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
       required:
-      - password_length
-      - score
-      title: AttackEventDataSchema
+      - errors
+      title: UnprocessableContentErrorResponse
+      type: object
+    PaginatedAttackLoginDomainPayload:
+      additionalProperties: false
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          description: The attack login domain, used as the link for each attack
+          examples:
+          - secure-signin.co
+          type: string
+      required:
+      - name
+      - id
+      title: PaginatedAttackLoginDomainPayload
+      type: object
+    AttackServiceSchema:
+      additionalProperties: false
+      properties:
+        name:
+          description: Name of the service being used in the phishing attack. Returns 'This service is no longer available' for services that have been deprecated.
+          examples:
+          - Microsoft
+          type: string
+      required:
+      - name
+      title: AttackServiceSchema
+      type: object
+    UnauthorizedErrorResponse:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            additionalProperties: false
+            properties:
+              code:
+                const: unauthorized
+              detail:
+                type: string
+              source:
+                properties:
+                  pointer:
+                    type: string
+                required:
+                - pointer
+                type: object
+              title:
+                const: Unauthorized
+            required:
+            - title
+            - source
+            - detail
+            type: object
+          type: array
+      required:
+      - errors
+      title: UnauthorizedErrorResponse
+      type: object
+    CampaignDelivery:
+      enum:
+      - one_off
+      - recurring
+      title: CampaignDelivery
+      type: string
+    AttackEventTypeSchema:
+      enum:
+      - attachment_opened
+      - attack_sent
+      - attack_voided
+      - credentials_submitted
+      - download_link_clicked
+      - email_answered
+      - email_opened
+      - email_reported
+      - employee_tricked
+      - file_opened
+      - manually_reported
+      - manually_retried
+      - mfa_code_submitted
+      - page_opened
+      - phishing_remedial_course_completed
+      - phone_number_called
+      - phone_number_code_entered
+      - qr_code_scanned
+      - remedial_completed
+      - remedial_started
+      - scope_granted
+      - sms_answered
+      - social_login_clicked
+      title: AttackEventTypeSchema
+      type: string
+    CampaignsStatisticsPayload:
+      additionalProperties: false
+      properties:
+        active_employees_attacked_count:
+          description: Number of active employees who were attacked
+          type: integer
+        attack_events_per_employee:
+          $ref: '#/components/schemas/EmployeeEventsSchema'
+        employees_attacked_count:
+          description: Number of employees who were attacked, active or not
+          type: integer
+        employees_weak_credentials_detected_count:
+          description: Number of employees with weak credentials detected
+          type: integer
+        reporting_rate:
+          description: 'If filtered by campaing_id and/or campaign_cycle_id: percentage of attacks that were reported by employees rounded to the nearest integer. Otherwise: percentage of employees who have reported rounded to the nearest integer.'
+          type: integer
+        vulnerability_rate:
+          description: 'If filtered by campaign_id and/or campaign_cycle_id: percentage of attacks that successfully tricked employees, rounded to the nearest integer. Otherwise: percentage of employees tricked, rounded to the nearest integer.'
+          type: integer
+      required:
+      - attack_events_per_employee
+      - reporting_rate
+      - vulnerability_rate
+      - employees_weak_credentials_detected_count
+      - employees_attacked_count
+      - active_employees_attacked_count
+      title: CampaignsStatisticsPayload
       type: object
     EmployeeOverviewSchema:
       additionalProperties: false
@@ -1033,7 +1013,23 @@ components:
       - id
       title: EmployeeOverviewSchema
       type: object
-    ForbiddenErrorResponse:
+    AttackSenderSchema:
+      additionalProperties: false
+      properties:
+        email:
+          examples:
+          - marketing@noreply.link
+          type: string
+        name:
+          examples:
+          - Marketing team
+          type: string
+      required:
+      - email
+      - name
+      title: AttackSenderSchema
+      type: object
+    RateLimitExceededErrorResponse:
       additionalProperties: false
       properties:
         errors:
@@ -1041,7 +1037,7 @@ components:
             additionalProperties: false
             properties:
               code:
-                const: forbidden
+                const: too_many_requests
               detail:
                 type: string
               source:
@@ -1052,7 +1048,7 @@ components:
                 - pointer
                 type: object
               title:
-                const: Forbidden
+                const: Too Many Requests
             required:
             - title
             - source
@@ -1061,43 +1057,47 @@ components:
           type: array
       required:
       - errors
-      title: ForbiddenErrorResponse
+      title: RateLimitExceededErrorResponse
       type: object
-    CampaignFrequency:
-      enum:
-      - custom
-      - daily
-      - monthly
-      - quarterly
-      - weekly
-      - yearly
-      title: CampaignFrequency
-      type: string
+    AttackTemplateSchema:
+      additionalProperties: false
+      properties:
+        name:
+          description: 'This field could be a default template''s name from the library, like ''deleted-files'', or a custom name if a custom template has been used.
+
+            '
+          examples:
+          - security-issue-detected
+          type: string
+      required:
+      - name
+      title: AttackTemplateSchema
+      type: object
   responses:
-    UnprocessableContentErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
-      description: Unprocessable content
-    UnauthorizedErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnauthorizedErrorResponse'
-      description: Missing API key or the key is invalid
-    RateLimitExceededErrorResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
-      description: Rate limit is exceeded
     ForbiddenErrorResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ForbiddenErrorResponse'
       description: Requested resource cannot be accessed
+    UnauthorizedErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+      description: Missing API key or the key is invalid
+    UnprocessableContentErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableContentErrorResponse'
+      description: Unprocessable content
+    RateLimitExceededErrorResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitExceededErrorResponse'
+      description: Rate limit is exceeded
   securitySchemes:
     apiKeyAuth:
       in: header
