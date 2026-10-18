@@ -1,7 +1,10 @@
 generated: '2026-10-14'
 method: searched
 checked:
+- google-workspace/integrations/google-workspace-integration-edges.yml
+- microsoft-teams/integrations/microsoft-teams-integration-edges.yml
 - okta/integrations/okta-integration-edges.yml
+- slack/integrations/slack-integration-edges.yml
 source:
 - okta/integrations/okta-integration-edges.yml
 edges:
@@ -26,3 +29,56 @@ edges:
   - OKTA_VERIFIED
   features:
   - OIDC
+- partner_name: Google Workspace (own)
+  partner: google-workspace
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://workspace.google.com/marketplace/app/riot_phishing_reporter/622566661269
+  mirror_of: google-workspace/integrations/google-workspace-integration-edges.yml
+  apps:
+  - Riot Phishing Reporter
+  listing_count: 1
+  detected: '2026-10-18'
+  detected_by: mirror-platform-listings.py
+  category: Google Workspace app
+- partner_name: Microsoft Teams (own)
+  partner: microsoft-teams
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://appsource.microsoft.com/en-us/product/office/WA200004164
+  mirror_of: microsoft-teams/integrations/microsoft-teams-integration-edges.yml
+  apps:
+  - Albert
+  listing_count: 1
+  detected: '2026-10-18'
+  detected_by: mirror-platform-listings.py
+  category: Microsoft Teams app
+  publisher_verified:
+  - Microsoft 365 Publisher Attestation
+- partner_name: Slack (own)
+  partner: slack
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://slack.com/marketplace/A01GSNM2H6V-riot
+  mirror_of: slack/integrations/slack-integration-edges.yml
+  apps:
+  - Riot
+  listing_count: 1
+  detected: '2026-10-18'
+  detected_by: mirror-platform-listings.py
+  category: Slack app
